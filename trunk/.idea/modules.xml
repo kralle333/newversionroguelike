@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/uniroguelike/uniroguelike.iml" filepath="$PROJECT_DIR$/uniroguelike/uniroguelike.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uniroguelike-android/uniroguelike-android.iml" filepath="$PROJECT_DIR$/uniroguelike-android/uniroguelike-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uniroguelike-desktop/uniroguelike-desktop.iml" filepath="$PROJECT_DIR$/uniroguelike-desktop/uniroguelike-desktop.iml" />
+    </modules>
+  </component>
+</project>
+
