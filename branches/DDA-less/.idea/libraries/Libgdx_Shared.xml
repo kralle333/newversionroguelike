@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Libgdx Shared">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/uniroguelike/libs/gdx-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/uniroguelike/libs/gdx.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
