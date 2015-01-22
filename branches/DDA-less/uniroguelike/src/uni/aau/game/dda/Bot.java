@@ -3,7 +3,7 @@ package uni.aau.game.dda;
 import com.badlogic.gdx.Gdx;
 import uni.aau.game.gameobjects.Monster;
 import uni.aau.game.gameobjects.Player;
-import uni.aau.game.gameobjects.Tile;
+import uni.aau.game.mapgeneration.Tile;
 import uni.aau.game.gui.GameConsole;
 import uni.aau.game.gui.Inventory;
 import uni.aau.game.helpers.GameAction;
@@ -35,13 +35,14 @@ public class Bot extends Player
 
     private int _monstersInCurrentRoom = 0;
     private Inventory _inventory;
-    private GameAction _previousAction;
+    private GameAction _currentAction = new GameAction();
+    private GameAction _previousAction = new GameAction();
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
     private final boolean isDebugging = false;
 
-    public Bot(int startStr, int startHp,String name)
+    public Bot(String name)
     {
-        super(startStr,startHp,name);
+        super(name);
     }
     public void setInventory(Inventory inventory)
     {
@@ -95,7 +96,8 @@ public class Bot extends Player
             }
             if(getCurrentStatusEffect() == StatusEffect.Paralysed)
             {
-                return new GameAction(this, GameAction.Type.Wait,currentTile,null);
+                _currentAction.setAction(this, GameAction.Type.Wait,currentTile,null);
+                return _currentAction;
             }
 
             GameAction actionToReturn = null;
@@ -126,12 +128,12 @@ public class Bot extends Player
     private GameAction getMonsterAction()
     {
         //Is there a monster next to us
-        for(Tile t: currentTile.getNeighbours())
+        for(Tile t: currentTile.getWalkableNeighbours())
         {
             if(t.getCharacter() instanceof Monster)
             {
                 _currentGoalMonster = (Monster)t.getCharacter();
-                _previousAction = new GameAction(this, GameAction.Type.Attack,_currentGoalMonster.getCurrentTile(),null);
+                _previousAction.setAction(this, GameAction.Type.Attack, _currentGoalMonster.getCurrentTile(), null);
                 return _previousAction;
             }
         }
@@ -148,13 +150,13 @@ public class Bot extends Player
             //Do we stand next to the monster:
             if(_currentGoalMonster.getCurrentTile().distanceTo(currentTile)==1)
             {
-                _previousAction = new GameAction(this, GameAction.Type.Attack,_currentGoalMonster.getCurrentTile(),null);
+                _previousAction.setAction(this, GameAction.Type.Attack,_currentGoalMonster.getCurrentTile(),null);
                 return _previousAction;
             }
 
             //Find the tile that get us the closest to the monster
-            Tile nextTile = getClosestTile(_currentGoalMonster.getCurrentTile(),currentTile.getNeighbours());
-            _previousAction =new GameAction(this, GameAction.Type.Move, nextTile, null);
+            Tile nextTile = getClosestTile(_currentGoalMonster.getCurrentTile(),currentTile.getWalkableNeighbours());
+            _previousAction.setAction(this, GameAction.Type.Move, nextTile, null);
             return _previousAction;
         }
         return null;
@@ -232,7 +234,7 @@ public class Bot extends Player
             if(useItem)
             {
                 _inventory.removeItem(i);
-                _previousAction = new GameAction(this, GameAction.Type.Use,currentTile,i);
+                _previousAction.setAction(this, GameAction.Type.Use,currentTile,i);
                 return _previousAction;
             }
         }
@@ -250,7 +252,7 @@ public class Bot extends Player
             if(i instanceof Scroll && ((Scroll) i).getType() == scrollType)
             {
                 _inventory.removeItem(i);
-                _previousAction = new GameAction(this, GameAction.Type.Use,currentTile,i);
+                _previousAction.setAction(this, GameAction.Type.Use, currentTile, i);
                 return _previousAction;
             }
         }
@@ -308,10 +310,10 @@ public class Bot extends Player
                 //Calculate the attackpower of the equipped weapon and the current weapon looked at
                 //Use your expectation of attack power when unidentified otherwise use actual attack power
                 int equippedAttackPower = 0;
-                int otherAttackPower = i.isIdentified()?((Weapon) i).getIdentifiedAttackPower():((Weapon) i).getExpectedAttackPower();
+                int otherAttackPower = i.isIdentified()?((Weapon) i).getIdentifiedMaxDamage():((Weapon) i).getExpectedMaxDamage();
                 if(getEquippedWeapon() != null)
                 {
-                    equippedAttackPower = getEquippedWeapon().isIdentified()?getEquippedWeapon().getIdentifiedAttackPower():getEquippedWeapon().getExpectedAttackPower();
+                    equippedAttackPower = getEquippedWeapon().isIdentified()?getEquippedWeapon().getIdentifiedMaxDamage():getEquippedWeapon().getExpectedMaxDamage();
                 }
 
                 if(otherAttackPower > equippedAttackPower)
@@ -321,7 +323,8 @@ public class Bot extends Player
                         return getUseItemAction(Scroll.ScrollType.RemoveCurse);
                     }
                     _inventory.equip(i);
-                    return new GameAction(this, GameAction.Type.Equip,currentTile,i);
+                    _currentAction.setAction(this, GameAction.Type.Equip,currentTile,i);
+                    return _currentAction;
                 }
             }
             else if(i instanceof Armor)
@@ -346,7 +349,8 @@ public class Bot extends Player
                         return getUseItemAction(Scroll.ScrollType.RemoveCurse);
                     }
                     _inventory.equip(i);
-                    return new GameAction(this, GameAction.Type.Equip,currentTile,i);
+                    _currentAction.setAction(this, GameAction.Type.Equip,currentTile,i);
+                    return _currentAction;
                 }
             }
         }
@@ -360,13 +364,13 @@ public class Bot extends Player
 
         if(getEquippedArmor() != null && getEquippedArmor().isIdentified() && getEquippedArmor().getIdentifiedDefense() == 0)
         {
-            _previousAction = new GameAction(this, GameAction.Type.Drop,currentTile,getEquippedArmor());
+            _previousAction.setAction(this, GameAction.Type.Drop,currentTile,getEquippedArmor());
             _inventory.removeItem(getEquippedArmor());
             return _previousAction;
         }
-        else if(getEquippedWeapon() != null && getEquippedWeapon().isIdentified() && getEquippedWeapon().getIdentifiedAttackPower() == 0)
+        else if(getEquippedWeapon() != null && getEquippedWeapon().isIdentified() && getEquippedWeapon().getIdentifiedMaxDamage() == 0)
         {
-            _previousAction = new GameAction(this, GameAction.Type.Drop,currentTile,getEquippedWeapon());
+            _previousAction.setAction(this, GameAction.Type.Drop,currentTile,getEquippedWeapon());
             _inventory.removeItem(getEquippedWeapon());
             return _previousAction;
         }
@@ -374,7 +378,7 @@ public class Bot extends Player
         {
             if(i instanceof Weapon && !((Weapon) i).isRanged())
             {
-                if(getEquippedWeapon() != null && i != getEquippedWeapon() &&  ((Weapon) i).getIdentifiedAttackPower()<=getEquippedWeapon().getIdentifiedAttackPower())
+                if(getEquippedWeapon() != null && i != getEquippedWeapon() &&  ((Weapon) i).getIdentifiedMaxDamage()<=getEquippedWeapon().getIdentifiedMaxDamage())
                 {
                     itemToDrop=i;
                     break;
@@ -423,7 +427,7 @@ public class Bot extends Player
         }
         if(itemToDrop != null)
         {
-            _previousAction = new GameAction(this, GameAction.Type.Drop, currentTile, itemToDrop);
+            _previousAction.setAction(this, GameAction.Type.Drop, currentTile, itemToDrop);
             _inventory.removeItem(itemToDrop);
             _droppedItems.add(itemToDrop);
             return _previousAction;
@@ -442,7 +446,7 @@ public class Bot extends Player
         if(currentTile == _currentGoalItemTile)
         {
             _currentGoalItemTile = null;
-            _previousAction = new GameAction(this, GameAction.Type.PickUp,currentTile,null);
+            _previousAction.setAction(this, GameAction.Type.PickUp,currentTile,null);
             return _previousAction;
         }
         //Find an item close-by
@@ -450,8 +454,8 @@ public class Bot extends Player
 
         if(_currentGoalItemTile != null)
         {
-            Tile nextTile = getClosestTile(_currentGoalItemTile,currentTile.getNeighbours());
-            _previousAction = new GameAction(this, GameAction.Type.Move,nextTile,null);
+            Tile nextTile = getClosestTile(_currentGoalItemTile,currentTile.getWalkableNeighbours());
+            _previousAction.setAction(this, GameAction.Type.Move,nextTile,null);
             return _previousAction;
         }
 
@@ -502,7 +506,7 @@ public class Bot extends Player
         {
             if(!i.isIdentified() && (i instanceof Potion || i instanceof Scroll))
             {
-                _previousAction = new GameAction(this, GameAction.Type.Use,currentTile,i);
+                _previousAction.setAction(this, GameAction.Type.Use,currentTile,i);
                 return _previousAction;
             }
         }
@@ -518,7 +522,7 @@ public class Bot extends Player
                 _currentPath.clear();
                 return null;
             }
-            _previousAction = new GameAction(this, GameAction.Type.Move,_currentPath.remove(0),null);
+            _previousAction.setAction(this, GameAction.Type.Move,_currentPath.remove(0),null);
             return _previousAction;
         }
         else if(!_isLookingForExit) //Nothing left to explore, leave room

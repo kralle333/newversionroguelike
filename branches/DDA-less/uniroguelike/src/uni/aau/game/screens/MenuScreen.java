@@ -49,7 +49,7 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
             @Override
             public void input(String s)
             {
-                RoguelikeGame.getGameInstance().setScreen(new PlayScreen(false,s));
+                RoguelikeGame.getGameInstance().setScreen(new PlayScreen(s));
             }
 
             @Override
@@ -105,14 +105,9 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         {
             if(startButton.isTouched(x, y))
             {
-                if(_useBot)
-                {
-                    RoguelikeGame.getGameInstance().setScreen(new PlayScreen(true, "Bot"));
-                } else
-                {
-                    _isShowingTextInput = true;
-                    Gdx.input.getTextInput(inputListener, "Input name", "Hero");
-                }
+
+                _isShowingTextInput = true;
+                Gdx.input.getTextInput(inputListener, "Input name", "Hero");
             } else if(highScoreButton.isTouched(x, y))
             {
                 RoguelikeGame.getGameInstance().setScreen(new HighScoreScreen());

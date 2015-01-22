@@ -25,11 +25,12 @@ public class SelectedItemWindow extends Window
     public SelectedItemWindow(int x, int y, int width, int height,Color color, int frameSize,Color frameColor)
     {
         super(x,y,width,height,color,frameSize,frameColor);
-        addButton("Use",0.1f,0.85f,0.25f,0.10f,Color.BLUE);
+        addButton("Use", 0.1f, 0.85f, 0.25f, 0.10f, Color.BLUE);
         addButton("Equip",0.10f,0.85f,0.25f,0.10f,Color.BLUE);
         addButton("Throw",0.40f,0.85f,0.25f,0.10f,Color.BLUE);
         addButton("Drop",0.70f,0.85f,0.25f,0.10f,Color.BLUE);
         hideButton("Equip");
+        _selectedAction = new GameAction();
         _descriptionFont = AssetManager.getFont("description");
     }
     public void reset(Player player)
@@ -42,11 +43,11 @@ public class SelectedItemWindow extends Window
         {
             if(isPressed("Drop",x,y))
             {
-                _selectedAction = new GameAction(_player,GameAction.Type.Drop,_player.getCurrentTile(),_selectedItem);
+                _selectedAction.setAction(_player, GameAction.Type.Drop, _player.getCurrentTile(), _selectedItem);
             }
             else if(isPressed("Throw",x,y))
             {
-                _selectedAction = new GameAction(null,GameAction.Type.Throw,null,_selectedItem);
+                _selectedAction.setAction(null,GameAction.Type.Throw,null,_selectedItem);
             }
             else if(_selectedItem instanceof Armor || _selectedItem instanceof Weapon)
             {
@@ -60,19 +61,19 @@ public class SelectedItemWindow extends Window
                         }
                         else
                         {
-                            _selectedAction = new GameAction(_player,GameAction.Type.Unequip,_player.getCurrentTile(),_selectedItem);
+                            _selectedAction.setAction(_player, GameAction.Type.Unequip, _player.getCurrentTile(), _selectedItem);
                         }
                     }
                     else
                     {
-                        _selectedAction = new GameAction(_player,GameAction.Type.Equip,_player.getCurrentTile(),_selectedItem);
+                        _selectedAction.setAction(_player,GameAction.Type.Equip,_player.getCurrentTile(),_selectedItem);
                     }
 
                 }
             }
             else if(isPressed("Use",x,y))
             {
-                _selectedAction = new GameAction(_player,GameAction.Type.Use,_player.getCurrentTile(),_selectedItem);
+                _selectedAction.setAction(_player,GameAction.Type.Use,_player.getCurrentTile(),_selectedItem);
             }
         }
         else

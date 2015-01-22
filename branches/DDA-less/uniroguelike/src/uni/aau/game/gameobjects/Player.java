@@ -12,23 +12,25 @@ public class Player extends Character
 {
     private Texture _texture;
     private final String _texturePath = "data/player.png";
-    private float _startStr;
-    private float _startHp;
+    private static int _startHp = 30;
+    private static int _startStr = 2;
+    private int _lanternStrength = 3;
+    public int getLanternStrength(){return _lanternStrength;}
     private String _killedBy = null;
     public String getKilledBy(){return _killedBy;}
     public void setKilledBy(String killedBy){_killedBy = killedBy;}
+
+    
 
     public boolean isMoving()
     {
         return actionQueue.size()>0 && actionQueue.get(0) != null && actionQueue.get(0).getType() == GameAction.Type.Move;
     }
 
-    public Player(int startStr, int startHp,String name)
+    public Player(String name)
     {
-        super(name,startStr,startHp);
+        super(name,_startStr,5,_startHp);
         _texture = new Texture(Gdx.files.internal(_texturePath));
-        _startStr = startStr;
-        _startHp = startHp;
     }
     public void retrieveExperience(Monster monster)
     {
@@ -40,7 +42,7 @@ public class Player extends Character
     }
     public float calculateScore()
     {
-        return getArmorDefense()+getAttackPower()+level+maxStr+maxHp+experience;
+        return getArmorDefense()+ getMaxAttackPower()+level+maxStr+maxHp+experience;
     }
     public void retrieveExperience(Potion potion)
     {

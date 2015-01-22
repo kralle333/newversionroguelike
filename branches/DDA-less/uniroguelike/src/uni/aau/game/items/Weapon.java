@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import uni.aau.game.gui.GameConsole;
-import uni.aau.game.mapgeneration.MapGenerator;
 import uni.aau.game.mapgeneration.RandomGen;
 
 public class Weapon extends Item
@@ -15,44 +14,51 @@ public class Weapon extends Item
     public boolean isRanged(){return _isRanged;}
     private int _ammoCount = 0;
     public int getAmmoCount(){return _ammoCount;}
-    private int _attack;
-    public int getAttack(){return _attack;}
-    private int _bonusAttack;
-    public int getIdentifiedAttackPower(){return _attack+_bonusAttack;}
-    public int getExpectedAttackPower(){return _attack;}
+    private int _minDamage;
+    public int getMinDamage(){return _minDamage;}
+    private int _maxDamage;
+    public int getMaxDamage(){return _maxDamage;}
+    private int _bonusDamage;
+    public int getIdentifiedMaxDamage(){return _maxDamage + _bonusDamage;}
+    public int getExpectedMaxDamage(){return _maxDamage;}
     private float _attackSpeed;
     public float getAttackSpeed(){return  _attackSpeed;}
     private int _stepsTillIdentified;
 
-    public Weapon(String name, String description,boolean isIdentified,TextureRegion textureRegion,
-                  int attack, int bonusAttack,float attackSpeed, boolean isRanged)
+    public Weapon(String name, String description,boolean isIdentified,TextureRegion textureRegion,int minDamage,
+                  int maxDamage, int bonusDamage,float attackSpeed, boolean isRanged)
     {
         super(name,description,isIdentified,textureRegion,isRanged, RandomGen.getRandomInt(0, 10)>8);
-        _attack = attack;
-        _bonusAttack = bonusAttack;
+        _minDamage=minDamage;
+        _maxDamage = maxDamage;
+        _bonusDamage = bonusDamage;
         _isRanged = isRanged;
         _attackSpeed = attackSpeed;
         if(_isRanged)
         {
-            _ammoCount = 1+_bonusAttack*2;
-            _bonusAttack = 0;
+            _ammoCount = 1+ _bonusDamage *2;
+            _bonusDamage = 0;
             _isIdentified=true;
         }
         else if(!isIdentified)
         {
-            _stepsTillIdentified = attack* RandomGen.getRandomInt(30, 100);
-            if(bonusAttack>0)
+            _stepsTillIdentified = maxDamage* RandomGen.getRandomInt(30, 100);
+            if(bonusDamage>0)
             {
-                _stepsTillIdentified *=bonusAttack;
+                _stepsTillIdentified *=bonusDamage;
             }
         }
     }
     public Weapon(Weapon toCopy, int bonusAttack)
     {
-        this(toCopy.getIdentifiedName(),toCopy.getIdentifiedDescription(),toCopy.isIdentified(),toCopy.getTextureRegion(),
-                toCopy.getAttack(),bonusAttack,toCopy.getAttackSpeed(),toCopy.isRanged());
+        this(toCopy.getIdentifiedName(),toCopy.getIdentifiedDescription(),toCopy.isIdentified(),toCopy.getTextureRegion(),toCopy.getMinDamage(),
+                toCopy.getMaxDamage(),bonusAttack,toCopy.getAttackSpeed(),toCopy.isRanged());
     }
 
+    public int getRandomDamage()
+    {
+        return RandomGen.getRandomInt(_minDamage+_bonusDamage,_maxDamage+_bonusDamage);
+    }
     public void step()
     {
         if(!_isIdentified)
@@ -60,7 +66,7 @@ public class Weapon extends Item
             _stepsTillIdentified--;
             if(_stepsTillIdentified<=0)
             {
-                GameConsole.addMessage(super.getName()+" [?] was identified to be "+ super.getName()+" ["+_bonusAttack+"]");
+                GameConsole.addMessage(super.getName()+" [?] was identified to be "+ super.getName()+" ["+ _bonusDamage +"]");
                 identify();
             }
         }
@@ -73,7 +79,7 @@ public class Weapon extends Item
             {
                 return super.getName() + "("+ _ammoCount +")";
             }
-            return super.getName()+" ["+_bonusAttack+"]";
+            return super.getName()+" ["+ _bonusDamage +"]";
         }
         else
         {
@@ -88,11 +94,11 @@ public class Weapon extends Item
             {
                 return super.getDescription()+"- There are "+_ammoCount+" of them";
             }
-            return super.getDescription()+"- Gives "+(_attack+_bonusAttack)+" attack";
+            return super.getDescription()+"- Gives "+(_maxDamage + _bonusDamage)+" attack";
         }
         else
         {
-            return super.getDescription()+" - Its effects are not known, but normally this type of weapon gives "+_attack+" attack - Its secrets will be revealed in "+_stepsTillIdentified+" steps";
+            return super.getDescription()+" - Its effects are not known, but normally this type of weapon gives "+ _maxDamage +" attack - Its secrets will be revealed in "+_stepsTillIdentified+" steps";
         }
     }
     public void addAmmo(int ammoToAdd)

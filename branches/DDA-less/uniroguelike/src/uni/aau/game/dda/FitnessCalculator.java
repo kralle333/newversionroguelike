@@ -6,7 +6,6 @@ import uni.aau.game.gui.Inventory;
 import uni.aau.game.helpers.GameAction;
 import uni.aau.game.items.Potion;
 import uni.aau.game.items.Scroll;
-import uni.aau.game.mapgeneration.DungeonCandidate;
 
 import java.io.*;
 
@@ -319,7 +318,7 @@ public class FitnessCalculator
         switch(gameAction.getType())
         {
             case Attack:
-                float damage = gameAction.getOwner().getAttackPower()-gameAction.getTargetTile().getCharacter().getArmorDefense();
+                float damage = gameAction.getOwner().getMaxAttackPower()-gameAction.getTargetTile().getCharacter().getArmorDefense();
                 if(damage<0)
                 {
                     damage = 1;

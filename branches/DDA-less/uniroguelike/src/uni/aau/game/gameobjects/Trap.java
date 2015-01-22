@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import uni.aau.game.gui.GameConsole;
 import uni.aau.game.helpers.AssetManager;
+import uni.aau.game.mapgeneration.DungeonMap;
+import uni.aau.game.mapgeneration.Tile;
 
 public class Trap
 {
