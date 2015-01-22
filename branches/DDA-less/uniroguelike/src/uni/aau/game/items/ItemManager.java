@@ -75,7 +75,8 @@ public class ItemManager
     {
         for(int i = 0;i<_availablePotions.size();i++)
         {
-            if(_availablePotions.get(i).getColor() == potion.getColor())
+            if(_availablePotions.get(i)._textureRegion.getRegionX()== potion._textureRegion.getRegionX() &&
+                    _availablePotions.get(i)._textureRegion.getRegionY()== potion._textureRegion.getRegionY()     )
             {
                 _availablePotions.get(i).identify();
                 return;
@@ -108,6 +109,7 @@ public class ItemManager
             }
             else
             {
+                //Random chance of spawning a strong armor
                 if(RandomGen.getRandomInt(0, 4) == 0)
                 {
                     toCopy = armor;

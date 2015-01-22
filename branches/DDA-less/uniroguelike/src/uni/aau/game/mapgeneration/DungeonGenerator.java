@@ -5,8 +5,8 @@ public class DungeonGenerator
 {
     public static DungeonMap GenerateCompleteDungeon(int depth)
     {
-        int width = 25+(int)(depth*RandomGen.getRandomFloat(0.5f,1.5f));
-        int height = 20+(int)(depth*RandomGen.getRandomFloat(0.5f,1.5f));
+        int width = 50+(int)(depth*RandomGen.getRandomFloat(1,3));
+        int height = 50+(int)(depth*RandomGen.getRandomFloat(1,3));
         DungeonMap newDungeon = MapGenerator.generateMap(width,height,"tile");
         newDungeon.createStairs();
         MonsterGenerator.Initialize();

@@ -33,7 +33,6 @@ public class Monster extends Character
         _monsterAction = new GameAction();
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
         _textureRegion = textureRegion;
-        _textureRegion.flip(false, true);
         _experienceGiven = experienceGiven;
     }
     public void copyAttacksToList(ArrayList<MonsterAttack> monsterAttacks)

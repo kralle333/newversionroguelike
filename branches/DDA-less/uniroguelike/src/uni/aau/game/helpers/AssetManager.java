@@ -39,8 +39,6 @@ public class AssetManager
             _assets.put("trap", new Texture(Gdx.files.internal("data/trap.png")));
             _assets.put("stairs", new Texture(Gdx.files.internal("data/stairs.png")));
             _fonts.put("description", new BitmapFont(Gdx.files.internal("data/DungeonFont.fnt"), Gdx.files.internal("data/DungeonFont.png"), true));
-            //Find a good formula
-            //_fonts.get("description").scale(1);
             for(Texture t : _assets.values())
             {
                 t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
