@@ -1,7 +1,4 @@
-package uni.aau.game.mapgeneration;
-
-import com.badlogic.gdx.Gdx;
-import uni.aau.game.dda.FeatureWeights;
+package uni.aau.game.dda;
 
 public class DungeonCandidate
 {

@@ -3,9 +3,8 @@ package uni.aau.game.mapgeneration;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import uni.aau.game.gameobjects.Monster;
-import uni.aau.game.gameobjects.Player;
-import uni.aau.game.gameobjects.Tile;
 
 import java.util.ArrayList;
 
@@ -34,7 +33,6 @@ public class Room
     private Tile.LightAmount _lighting;
     public Tile.LightAmount getLighting(){return  _lighting;}
     private Tile _playerTile;
-    private boolean _previousPlayerTileWasDoor = false;
     public boolean isLeftOf(Room otherRoom)
     {
         return getRightSide()<otherRoom.getX();
@@ -107,31 +105,7 @@ public class Room
         return null;
     }
 
-    public void playerHasEntered(Tile playerTile)
-    {
-        if(_previousPlayerTileWasDoor && _playerTile != null)
-        {
-            for(Tile neighbour : _playerTile.getNeighbours())
-            {
-                neighbour.setLight(Tile.LightAmount.Shadow);
-            }
-            _previousPlayerTileWasDoor=false;
-            setLightingOnTiles(Tile.LightAmount.Light);
-        }
-        _playerTile=playerTile;
-        if(_lighting != Tile.LightAmount.Light)
-        {
-            setLightingOnTiles(Tile.LightAmount.Light);
-        }
-        if(_playerTile.getType() == Tile.Types.Door)
-        {
-            for(Tile neighbour : _playerTile.getNeighbours())
-            {
-                neighbour.setLight(Tile.LightAmount.Light);
-            }
-            _previousPlayerTileWasDoor=true;
-        }
-    }
+
 
     private void setLightingOnTiles(Tile.LightAmount light)
     {
@@ -159,13 +133,34 @@ public class Room
         {
             for(int y=0;y<_height;y++)
             {
-                if(x==0||y==0||x==_width-1||y==_height-1)
+                if(y==0)
                 {
-                    _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this);
+                    if(x==0){ _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(3,0));}
+                    else if(x==1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(4,0));}
+                    else if(x==_width-1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(7,0));}
+                    else if(x==_width-2){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(6,0));}
+                    else{_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(5,0));}
+
+                }
+                else if(y==_height-1)
+                {
+                    if(x==0){ _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(3,2));}
+                    else if(x==1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(4,2));}
+                    else if(x==_width-1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(7,2));}
+                    else if(x==_width-2){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(6,2));}
+                    else{_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(5,2));}
+                }
+                else if(x==0)
+                {
+                    _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(3,1));
+                }
+                else if(x==_width-1)
+                {
+                    _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(7,1));
                 }
                 else
                 {
-                    _tiles[x][y] = new Tile(Tile.Types.Floor,x+_x,y+_y,this);
+                    _tiles[x][y] = new Tile(Tile.Types.Floor,x+_x,y+_y,this,new Vector2(3+RandomGen.getRandomInt(0,2),3));
                 }
             }
         }
@@ -178,31 +173,32 @@ public class Room
         }
     }
 
-    public void setNeighbours(Tile tile)
+    private Vector2[] directions = new Vector2[]{new Vector2(-1,0),new Vector2(0,-1),
+                                            new Vector2(1,0),new Vector2(0,1),
+                                            new Vector2(-1,-1),new Vector2(-1,1),
+                                            new Vector2(1,-1),new Vector2(1,1)};
+    private void setNeighbours(Tile tile)
     {
         int x = (int)tile.getX()-_x;
         int y = (int)tile.getY()-_y;
 
-        //add 8 directions instead of 4
-        ArrayList<Tile> neighbourList = new ArrayList<Tile>();
-        if(x-1>=0 && _tiles[x-1][y].getType()==Tile.Types.Floor)
+        ArrayList<Tile> walkableNeighbours = new ArrayList<Tile>();
+        ArrayList<Tile> nonWalkableNeighbours = new ArrayList<Tile>();
+        for(int d = 0;d<directions.length;d++)
         {
-            neighbourList.add(_tiles[x-1][y]);
+            int nX=x+(int)directions[d].x;
+            int nY=y+(int)directions[d].y;
+            if(nX>0 && nX<_width-1 && nY>0 && nY<_height-1)
+            {
+                walkableNeighbours.add(_tiles[nX][nY]);
+            }
+            else if(nX>=0 && nX<_width && nY>=0 && nY<_height)
+            {
+                nonWalkableNeighbours.add(_tiles[nX][nY]);
+            }
         }
-        if(y-1>=0 && _tiles[x][y-1].getType()==Tile.Types.Floor)
-        {
-            neighbourList.add(_tiles[x][y-1]);
-        }
-        if(x+1<_width && _tiles[x+1][y].getType()==Tile.Types.Floor)
-        {
-            neighbourList.add(_tiles[x+1][y]);
-        }
-        if(y+1<_height && _tiles[x][y+1].getType()==Tile.Types.Floor)
-        {
-            neighbourList.add(_tiles[x][y+1]);
-        }
-
-        tile.setNeighbours(neighbourList);
+        tile.setNonWalkableNeighbours(nonWalkableNeighbours);
+        tile.setWalkableNeighbours(walkableNeighbours);
     }
     public enum WallSide{West,East,South,North}
     public Tile getRandomEmptyWall(WallSide side)
@@ -239,14 +235,20 @@ public class Room
     }
 
 
-    public void createDoorAndConnect(Tile doorTile,Tile corridorTile)
+    public void createDoorAndConnect(Tile doorTile,Tile corridorTile,WallSide orientation)
     {
         if(doorTile.getRoom() != this)
         {
             throw new RuntimeException("Door tile did not match room");
         }
 
-        doorTile.setType(Tile.Types.Door);
+        switch (orientation)
+        {
+            case West:doorTile.setTextureRegion(new Vector2(1,4));break;
+            case East:doorTile.setTextureRegion(new Vector2(1,3));break;
+            case North:doorTile.setTextureRegion(new Vector2(0,3));break;
+            case South:doorTile.setTextureRegion(new Vector2(0,4));break;
+        }
 
         //Get local coordinates
         int doorX = (int)doorTile.getX()-_x;
@@ -271,10 +273,11 @@ public class Room
             adjacentToDoor= _tiles[doorX][doorY-1];
         }
         //Add neighbours
-        adjacentToDoor.addNeighbour(doorTile);
-        doorTile.addNeighbour(adjacentToDoor);
-        doorTile.addNeighbour(corridorTile);
-        corridorTile.addNeighbour(doorTile);
+        adjacentToDoor.addWalkableNeighbour(doorTile);
+        doorTile.addWalkableNeighbour(adjacentToDoor);
+        doorTile.addWalkableNeighbour(corridorTile);
+        corridorTile.addWalkableNeighbour(doorTile);
+        doorTile.setType(Tile.Types.Door);
         _doors.add(doorTile);
 
     }
@@ -294,11 +297,6 @@ public class Room
     }
     public void draw(SpriteBatch batch)
     {
-        if(_playerTile != null && !(_playerTile.getCharacter() instanceof Player))
-        {
-            _playerTile = null;
-            setLightingOnTiles(Tile.LightAmount.Shadow);
-        }
         for(int x = 0;x<_width;x++)
         {
             for(int y= 0;y<_height;y++)
@@ -306,13 +304,9 @@ public class Room
                 _tiles[x][y].draw(batch);
             }
         }
-        if(_lighting == Tile.LightAmount.Non)
+        for(Tile door : _doors)
         {
-            for(Tile door : _doors)
-            {
-                door.draw(batch);
-            }
-            return;
+            door.draw(batch);
         }
 
         batch.setColor(Color.WHITE);

@@ -2,11 +2,8 @@ package uni.aau.game.mapgeneration;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import uni.aau.game.gameobjects.DungeonMap;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class MapGenerator
 {

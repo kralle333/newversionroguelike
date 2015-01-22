@@ -1,10 +1,14 @@
-package uni.aau.game.gameobjects;
+package uni.aau.game.mapgeneration;
 
 
 import android.util.Log;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import uni.aau.game.gameobjects.Monster;
+import uni.aau.game.gameobjects.Player;
+import uni.aau.game.gameobjects.Trap;
 import uni.aau.game.helpers.AssetManager;
 import uni.aau.game.items.Item;
 import uni.aau.game.mapgeneration.*;
@@ -171,7 +175,9 @@ public class DungeonMap extends BSPMapNode
 
     public void createStairs()
     {
-       getRandomEmptyTile().setType(Tile.Types.StairCase);
+        Tile stairTile = getRandomEmptyTile();
+        stairTile.setType(Tile.Types.StairCase);
+        stairTile.setTextureRegion(new Vector2(2,3));
     }
 
     public Tile getRandomEmptyTile()

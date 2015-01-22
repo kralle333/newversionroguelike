@@ -12,6 +12,17 @@ public class AssetManager
     private static HashMap<String,Texture> _assets = new HashMap<String, Texture>();
     private static HashMap<String,BitmapFont> _fonts = new HashMap<String, BitmapFont>();
     private static boolean _isInitialized = false;
+    public class TileSetCoordinate
+    {
+        public int x;
+        public int y;
+        public TileSetCoordinate(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
 
     public static void initialize()
     {

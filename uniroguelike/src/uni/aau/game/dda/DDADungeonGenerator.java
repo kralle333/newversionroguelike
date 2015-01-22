@@ -2,22 +2,20 @@ package uni.aau.game.dda;
 
 
 import com.badlogic.gdx.Gdx;
-import uni.aau.game.gameobjects.DungeonMap;
+import uni.aau.game.mapgeneration.DungeonMap;
 import uni.aau.game.gameobjects.Monster;
 import uni.aau.game.gameobjects.Player;
 import uni.aau.game.gameobjects.Trap;
 import uni.aau.game.gui.Inventory;
-import uni.aau.game.helpers.GameAction;
 import uni.aau.game.items.Item;
 import uni.aau.game.items.ItemManager;
 import uni.aau.game.items.Potion;
 import uni.aau.game.items.Scroll;
 import uni.aau.game.mapgeneration.*;
 
-import java.io.*;
 import java.util.*;
 
-public class DungeonGenerator
+public class DDADungeonGenerator
 {
 
     private static final int generationsOfEvolution = 100;
@@ -123,14 +121,14 @@ public class DungeonGenerator
     public static DungeonMap generateDungeonFromCandidate(DungeonCandidate candidate)
     {
         int dungeonSize = 15+candidate.monsterCount+candidate.trapCount+(candidate.armorCount+candidate.weaponCount+candidate.potionCount+candidate.scrollCount)/4;
-        Gdx.app.log("DungeonGenerator","About to create a map of size: "+dungeonSize);
+        Gdx.app.log("DDADungeonGenerator","About to create a map of size: "+dungeonSize);
         DungeonMap returnedMap = MapGenerator.generateMap(dungeonSize, dungeonSize, "tile");
 
         //Create monsters
         ArrayList<Monster> monstersInMap = new ArrayList<Monster>();
         for(int i = 0;i<candidate.monsterCount;i++)
         {
-            monstersInMap.add(MonsterGenerator.createMonster(candidate.monsterAvgStr, candidate.monsterAvgHp, candidate.monsterAvgDef));
+            monstersInMap.add(MonsterGenerator.createMonsterForDDA(candidate.monsterAvgStr, candidate.monsterAvgHp, candidate.monsterAvgDef));
         }
         returnedMap.addMonsters(monstersInMap);
 
@@ -302,7 +300,7 @@ public class DungeonGenerator
         currentCandidates.clear();
         for(int i = 0;i<startPoolSize;i++)
         {
-            DungeonCandidate candidate = new DungeonCandidate(RandomGen.getRandomInt(1, 5), RandomGen.getRandomInt(2, player.getMaxHitPoints() / 2),RandomGen.getRandomInt(1, 5),RandomGen.getRandomInt(1, 10),RandomGen.getRandomInt(2, player.getMaxHitPoints()/2),RandomGen.getRandomInt(1, 10),RandomGen.getRandomInt(1, 5),RandomGen.getRandomInt(1, 10),RandomGen.getRandomInt(1, 5),RandomGen.getRandomInt(1, 20),RandomGen.getRandomInt(1, player.getAttackPower()),RandomGen.getRandomInt(1, player.getArmorDefense()),RandomGen.getRandomInt(2, player.getMaxHitPoints()));
+            DungeonCandidate candidate = new DungeonCandidate(RandomGen.getRandomInt(1, 5), RandomGen.getRandomInt(2, player.getMaxHitPoints() / 2),RandomGen.getRandomInt(1, 5),RandomGen.getRandomInt(1, 10),RandomGen.getRandomInt(2, player.getMaxHitPoints()/2),RandomGen.getRandomInt(1, 10),RandomGen.getRandomInt(1, 5),RandomGen.getRandomInt(1, 10),RandomGen.getRandomInt(1, 5),RandomGen.getRandomInt(1, 20),RandomGen.getRandomInt(1, player.getMaxAttackPower()),RandomGen.getRandomInt(1, player.getArmorDefense()),RandomGen.getRandomInt(2, player.getMaxHitPoints()));
             currentCandidates.add(candidate);
         }
 

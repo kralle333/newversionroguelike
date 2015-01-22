@@ -1,7 +1,7 @@
 package uni.aau.game.helpers;
 
 import uni.aau.game.gameobjects.Character;
-import uni.aau.game.gameobjects.Tile;
+import uni.aau.game.mapgeneration.Tile;
 import uni.aau.game.items.Item;
 
 public class GameAction
@@ -17,12 +17,16 @@ public class GameAction
     private Item _targetItem;
     public Item getTargetItem(){return _targetItem;}
 
+    public GameAction()
+    {
 
-    public GameAction(Character owner, Type type, Tile tile, Item item)
+    }
+    public void setAction(Character owner, Type type, Tile tile, Item item)
     {
         _owner = owner;
         _type=type;
         _targetTile = tile;
         _targetItem = item;
     }
+
 }

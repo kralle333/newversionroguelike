@@ -1,10 +1,7 @@
 package uni.aau.game.helpers;
 
-import android.util.Log;
 import com.badlogic.gdx.Gdx;
-import uni.aau.game.gameobjects.Tile;
-import uni.aau.game.mapgeneration.Corridor;
-import uni.aau.game.mapgeneration.Room;
+import uni.aau.game.mapgeneration.Tile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,8 +58,8 @@ public class PathFinder
             openSet.remove(currentNode);
             closedSet.add(currentNode);
             if(isDebugging)
-                Gdx.app.log("Pathfinder","Current tile is at: "+currentNode.getTilePosition().toString()+"-fScore is: "+fScores.get(currentNode)+"This tile has neighbours: "+currentNode.getNeighbours().size());
-            for(Tile neighbour : currentNode.getNeighbours())
+                Gdx.app.log("Pathfinder","Current tile is at: "+currentNode.getTilePosition().toString()+"-fScore is: "+fScores.get(currentNode)+"This tile has neighbours: "+currentNode.getWalkableNeighbours().size());
+            for(Tile neighbour : currentNode.getWalkableNeighbours())
             {
                 if(closedSet.contains(neighbour))
                 {

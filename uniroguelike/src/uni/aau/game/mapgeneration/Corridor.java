@@ -1,9 +1,9 @@
 package uni.aau.game.mapgeneration;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import uni.aau.game.gameobjects.Monster;
 import uni.aau.game.gameobjects.Player;
-import uni.aau.game.gameobjects.Tile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,38 +60,24 @@ public class Corridor
 
     public void connectRoomsVertical()
     {
-        if (_room1.isAboveOf(_room2)) //Room1 is above of room2
-        {
-            _door1 = _room1.getRandomEmptyWall(Room.WallSide.South);
-            _door2 = _room2.getRandomEmptyWall(Room.WallSide.North);
-        }
-        else //if (room2.isLeftOf(room1)) //Room2 to the left of room1
-        {
-            _door1 = _room2.getRandomEmptyWall(Room.WallSide.South);
-            _door2 = _room1.getRandomEmptyWall(Room.WallSide.North);
-
-        }
+        Room.WallSide door1Ori = _room1.isAboveOf(_room2)?Room.WallSide.South: Room.WallSide.North;
+        Room.WallSide door2Ori = door1Ori== Room.WallSide.South?Room.WallSide.North: Room.WallSide.South;
+        _door1 = _room1.getRandomEmptyWall(door1Ori);
+        _door2 = _room2.getRandomEmptyWall(door2Ori);
         createVerticalLine((int)_door1.getX(),(int) _door1.getY(),(int) _door2.getX(),(int) _door2.getY());
-        _room1.createDoorAndConnect(_door1,_tiles.get(0));
-        _room2.createDoorAndConnect(_door2,_tiles.get(_tiles.size()-1));
+        _room1.createDoorAndConnect(_door1,_tiles.get(0),door1Ori);
+        _room2.createDoorAndConnect(_door2,_tiles.get(_tiles.size()-1),door2Ori);
         addNeighbours();
     }
     public void connectRoomsHorizontal()
     {
-        if (_room1.isLeftOf(_room2)) //Room1 to the left of room2
-        {
-            _door1 = _room1.getRandomEmptyWall(Room.WallSide.East);
-            _door2 = _room2.getRandomEmptyWall(Room.WallSide.West);
-        }
-        else //if (room2.isLeftOf(room1)) //Room2 to the left of room1
-        {
-            _door1 = _room2.getRandomEmptyWall(Room.WallSide.East);
-            _door2 = _room1.getRandomEmptyWall(Room.WallSide.West);
-
-        }
+        Room.WallSide door1Ori = _room1.isLeftOf(_room2)?Room.WallSide.East: Room.WallSide.West;
+        Room.WallSide door2Ori = door1Ori== Room.WallSide.East?Room.WallSide.West: Room.WallSide.East;
+        _door1 = _room1.getRandomEmptyWall(door1Ori);
+        _door2 = _room2.getRandomEmptyWall(door2Ori);
         createHorizontalLine((int)_door1.getX(),(int) _door1.getY(),(int) _door2.getX(),(int) _door2.getY());
-        _room1.createDoorAndConnect(_door1,_tiles.get(0));
-        _room2.createDoorAndConnect(_door2,_tiles.get(_tiles.size()-1));
+        _room1.createDoorAndConnect(_door1,_tiles.get(0),door1Ori);
+        _room2.createDoorAndConnect(_door2,_tiles.get(_tiles.size()-1),door2Ori);
         addNeighbours();
     }
 
@@ -108,7 +94,7 @@ public class Corridor
 
         for(int a=x0+1;a<junctionPoint;a++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, a, y0,this));
+            _tiles.add(new Tile(Tile.Types.Floor, a, y0,this,new Vector2(1,0)));
         }
         if(Math.abs(y0-y1)>0)//Multiple tiles in junction
         {
@@ -117,7 +103,11 @@ public class Corridor
             ArrayList<Tile> junction = new ArrayList<Tile>();
                 for(int y = smallestY;y<=biggestY;y++)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this));
+                    if(y==smallestY && smallestY == y0){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(2,0)));}
+                    else if(y==smallestY && smallestY == y1){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(0,0)));}
+                    else if(y==biggestY && biggestY == y1){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(0,2)));}
+                    else if(y==biggestY && biggestY == y0){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(2,2)));}
+                    else {junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(0,1)));}
                 }
             //To ensure that the path is in the correct order
             if(smallestY == y1)
@@ -128,12 +118,12 @@ public class Corridor
         }
         else//Only one in junction
         {
-            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0,this));
+            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0,this, new Vector2(1,0)));
         }
 
         for(int b=junctionPoint+1;b<x1;b++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, b, y1,this));
+            _tiles.add(new Tile(Tile.Types.Floor, b, y1,this,new Vector2(1,0)));
         }
     }
     private void createVerticalLine(int x0, int y0, int x1, int y1)
@@ -158,7 +148,7 @@ public class Corridor
 
         for(int a=y0+1;a<junctionPoint;a++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x0, a,this));
+            _tiles.add(new Tile(Tile.Types.Floor, x0, a,this,new Vector2(0,1)));
         }
 
         if(Math.abs(x1-x0)>0)//Multiple in junction
@@ -168,7 +158,11 @@ public class Corridor
             ArrayList<Tile> junction = new ArrayList<Tile>();
             for(int x = smallestX;x<=biggestX;x++)
             {
-                junction.add(new Tile(Tile.Types.Floor, x, junctionPoint,this));
+                if(x==smallestX && smallestX == x1){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(0,0)));}
+                else if(x==smallestX && smallestX == x0){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(0,2)));}
+                else if(x==biggestX && biggestX == x1){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(2,0)));}
+                else if(x==biggestX && biggestX == x0){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(2,2)));}
+                else {junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(1,0)));}
             }
             if(smallestX == x1)
             {
@@ -178,12 +172,12 @@ public class Corridor
         }
         else//Only one in junction point
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x0, junctionPoint,this));
+            _tiles.add(new Tile(Tile.Types.Floor, x0, junctionPoint,this,new Vector2(0,1)));
         }
 
         for(int b=junctionPoint+1;b<y1;b++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x1, b,this));
+            _tiles.add(new Tile(Tile.Types.Floor, x1, b,this,new Vector2(0,1)));
         }
     }
 
@@ -191,8 +185,8 @@ public class Corridor
     {
         for(int i = 1;i<_tiles.size();i++)
         {
-            _tiles.get(i-1).addNeighbour(_tiles.get(i));
-            _tiles.get(i).addNeighbour(_tiles.get(i-1));
+            _tiles.get(i-1).addWalkableNeighbour(_tiles.get(i));
+            _tiles.get(i).addWalkableNeighbour(_tiles.get(i - 1));
         }
     }
 
@@ -245,7 +239,7 @@ public class Corridor
         if(_playerTile != null && !(_playerTile.getCharacter() instanceof Player))
         {
             _playerTile.setLight(Tile.LightAmount.Shadow);
-            for(Tile neighbour : _playerTile.getNeighbours())
+            for(Tile neighbour : _playerTile.getWalkableNeighbours())
             {
                 neighbour.setLight(Tile.LightAmount.Shadow);
             }

@@ -3,12 +3,13 @@ package uni.aau.game.items;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import uni.aau.game.helpers.AssetManager;
-import uni.aau.game.mapgeneration.MapGenerator;
 import uni.aau.game.mapgeneration.RandomGen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ItemManager
 {
@@ -20,8 +21,7 @@ public class ItemManager
     private static final ArrayList<Scroll> _availableScrolls = new ArrayList<Scroll>();
 
     private static ArrayList<String> _availableWords = new ArrayList<String>();
-    private static ArrayList<Color> _availableColors = new ArrayList<Color>();
-
+    private static ArrayList<Vector2> _availablePotionTypes = new ArrayList<Vector2>();
 
     public static boolean isIdentified(Item item)
     {
@@ -94,7 +94,7 @@ public class ItemManager
         }
         Weapon toCopy = _availableWeapons.get(RandomGen.getRandomInt(0, 4)+Math.abs(powerLevelIndex*4-1));
 
-        int bonusDamage = weaponAtk-toCopy.getAttack();
+        int bonusDamage = weaponAtk-toCopy.getMaxDamage();
         return new Weapon(toCopy,bonusDamage);
     }
     public static Armor getRandomArmor(int armorDef)
@@ -163,15 +163,15 @@ public class ItemManager
             throwingAxeRegion.flip(false, true);
             switch(i)
             {
-                case 0:prefix = "Metal"; break;
+                case 0:prefix = "Iron"; break;
                 case 1:prefix = "Mythril";break;
                 case 2:prefix = "Adamantite";break;
                 case 3:prefix = "Ruby";break;
             }
-            _availableWeapons.add(new Weapon(prefix+" Sword","A"+prefix+" sword. Attacks are average speed.",false,swordRegion, 2+(i*2),0,1,false));
-            _availableWeapons.add(new Weapon(prefix+" Axe","A 2-handed "+prefix+" axe. Attacks are slow.",false,axeRegion, 3+(i*2),0,1.5f,false));
-            _availableWeapons.add(new Weapon(prefix+" Dagger","A "+prefix+" dagger. Its attacks are quick.",false,daggerRegion, 1+(i*2),0,0.5f,false));
-            _availableWeapons.add(new Weapon(prefix+" Throwing axe","Ranged throwing axe made of "+prefix,false,throwingAxeRegion, 1+(i*2),0,1,true));
+            _availableWeapons.add(new Weapon(prefix+" Sword","A"+prefix+" sword. Attacks are average speed.",false,swordRegion,i+1, 6+(i*2),0,10,false));
+            _availableWeapons.add(new Weapon(prefix+" Axe","A 2-handed "+prefix+" axe. Attacks are slow.",false,axeRegion,1, 8+(i*2),0,5,false));
+            _availableWeapons.add(new Weapon(prefix+" Dagger","A "+prefix+" dagger. Its attacks are quick.",false,daggerRegion,2, 4+(i*2),0,15,false));
+            _availableWeapons.add(new Weapon(prefix+" Throwing axe","Ranged throwing axe made of "+prefix,false,throwingAxeRegion,1, 1+(i*2),0,10,true));
         }
     }
 
@@ -191,26 +191,44 @@ public class ItemManager
         _availableArmors.add(new Armor("Chain Mail","A very protective iron chain mail",false,chainMailRegion,5,0));
         _availableArmors.add(new Armor("Scale armor","Considered to be the most protective armor",false,scaleArmor,7,0));
     }
-    private static  Color getRandomColor()
-    {
-        return _availableColors.remove(RandomGen.getRandomInt(0, _availableColors.size() - 1));
-    }
 
+    private static Color convertPotionTypeIndexToColor(Vector2 textureRegionPosition)
+    {
+        //The x position in the tilemap represents the different colors
+        switch ((int)textureRegionPosition.x)
+        {
+            case 0:return Color.WHITE;
+            case 1:return Color.RED;
+            case 2:return Color.BLUE;
+            case 3:return Color.GREEN;
+        }
+        return Color.PINK;
+    }
     private static  void initializePotions()
     {
         TextureRegion potionRegion = AssetManager.getTextureRegion("potion",0,0,32,32);
         potionRegion.flip(false,true);
 
-        _availableColors.add(Color.RED);
-        _availableColors.add(Color.BLACK);
-        _availableColors.add(Color.BLUE);
-        _availableColors.add(Color.CYAN);
-        _availableColors.add(Color.GREEN);
+        //There are 16 different types of potion types in the potion.png tileset
+        for(int x=0;x<4;x++)
+        {
+            for(int y=0;y<4;y++)
+            {
+                _availablePotionTypes.add(new Vector2(x,y));
+            }
+        }
 
-        _availablePotions.add(new Potion("Potion of Healing","Heals some health",false,potionRegion,0,getRandomColor()));
-        _availablePotions.add(new Potion("Potion of Experience","Use to get experience",false,potionRegion,0,getRandomColor()));
-        _availablePotions.add(new Potion("Potion of Poison Gas","Spreads a poisonous gas",false,potionRegion,0,getRandomColor()));
-        _availablePotions.add(new Potion("Potion of Paralysis Gas","Spreads a paralysing gas",false,potionRegion,0,getRandomColor()));
+        Vector2 randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
+        _availablePotions.add(new Potion("Potion of Healing","Heals some health",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
+
+        randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
+        _availablePotions.add(new Potion("Potion of Experience","Use to get experience",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
+
+        randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
+        _availablePotions.add(new Potion("Potion of Poison Gas","Spreads a poisonous gas",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
+
+        randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
+        _availablePotions.add(new Potion("Potion of Paralysis Gas","Spreads a paralysing gas",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
 
     }
 

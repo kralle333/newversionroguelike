@@ -7,6 +7,9 @@ import uni.aau.game.helpers.GameAction;
 import uni.aau.game.items.Armor;
 import uni.aau.game.items.Item;
 import uni.aau.game.items.Weapon;
+import uni.aau.game.mapgeneration.DungeonMap;
+import uni.aau.game.mapgeneration.RandomGen;
+import uni.aau.game.mapgeneration.Tile;
 
 import java.util.ArrayList;
 
@@ -20,6 +23,8 @@ public class Character
     protected float currentStr;
     public int getMaxStr(){return (int)maxStr;}
     public int getCurrentStr(){return (int)currentStr;}
+    protected int _dodgeChance;
+    public int getDodgeChance(){return _dodgeChance;}
     protected int level = 1;
     public int getLevel(){return level;}
     protected int experience = 0;
@@ -39,7 +44,7 @@ public class Character
     public int getArmorDefense(){return _equippedArmor==null?0:_equippedArmor.getIdentifiedDefense();}
     private Weapon _equippedWeapon;
     public Weapon getEquippedWeapon(){return _equippedWeapon;}
-    public int getWeaponAttack(){return _equippedWeapon==null?0:_equippedWeapon.getIdentifiedAttackPower();}
+    public int getWeaponAttack(){return _equippedWeapon==null?0:_equippedWeapon.getIdentifiedMaxDamage();}
 
     protected Vector2 _position;
     public Vector2 getPosition(){return _position;}
@@ -50,13 +55,14 @@ public class Character
     private String _name;
     public String getName(){return _name;}
 
-    public Character(String name,int str, int hp)
+    public Character(String name,int str,int dodgeChance, int hp)
     {
         _name = name;
         currentStr = str;
         maxStr=str;
         currentHp = hp;
         maxHp=hp;
+        _dodgeChance = dodgeChance;
     }
 
 
@@ -101,19 +107,33 @@ public class Character
     }
     public void setMovementActions(ArrayList<Tile> path)
     {
+        int i=0;
         for(Tile tile : path)
         {
-            actionQueue.add(new GameAction(this, GameAction.Type.Move,tile,null));
+            if(i>=actionQueue.size())
+            {
+                actionQueue.add(new GameAction());
+            }
+            actionQueue.get(i).setAction(this, GameAction.Type.Move, tile, null);
+            i++;
         }
     }
     public void setThrowAction(Item selectedItem, Tile touchedTile)
     {
         actionQueue.clear();
-        actionQueue.add(new GameAction(this, GameAction.Type.Throw,touchedTile,selectedItem));
+        if(actionQueue.size()==0)
+        {
+            actionQueue.add(new GameAction());
+        }
+        actionQueue.get(0).setAction(this, GameAction.Type.Throw, touchedTile, selectedItem);
     }
     public void setAttackAction(Tile enemyTile)
     {
-        actionQueue.add(new GameAction(this, GameAction.Type.Attack,enemyTile,null));
+        if(actionQueue.size()==0)
+        {
+            actionQueue.add(new GameAction());
+        }
+        actionQueue.get(0).setAction(this, GameAction.Type.Attack, enemyTile, null);
     }
 
     public void clearQueueAndSetAction(GameAction action)
@@ -136,9 +156,9 @@ public class Character
         return null;
     }
 
-    public int getAttackPower()
+    public int getMaxAttackPower()
     {
-        return _equippedWeapon!=null?_equippedWeapon.getIdentifiedAttackPower()+getCurrentStr():getCurrentStr();
+        return _equippedWeapon!=null?_equippedWeapon.getIdentifiedMaxDamage()+getCurrentStr():getCurrentStr();
     }
     public void giveStatusEffect(StatusEffect effect, int turns)
     {
@@ -184,16 +204,45 @@ public class Character
             GameConsole.addMessage(_name+" was healed "+hitpoints+" hitpoints");
         }
     }
+    public void attack(Character target)
+    {
+        String attackMessage =_name+" tries to attack "+target.getName()+" and manages to ";
+
+        int hitChance=_equippedWeapon!=null?(int)_equippedWeapon.getAttackSpeed():0;
+        int failChance=5+_dodgeChance;
+
+        int result = RandomGen.getRandomInt(0,100);
+        if(result>=95)
+        {
+            GameConsole.addMessage("land a critical hit!");
+            damage(getMaxAttackPower()*2);
+        }
+        else if(result>(failChance-hitChance))
+        {
+            attackMessage+="hit";
+            int damage = (_equippedWeapon!=null?_equippedWeapon.getRandomDamage():0)+getCurrentStr();
+            if(damage/4<target.getArmorDefense())
+            {
+                damage-=damage/4;
+            }
+            else  if(damage/2<target.getArmorDefense())
+            {
+                damage -=damage/2;
+            }
+            GameConsole.addMessage(attackMessage);
+            target.damage(damage);
+        }
+        else
+        {
+            attackMessage+="miss";
+            GameConsole.addMessage(attackMessage);
+        }
+
+    }
     public void damage(int damage)
     {
-        //Change into armor def
-        int receivedDamage = damage-(_equippedArmor!=null?_equippedArmor.getIdentifiedDefense():0);
-        if(receivedDamage<=0)
-        {
-            receivedDamage=1;
-        }
-        currentHp-=receivedDamage;
-        GameConsole.addMessage(_name + " received " + receivedDamage + " damage");
+        currentHp-=damage;
+        GameConsole.addMessage(_name + " was dealt " + damage + " damage");
         if(currentHp<=0)
         {
             kill();
