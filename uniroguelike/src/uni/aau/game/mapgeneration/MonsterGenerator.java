@@ -118,7 +118,9 @@ public class MonsterGenerator
     {
         int str = prototype.attacks.size()>0?RandomGen.getRandomInt(1,prototype.attacks.get(0).minDamage):0;
         int hp = RandomGen.getRandomInt(prototype.minHp,prototype.maxHp);
-        return new Monster(prototype.name,str,hp,prototype.defense,prototype.dodgeChance,prototype.experience,prototype.texture);
+        Monster monsterToReturn = new Monster(prototype.name,str,hp,prototype.defense,prototype.dodgeChance,prototype.experience,prototype.texture);
+        monsterToReturn.copyAttacksToList(prototype.attacks);
+        return monsterToReturn;
     }
     public static Monster createMonsterForDDA(int averageStr, int averageHP, int averageDef)
     {
