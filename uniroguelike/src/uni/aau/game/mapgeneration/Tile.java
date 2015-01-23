@@ -9,6 +9,7 @@ import uni.aau.game.gameobjects.*;
 import uni.aau.game.gameobjects.Character;
 import uni.aau.game.helpers.AssetManager;
 import uni.aau.game.helpers.PathFinder;
+import uni.aau.game.helpers.TileSetCoordinate;
 import uni.aau.game.items.Item;
 
 import java.util.ArrayList;
@@ -130,7 +131,7 @@ public class Tile
         _textureRegion.flip(false,true);
     }
 
-    public Tile(Types type, int x, int y, Room owner,Vector2 tileTexture)
+    public Tile(Types type, int x, int y, Room owner,TileSetCoordinate tileTexture)
     {
         _tilePosition = new Vector2(x,y);
         _x=x;
@@ -138,7 +139,7 @@ public class Tile
         _lightAmount = LightAmount.Non;
         _type = type;
         _roomOwner = owner;
-        _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(),(int)tileTexture.x,(int)tileTexture.y,DungeonMap.TileSize,DungeonMap.TileSize);
+        _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(),tileTexture.x,tileTexture.y,DungeonMap.TileSize,DungeonMap.TileSize);
         _textureRegion.flip(false,true);
     }
     public void setType(Types type)

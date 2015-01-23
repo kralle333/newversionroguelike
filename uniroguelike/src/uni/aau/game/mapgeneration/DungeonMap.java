@@ -33,7 +33,7 @@ public class DungeonMap extends BSPMapNode
     {
         super(0,0,width,height,0,null);
         _tileMapPath = texturePath;
-        _stairTextureRegion = AssetManager.getTextureRegion("stairs",0,0,TileSize,TileSize);
+        _stairTextureRegion = AssetManager.getTextureRegion("tile","stairs",TileSize,TileSize);
         _stairTextureRegion.flip(false,true);
     }
 

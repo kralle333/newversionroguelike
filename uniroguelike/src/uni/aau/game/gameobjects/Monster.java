@@ -4,12 +4,8 @@ package uni.aau.game.gameobjects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import uni.aau.game.helpers.GameAction;
-import uni.aau.game.helpers.MonsterAttack;
 import uni.aau.game.items.Armor;
 import uni.aau.game.mapgeneration.Tile;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 public class Monster extends Character
 {
@@ -17,9 +13,6 @@ public class Monster extends Character
     private int _experienceGiven;
     private float _pursueDistance = 4;
     private GameAction _monsterAction;
-
-    private ArrayList<MonsterAttack> attacks = new ArrayList<MonsterAttack>();
-
     public int retrieveExperienceGiven()
     {
         int toReturn = _experienceGiven;
@@ -35,14 +28,7 @@ public class Monster extends Character
         _textureRegion = textureRegion;
         _experienceGiven = experienceGiven;
     }
-    public void copyAttacksToList(ArrayList<MonsterAttack> monsterAttacks)
-    {
-        for(MonsterAttack monsterAttack : monsterAttacks)
-        {
-            attacks.add(new MonsterAttack(monsterAttack.name,monsterAttack.minDamage,monsterAttack.maxDamage,monsterAttack.attackSpeed));
-        }
 
-    }
 
     public GameAction createNextAction(Player player)
     {

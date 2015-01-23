@@ -6,10 +6,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import uni.aau.game.gameobjects.Monster;
 import uni.aau.game.helpers.AssetManager;
-import uni.aau.game.helpers.MonsterAttack;
+import uni.aau.game.items.Weapon;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MonsterGenerator
 {
@@ -34,7 +33,8 @@ public class MonsterGenerator
         public int defense;
         public int dodgeChance;
         public int experience;
-        public ArrayList<MonsterAttack> attacks = new ArrayList<MonsterAttack>();
+        public Weapon attack;
+
 
         public MonsterPrototype(String name, int minHp, int maxHp,int defense,int dodgeChance,int experience,Vector2 textureRegionPosition)
         {
@@ -61,15 +61,16 @@ public class MonsterGenerator
         {
             MonsterPrototype beaverRat = new MonsterPrototype("BeaverRat",2,12,1,5,2,new Vector2(0,0));
             beaverRat.addProbabilityOfAppearing(1, 1);
-            beaverRat.attacks.add(new MonsterAttack("Bite",1,4,10));
+            beaverRat.attack = new Weapon("Bite","It's a bite",true,null,1,4,0,10,false);
 
             MonsterPrototype bat = new MonsterPrototype("Bat", 4, 4, 1,15,1, new Vector2(1, 0));
-            beaverRat.attacks.add(new MonsterAttack("Bite",1,4,10));
+            bat.attack = new Weapon("Bite","It's a bite",true,null,1,4,0,10,false);
             bat.addProbabilityOfAppearing(0.2f, 1);
             bat.addProbabilityOfAppearing(0.5f, 3);
             bat.addProbabilityOfAppearing(1, 5);
 
             MonsterPrototype troll = new MonsterPrototype("Troll",10,25, 3, 3,10, new Vector2(2, 0));
+            troll.attack = new Weapon("Club","Big club",true,null,1,10,0,5,false);
             troll.addProbabilityOfAppearing(0.2f, 2);
             troll.addProbabilityOfAppearing(0.4f, 4);
             troll.addProbabilityOfAppearing(0.6f, 6);
@@ -84,7 +85,7 @@ public class MonsterGenerator
         }
     }
 
-    public static ArrayList<Monster> createMonsters(int depth)
+    public static ArrayList<Monster> generateMonsters(int depth)
     {
         int numberOfMonsters = maxMonsters[depth];
         int monstersAdded = 0;
@@ -116,10 +117,10 @@ public class MonsterGenerator
 
     private static Monster createMonsterFromPrototype(MonsterPrototype prototype)
     {
-        int str = prototype.attacks.size()>0?RandomGen.getRandomInt(1,prototype.attacks.get(0).minDamage):0;
+        int str = RandomGen.getRandomInt(1,3);
         int hp = RandomGen.getRandomInt(prototype.minHp,prototype.maxHp);
         Monster monsterToReturn = new Monster(prototype.name,str,hp,prototype.defense,prototype.dodgeChance,prototype.experience,prototype.texture);
-        monsterToReturn.copyAttacksToList(prototype.attacks);
+        monsterToReturn.equip(new Weapon(prototype.attack,0));
         return monsterToReturn;
     }
     public static Monster createMonsterForDDA(int averageStr, int averageHP, int averageDef)
@@ -135,12 +136,7 @@ public class MonsterGenerator
         if(exp<=0){exp = 1;}
 
         MonsterType type = getType(str,hp);
-        return new Monster(type.toString(),str,hp,def,5,exp,getTextureRegion(type));
-    }
-
-    private static TextureRegion getTextureRegion(MonsterType type)
-    {
-        return new TextureRegion(_monsterTileSet,type.ordinal()* DungeonMap.TileSize,0,DungeonMap.TileSize,DungeonMap.TileSize);
+        return new Monster(type.toString(),str,hp,def,5,exp,new TextureRegion(_monsterTileSet, type.ordinal() * DungeonMap.TileSize, 0, DungeonMap.TileSize, DungeonMap.TileSize));
     }
 
     //Change to texture later

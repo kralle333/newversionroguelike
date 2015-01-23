@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import uni.aau.game.gameobjects.Monster;
+import uni.aau.game.helpers.AssetManager;
+import uni.aau.game.helpers.TileSetCoordinate;
 
 import java.util.ArrayList;
 
@@ -135,32 +137,31 @@ public class Room
             {
                 if(y==0)
                 {
-                    if(x==0){ _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(3,0));}
-                    else if(x==1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(4,0));}
-                    else if(x==_width-1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(7,0));}
-                    else if(x==_width-2){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(6,0));}
-                    else{_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(5,0));}
+                    if(x==0){ _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("nwWall"));}
+                    else if(x==1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("nwRoomWall"));}
+                    else if(x==_width-1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("neWall"));}
+                    else if(x==_width-2){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("neRoomWall"));}
+                    else{_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("nRoomWall"));}
 
                 }
                 else if(y==_height-1)
                 {
-                    if(x==0){ _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(3,2));}
-                    else if(x==1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(4,2));}
-                    else if(x==_width-1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(7,2));}
-                    else if(x==_width-2){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(6,2));}
-                    else{_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(5,2));}
+                    if(x==0){ _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this,AssetManager.getTileSetPosition("swWall"));}
+                    else if(x==_width-1){_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("seWall"));}
+                    else{_tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("sWall"));}
                 }
                 else if(x==0)
                 {
-                    _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(3,1));
+                    _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, AssetManager.getTileSetPosition("wWall"));
                 }
                 else if(x==_width-1)
                 {
-                    _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this, new Vector2(7,1));
+                    _tiles[x][y] = new Tile(Tile.Types.Wall,x+_x,y+_y,this,AssetManager.getTileSetPosition("eWall"));
                 }
                 else
                 {
-                    _tiles[x][y] = new Tile(Tile.Types.Floor,x+_x,y+_y,this,new Vector2(3+RandomGen.getRandomInt(0,2),3));
+                    //Random floor
+                    _tiles[x][y] = new Tile(Tile.Types.Floor,x+_x,y+_y,this,new TileSetCoordinate(3+RandomGen.getRandomInt(0,2),3));
                 }
             }
         }

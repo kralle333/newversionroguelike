@@ -10,7 +10,7 @@ public class DungeonGenerator
         DungeonMap newDungeon = MapGenerator.generateMap(width,height,"tile");
         newDungeon.createStairs();
         MonsterGenerator.Initialize();
-        newDungeon.addMonsters(MonsterGenerator.createMonsters(depth));
+        newDungeon.addMonsters(MonsterGenerator.generateMonsters(depth));
 
 
         return newDungeon;

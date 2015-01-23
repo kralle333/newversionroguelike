@@ -15,7 +15,7 @@ public class GameConsole
 {
     private static String[] messages = new String[100000];
     private static Vector2 _position;
-    private static final int _linesToShow = 3;
+    private static final int _linesToShow = 4;
     private static int drawIndex =-_linesToShow;
     private static int messagesAdded = 0;
     private static BitmapFont _font;
