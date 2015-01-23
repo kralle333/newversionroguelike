@@ -456,7 +456,13 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         return true;
     }
 
-
+    @Override
+    public void dispose()
+    {
+        batch.dispose();
+        shapeRenderer.dispose();
+        AssetManager.disposeAll();
+    }
     //NOT CURRENTLY USED
 
     @Override
@@ -520,12 +526,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
 
     }
 
-    @Override
-    public void dispose()
-    {
-        batch.dispose();
-        shapeRenderer.dispose();
-        AssetManager.disposeAll();
-    }
+
 }
 
