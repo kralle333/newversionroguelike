@@ -15,7 +15,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import uni.aau.game.RoguelikeGame;
-import uni.aau.game.dda.FitnessCalculator;
 import uni.aau.game.gameobjects.Character;
 import uni.aau.game.gameobjects.Player;
 import uni.aau.game.gui.*;
@@ -78,7 +77,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
 
         AssetManager.initialize();
         ItemManager.initialize();
-        FitnessCalculator.initialize();
         HighScoreIO.initialize();
 
         batch = new SpriteBatch();

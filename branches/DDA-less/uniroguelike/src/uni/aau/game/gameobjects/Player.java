@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import uni.aau.game.gui.GameConsole;
 import uni.aau.game.helpers.GameAction;
+import uni.aau.game.items.Item;
+import uni.aau.game.items.ItemManager;
 import uni.aau.game.items.Potion;
 
 public class Player extends Character
@@ -31,7 +33,16 @@ public class Player extends Character
     {
         super(name,_startStr,5,_startHp);
         _texture = new Texture(Gdx.files.internal(_texturePath));
+        super.equip(ItemManager.getWeapon(0,0));//Player starts with sword
     }
+
+    @Override
+    public void equip(Item item)
+    {
+        super.equip(item);
+        GameConsole.addMessage(getName()+" equipped "+item.getName());
+    }
+
     public void retrieveExperience(Monster monster)
     {
         experience+=monster.retrieveExperienceGiven();
@@ -57,7 +68,6 @@ public class Player extends Character
     public void levelUp()
     {
         experience=0;
-
 
         level++;
         experienceToNextLevel*=2;

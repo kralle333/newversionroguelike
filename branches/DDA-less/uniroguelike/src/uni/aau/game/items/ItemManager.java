@@ -84,18 +84,17 @@ public class ItemManager
         }
     }
 
-
-    public static Weapon getRandomWeapon(int weaponAtk)
+    public static Weapon getWeapon(int type,int power)
     {
+        return _availableWeapons.get(power*4+type);
+    }
+    public static Weapon getRandomWeapon(int depth)
+    {
+        //Ma
+        int weaponType = depth/5;
+        Weapon toCopy = _availableWeapons.get(RandomGen.getRandomInt(0, 3)+weaponType);
 
-        int powerLevelIndex = weaponAtk/3;
-        if(powerLevelIndex>=4)
-        {
-            powerLevelIndex = 3;
-        }
-        Weapon toCopy = _availableWeapons.get(RandomGen.getRandomInt(0, 4)+Math.abs(powerLevelIndex*4-1));
-
-        int bonusDamage = weaponAtk-toCopy.getMaxDamage();
+        int bonusDamage = RandomGen.getRandomInt(-2,2);
         return new Weapon(toCopy,bonusDamage);
     }
     public static Armor getRandomArmor(int armorDef)
@@ -138,6 +137,7 @@ public class ItemManager
     }
 
 
+
     public static void initialize()
     {
         initializeArmors();
@@ -162,7 +162,8 @@ public class ItemManager
             swordRegion.flip(false,true);
             axeRegion.flip(false,true);
             daggerRegion.flip(false,true);
-            throwingAxeRegion.flip(false, true);
+            throwingAxeRegion.flip(false,true);
+
             switch(i)
             {
                 case 0:prefix = "Iron"; break;
@@ -208,8 +209,6 @@ public class ItemManager
     }
     private static  void initializePotions()
     {
-        TextureRegion potionRegion = AssetManager.getTextureRegion("potion",0,0,32,32);
-        potionRegion.flip(false,true);
 
         //There are 16 different types of potion types in the potion.png tileset
         for(int x=0;x<4;x++)
@@ -220,17 +219,29 @@ public class ItemManager
             }
         }
 
+        //1. Figure out the type of the potion
+        //2. Get the corresponding texture region of that type
+        //3. Flip the texture so its not upside down
+        //4. Add the potion to the list of available potions
         Vector2 randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        _availablePotions.add(new Potion("Potion of Healing","Heals some health",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
+        TextureRegion potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
+        potionRegion.flip(false,true);
+        _availablePotions.add(new Potion("Potion of Healing","Heals some health",false,potionRegion,0,convertPotionTypeIndexToColor(randomType)));
 
         randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        _availablePotions.add(new Potion("Potion of Experience","Use to get experience",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
+        potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
+        potionRegion.flip(false,true);
+        _availablePotions.add(new Potion("Potion of Experience","Use to get experience",false,potionRegion,0,convertPotionTypeIndexToColor(randomType)));
 
         randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        _availablePotions.add(new Potion("Potion of Poison Gas","Spreads a poisonous gas",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
+        potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
+        potionRegion.flip(false,true);
+        _availablePotions.add(new Potion("Potion of Poison Gas","Spreads a poisonous gas",false,potionRegion,0,convertPotionTypeIndexToColor(randomType)));
 
         randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        _availablePotions.add(new Potion("Potion of Paralysis Gas","Spreads a paralysing gas",false,AssetManager.getTextureRegion("potion",(int)randomType.x,(int)randomType.y,32,32),0,convertPotionTypeIndexToColor(randomType)));
+        potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
+        potionRegion.flip(false,true);
+        _availablePotions.add(new Potion("Potion of Paralysis Gas","Spreads a paralysing gas",false,potionRegion,0,convertPotionTypeIndexToColor(randomType)));
 
     }
 
@@ -249,7 +260,6 @@ public class ItemManager
     {
         TextureRegion scrollRegion = AssetManager.getTextureRegion("scroll",0,0,32,32);
         scrollRegion.flip(false,true);
-
         _availableWords = new ArrayList<String>(Arrays.asList(new String[]{"donec", "ach", "nisi", "sit", "amet", "sem", "dapibus", "semper", "praesent", "tincidunt", "ultricies", "commodo", "porta", "velit", "lorem", "consequat", "fringilla" }));
         _availableScrolls.add(new Scroll("Scroll of Identify","Use to identify an item",false,scrollRegion,getRandomScrollName()));
         _availableScrolls.add(new Scroll("Scroll of Mapping","Reveals the layout of the dungeon",false,scrollRegion,getRandomScrollName()));

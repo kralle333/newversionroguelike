@@ -36,7 +36,7 @@ public class Weapon extends Item
         _attackSpeed = attackSpeed;
         if(_isRanged)
         {
-            _ammoCount = 1+ _bonusDamage *2;
+            _ammoCount = RandomGen.getRandomInt(3,5)+ _bonusDamage *2;
             _bonusDamage = 0;
             _isIdentified=true;
         }

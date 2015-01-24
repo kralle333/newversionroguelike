@@ -20,6 +20,7 @@ public class Item
     public void showCurse(){_isCurseKnown = true;}
     public boolean isCurseKnown(){return _isCurseKnown;}
     private boolean _stackable = false;
+    public boolean isStackable(){return _stackable;}
     private static int currentId=0;
     private int _id;
     public int getId(){return _id;}

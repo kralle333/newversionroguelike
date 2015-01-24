@@ -114,14 +114,10 @@ public class Potion extends Item
     @Override
     public void draw(SpriteBatch batch, float x,float y)
     {
-        batch.setColor(_color);
         super.draw(batch, x,y);
-        batch.setColor(Color.WHITE);
     }
     public void draw(SpriteBatch batch,float x, float y, float scale)
     {
-        batch.setColor(_color);
         super.draw(batch, x,y,scale);
-        batch.setColor(Color.WHITE);
     }
 }
