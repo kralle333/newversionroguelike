@@ -253,7 +253,9 @@ public class GameStateUpdater
             case Wait:
                 break;
             case PickUp:
-                _inventory.addItem(action.getTargetTile().pickupItem());
+                Item item =action.getTargetTile().pickupItem();
+                _inventory.addItem(item);
+                GameConsole.addMessage("Picked up item " + item.getName());
                 break;
             case Drop:
                 _player.getCurrentTile().addItem(action.getTargetItem());

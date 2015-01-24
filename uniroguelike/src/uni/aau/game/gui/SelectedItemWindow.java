@@ -14,9 +14,9 @@ import uni.aau.game.items.Weapon;
 
 public class SelectedItemWindow extends Window
 {
-    private GameAction _selectedAction;
+    private GameAction _selectedAction = new GameAction();
     public boolean hasAction(){return _selectedAction !=null;}
-    public GameAction retrieveAction(){GameAction toReturn = _selectedAction; _selectedAction = null; return toReturn;}
+    public GameAction retrieveAction(){return _selectedAction;}
     private Item _selectedItem;
     public Item retrieveItem(){Item toReturn = _selectedItem;_selectedItem=null;return toReturn;}
     private Player _player;

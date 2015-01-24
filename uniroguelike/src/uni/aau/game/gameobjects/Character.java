@@ -80,7 +80,6 @@ public class Character
         {
             Gdx.app.log("Character","Can not equip an item which is not armor or weapon");
         }
-        GameConsole.addMessage(_name+" equipped "+item.getName());
     }
     public void unequip(Item item)
     {
@@ -206,21 +205,21 @@ public class Character
     }
     public void attack(Character target)
     {
-        String attackMessage =_name+" tries to attack "+target.getName()+" and manages to ";
 
         int hitChance=_equippedWeapon!=null?(int)_equippedWeapon.getAttackSpeed():0;
         int failChance=5+_dodgeChance;
+        int damage = 0;
 
         int result = RandomGen.getRandomInt(0,100);
-        if(result>=95)
+        if(result>=97)
         {
-            GameConsole.addMessage("land a critical hit!");
-            damage(getMaxAttackPower()*2);
+            damage = getMaxAttackPower()*2;
+            GameConsole.addMessage(_name+" landed a critical hit on "+target.getName()+"! Was dealt "+damage+" damage.");
+            target.damage(damage);
         }
         else if(result>(failChance-hitChance))
         {
-            attackMessage+="hit";
-            int damage = (_equippedWeapon!=null?_equippedWeapon.getRandomDamage():0)+getCurrentStr();
+            damage = (_equippedWeapon!=null?_equippedWeapon.getRandomDamage():0)+getCurrentStr();
             if(damage/4<target.getArmorDefense())
             {
                 damage-=damage/4;
@@ -229,20 +228,18 @@ public class Character
             {
                 damage -=damage/2;
             }
-            GameConsole.addMessage(attackMessage);
+            GameConsole.addMessage(_name+" attacks "+target.getName()+"! Target lost "+damage+" hp.");
             target.damage(damage);
         }
         else
         {
-            attackMessage+="miss";
-            GameConsole.addMessage(attackMessage);
+            GameConsole.addMessage(_name+" tries to attack "+target.getName()+" but misses!");
         }
 
     }
     public void damage(int damage)
     {
         currentHp-=damage;
-        GameConsole.addMessage(_name + " was dealt " + damage + " damage");
         if(currentHp<=0)
         {
             kill();

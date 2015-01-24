@@ -12,7 +12,6 @@ import uni.aau.game.helpers.AssetManager;
 import uni.aau.game.items.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class Inventory extends Window
@@ -47,49 +46,32 @@ public class Inventory extends Window
     public void reset(Player player)
     {
         super.reset();
-        _player = player;
-        _equippedArmor = null;
-        _equippedWeapon = null;
         _items.clear();
         _itemButtonMap.clear();
-    }
-    public float getPotionPotency()
-    {
-        float averagePotency = 0;
-        int count = 0;
-        for(Item item : _items)
+        _player = player;
+        _equippedWeapon=null;
+        _equippedArmor=null;
+        if(_player.getEquippedArmor()!= null)
         {
-            if(item instanceof Potion)
-            {
-                count++;
-                averagePotency+=((Potion) item).getPotency();
-            }
+            addItem(_player.getEquippedArmor());
+            equip( _player.getEquippedArmor());
         }
-        if(count == 0)
+        if(_player.getEquippedWeapon()!=null)
         {
-            return 0;
+            addItem(_player.getEquippedWeapon());
+            equip( _player.getEquippedWeapon());
         }
-        return averagePotency/count;
+
+
+
     }
-    public int getItemTypeCount(Class<?> i)
-    {
-        int itemTypeInInventory = 0;
-        for(Item item : _items)
-        {
-            if(i.isInstance(item))
-            {
-                itemTypeInInventory++;
-            }
-        }
-        return itemTypeInInventory;
-    }
+
     public void addItem(Item item)
     {
         if(ItemManager.isIdentified(item))
         {
             item.identify();
         }
-        GameConsole.addMessage("Picked up item " + item.getName());
 
         if(item instanceof Weapon && ((Weapon) item).isRanged())
         {
@@ -110,11 +92,6 @@ public class Inventory extends Window
         _items.add(item);
         String itemId = String.valueOf(item.getId());
         Button itemButton = addButton(itemId,item.getTextureRegion());
-
-        if(item instanceof Potion)
-        {
-            itemButton.setColor(((Potion) item).getColor());
-        }
         _itemButtonMap.put(itemButton,item);
         arrangeButtons(0,0,8,8,4);
         repositionESigns();

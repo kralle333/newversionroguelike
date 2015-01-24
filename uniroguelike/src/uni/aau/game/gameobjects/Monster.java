@@ -5,14 +5,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import uni.aau.game.helpers.GameAction;
 import uni.aau.game.items.Armor;
+import uni.aau.game.items.Item;
 import uni.aau.game.mapgeneration.Tile;
+
+import java.util.ArrayList;
 
 public class Monster extends Character
 {
+    public enum Nature{Aggressive,Passive}
+    private Nature _nature;
     private TextureRegion _textureRegion;
     private int _experienceGiven;
     private float _pursueDistance = 4;
     private GameAction _monsterAction;
+    private ArrayList<Item> _droppedItems = new ArrayList<Item>();
+
     public int retrieveExperienceGiven()
     {
         int toReturn = _experienceGiven;
@@ -20,15 +27,19 @@ public class Monster extends Character
         return toReturn;
     }
 
-    public Monster(String name, int str, int hp, int def,int dodgeChance,int experienceGiven, TextureRegion textureRegion)
+    public Monster(String name, int str, int hp, int def,int dodgeChance,int experienceGiven,Nature nature, TextureRegion textureRegion)
     {
         super(name, str,dodgeChance,hp);
         _monsterAction = new GameAction();
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
         _textureRegion = textureRegion;
         _experienceGiven = experienceGiven;
+        _nature=nature;
     }
-
+    public void addItemToDrop(Item item)
+    {
+        _droppedItems.add(item);
+    }
 
     public GameAction createNextAction(Player player)
     {
@@ -36,7 +47,7 @@ public class Monster extends Character
         {
             return null;
         }
-        else if (currentTile.distanceTo(player.getCurrentTile()) < _pursueDistance)
+        else if (_nature==Nature.Aggressive && currentTile.distanceTo(player.getCurrentTile()) < _pursueDistance)
         {
             return pursuePlayer(player);
         }
@@ -92,5 +103,13 @@ public class Monster extends Character
     public void kill()
     {
         super.kill();
+        if(_droppedItems.size()>0)
+        {
+            for(Item item :_droppedItems)
+            {
+                currentTile.addItem(item);
+            }
+
+        }
     }
 }
