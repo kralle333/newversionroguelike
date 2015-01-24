@@ -21,12 +21,12 @@ public class Weapon extends Item
     private int _bonusDamage;
     public int getIdentifiedMaxDamage(){return _maxDamage + _bonusDamage;}
     public int getExpectedMaxDamage(){return _maxDamage;}
-    private float _attackSpeed;
-    public float getAttackSpeed(){return  _attackSpeed;}
+    private int _attackSpeed;
+    public int getAttackSpeed(){return  _attackSpeed;}
     private int _stepsTillIdentified;
 
     public Weapon(String name, String description,boolean isIdentified,TextureRegion textureRegion,int minDamage,
-                  int maxDamage, int bonusDamage,float attackSpeed, boolean isRanged)
+                  int maxDamage, int bonusDamage,int attackSpeed, boolean isRanged)
     {
         super(name,description,isIdentified,textureRegion,isRanged, RandomGen.getRandomInt(0, 10)>8);
         _minDamage=minDamage;

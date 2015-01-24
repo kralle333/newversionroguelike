@@ -28,5 +28,14 @@ public class GameAction
         _targetTile = tile;
         _targetItem = item;
     }
+    public int getExpectedDuration()
+    {
+        if(_type == Type.Attack)
+        {
+            return _owner.getEquippedWeapon()==null?10:_owner.getEquippedWeapon().getAttackSpeed();
+        }
+
+        return 10;
+    }
 
 }

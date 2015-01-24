@@ -13,6 +13,9 @@ import uni.aau.game.mapgeneration.RandomGen;
 import uni.aau.game.mapgeneration.Tile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 public class GameStateUpdater
 {
@@ -23,6 +26,7 @@ public class GameStateUpdater
     private Inventory _inventory;
     private DungeonMap _playedMap;
 
+    private HashMap<Monster,Integer> _monstersToAct = new HashMap<Monster, Integer>();
     private final ArrayList<Monster> _monstersToRemove = new ArrayList<Monster>();
     private static int _turn = 0;
 
@@ -31,7 +35,7 @@ public class GameStateUpdater
         return _turn;
     }
 
-    private float _costOfPlayerAction = 0;
+    private int _costOfPlayerAction = 0;
     private boolean _showingBattleAnimation = false;
 
     public boolean isShowingAnimation()
@@ -60,6 +64,10 @@ public class GameStateUpdater
         _turn = 0;
         _player = player;
         _monsters = monsters;
+        for(Monster monster : _monsters)
+        {
+            _monstersToAct.put(monster,0);
+        }
         _inventory = inventory;
         _playedMap = playedMap;
         _traps = traps;
@@ -83,43 +91,49 @@ public class GameStateUpdater
     private void handleActionExecution()
     {
         GameAction gameAction = _player.getNextAction();
+
         if (gameAction != null)
         {
             executeAction(gameAction);
-            if (gameAction.getType() == GameAction.Type.Attack && _player.getEquippedWeapon() != null)
+            _costOfPlayerAction=gameAction.getExpectedDuration();
+            for (Map.Entry<Monster,Integer> monsterEntry: _monstersToAct.entrySet())
             {
-                _costOfPlayerAction += _player.getEquippedWeapon().getAttackSpeed();
-            }
-            else
-            {
-                _costOfPlayerAction += 1;
-            }
-            if (gameAction.getType() == GameAction.Type.Throw)
-            {
-                return;
+                _monstersToAct.put(monsterEntry.getKey(),monsterEntry.getValue()+_costOfPlayerAction);
             }
         }
-
-        if (_costOfPlayerAction >= 1)
+        if(_costOfPlayerAction>0)
         {
-            for (Monster monster : _monsters)
+            int monstersLeft = _monstersToAct.size();
+            while (monstersLeft > 0)
             {
-                gameAction = monster.createNextAction(_player);
-                if (gameAction == null)
+                for (Map.Entry<Monster, Integer> monsterEntry : _monstersToAct.entrySet())
                 {
-                    _monstersToRemove.add(monster);
-                    continue;
+                    if (monsterEntry.getValue() > 0)
+                    {
+                        gameAction = monsterEntry.getKey().createNextAction(_player);
+                        if (gameAction == null)
+                        {
+                            _monstersToRemove.add(monsterEntry.getKey());
+                            monstersLeft--;
+                        }
+                        else
+                        {
+                            _monstersToAct.put(monsterEntry.getKey(), monsterEntry.getValue() - gameAction.getExpectedDuration());
+                            executeAction(gameAction);
+                        }
+                    }
+                    else
+                    {
+                        monstersLeft--;
+                    }
                 }
-                executeAction(gameAction);
-            }
-            _monsters.removeAll(_monstersToRemove);
-            _monstersToRemove.clear();
-            updateGasses();
-            _turn++;
-            _costOfPlayerAction -= 1;
-            if (_costOfPlayerAction < 0)
-            {
-                _costOfPlayerAction = 0;
+                _monsters.removeAll(_monstersToRemove);
+                _monstersToRemove.clear();
+                updateGasses();
+                if(monstersLeft>0)
+                {
+                    _turn++;
+                }
             }
         }
     }
