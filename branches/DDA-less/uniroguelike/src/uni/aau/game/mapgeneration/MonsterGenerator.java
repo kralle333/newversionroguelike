@@ -16,9 +16,6 @@ import java.util.*;
 
 public class MonsterGenerator
 {
-
-    private static final String _monsterTileSetPath = "data/monsterTileSet.png";
-
     private static ArrayList<MonsterPrototype> monsterPrototypes = new ArrayList<MonsterPrototype>();
     private static int numberOfPrototypes;
     private static int[] maxMonsters = new int[]{3,4,5,6,7,8};
