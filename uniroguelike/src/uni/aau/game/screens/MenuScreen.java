@@ -34,7 +34,6 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     private OrthographicCamera guiCamera;
     private BitmapFont _font;
     private Input.TextInputListener inputListener;
-    private boolean _useBot = false;
     private boolean _isShowingTextInput = false;
 
     public MenuScreen()
@@ -85,9 +84,9 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         exitGameButton.draw(batch,shapeRenderer);
         batch.begin();
         _font.setScale(2);
-        _font.draw(batch,"Dungeons of SP8",Gdx.graphics.getWidth()/2-(_font.getBounds("Dungeons of SP8").width/2),_font.getBounds("Dungeons of SP8").height+10);
+        _font.draw(batch,"Dungeons of Doom",Gdx.graphics.getWidth()/2-(_font.getBounds("Dungeons of Doom").width/2),_font.getBounds("Dungeons of Doom").height+10);
         _font.setScale(1);
-        _font.draw(batch,"Everything made by Kristian Pilegaard Jensen",Gdx.graphics.getWidth()/2-(_font.getBounds("Everything made by Kristian Pilegaard Jensen").width/2),Gdx.graphics.getHeight()-_font.getBounds("Everything").height);
+        //_font.draw(batch,"Everything made by Kristian Pilegaard Jensen",Gdx.graphics.getWidth()/2-(_font.getBounds("Everything made by Kristian Pilegaard Jensen").width/2),Gdx.graphics.getHeight()-_font.getBounds("Everything").height);
         batch.end();
     }
 

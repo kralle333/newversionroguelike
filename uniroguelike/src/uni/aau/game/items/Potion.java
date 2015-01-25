@@ -18,16 +18,16 @@ public class Potion extends Item
     private PotionType _potionType;
     public PotionType getType(){return _isIdentified?_potionType:PotionType.Unidentified;}
 
-    public Potion(String name, String description,boolean isIdentified, TextureRegion textureRegion,int potency, Color color)
+    public Potion(String name, String description,boolean isIdentified, TextureRegion textureRegion,int depth, Color color)
     {
         super(name,description,isIdentified,textureRegion,true,false);
         _potionType = getPotionType(name);
-        _potency = potency;
-        if(_potency>10)
+        _potency = getPotency(depth);
+        if(depth>5)
         {
             _name = "Greater "+_name;
         }
-        else if(_potency>20)
+        else if(depth>15)
         {
             _name = "Superior "+_name;
         }
@@ -86,6 +86,17 @@ public class Potion extends Item
             throw new IllegalArgumentException(name+" does not name a potion type");
         }
     }
+    private int getPotency(int depth)
+    {
+        switch (_potionType)
+        {
+            case Healing: return depth*5;
+            case PoisonGas: return depth*2;
+            case ParaGas: return depth*2;
+            case Experience: return depth*3;
+        }
+        return -1;
+    }
     private String convertColorToString(Color color)
     {
         if(color == Color.RED)
@@ -96,13 +107,9 @@ public class Potion extends Item
         {
             return "blue";
         }
-        else if(color == Color.BLACK)
+        else if(color == Color.WHITE)
         {
-            return "black";
-        }
-        else if(color == Color.CYAN)
-        {
-            return "cyan";
+            return "white";
         }
         else if(color == Color.GREEN)
         {
