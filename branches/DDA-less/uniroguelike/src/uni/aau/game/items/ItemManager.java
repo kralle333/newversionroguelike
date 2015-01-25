@@ -172,8 +172,8 @@ public class ItemManager
                 case 3:prefix = "Ruby";break;
             }
             _availableWeapons.add(new Weapon(prefix+" Sword","A"+prefix+" sword. Attacks are average speed.",false,swordRegion,i+1, 6+(i*2),0,10,false));
-            _availableWeapons.add(new Weapon(prefix+" Axe","A 2-handed "+prefix+" axe. Attacks are slow.",false,axeRegion,1, 8+(i*2),0,5,false));
-            _availableWeapons.add(new Weapon(prefix+" Dagger","A "+prefix+" dagger. Its attacks are quick.",false,daggerRegion,2, 4+(i*2),0,15,false));
+            _availableWeapons.add(new Weapon(prefix+" Axe","A 2-handed "+prefix+" axe. Attacks are slow.",false,axeRegion,1, 8+(i*2),0,15,false));
+            _availableWeapons.add(new Weapon(prefix+" Dagger","A "+prefix+" dagger. Its attacks are quick.",false,daggerRegion,2, 4+(i*2),0,5,false));
             _availableWeapons.add(new Weapon(prefix+" Throwing axe","Ranged throwing axe made of "+prefix,false,throwingAxeRegion,1, 1+(i*2),0,10,true));
         }
     }

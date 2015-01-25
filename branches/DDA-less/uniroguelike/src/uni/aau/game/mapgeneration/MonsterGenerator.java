@@ -58,18 +58,18 @@ public class MonsterGenerator
     {
         if(!prototypesInitialized)
         {
-            MonsterPrototype beaverRat = new MonsterPrototype("BeaverRat",2,10,1,5,2, Monster.Nature.Aggressive,new TileSetCoordinate(0,0));
+            MonsterPrototype beaverRat = new MonsterPrototype("BeaverRat",5,15,1,5,2, Monster.Nature.Aggressive,new TileSetCoordinate(0,0));
             beaverRat.addProbabilityOfAppearing(1, 1);
-            beaverRat.attack = new Weapon("Bite","It's a bite",true,null,1,4,0,10,false);
+            beaverRat.attack = new Weapon("Bite","It's a bite",true,null,1,2,0,10,false);
 
-            MonsterPrototype bat = new MonsterPrototype("Bat", 4, 4, 1,15,1,Monster.Nature.Aggressive, new TileSetCoordinate(1, 0));
-            bat.attack = new Weapon("Bite","It's a bite",true,null,1,4,0,10,false);
+            MonsterPrototype bat = new MonsterPrototype("Bat", 4, 8, 1,20,1,Monster.Nature.Aggressive, new TileSetCoordinate(1, 0));
+            bat.attack = new Weapon("Bite","It's a bite",true,null,1,1,0,5,false);
             bat.addProbabilityOfAppearing(0.2f, 1);
             bat.addProbabilityOfAppearing(0.5f, 3);
             bat.addProbabilityOfAppearing(1, 5);
 
             MonsterPrototype troll = new MonsterPrototype("Troll",10,25, 3, 3,10,Monster.Nature.Aggressive, new TileSetCoordinate(2, 0));
-            troll.attack = new Weapon("Club","Big club",true,null,1,10,0,5,false);
+            troll.attack = new Weapon("Club","Big club",true,null,1,8,0,15,false);
             troll.addProbabilityOfAppearing(0.2f, 2);
             troll.addProbabilityOfAppearing(0.4f, 4);
             troll.addProbabilityOfAppearing(0.6f, 6);
@@ -96,8 +96,10 @@ public class MonsterGenerator
             case 1:chest.addItemToDrop(ItemManager.getRandomScroll());break;
             case 2:chest.addItemToDrop(ItemManager.getRandomPotion(depth));break;
             case 3:chest.addItemToDrop(ItemManager.getRandomScroll());break;
-            case 4:chest.addItemToDrop(ItemManager.getRandomWeapon(depth));break;
-            case 5:chest.addItemToDrop(ItemManager.getRandomArmor(depth));break;
+            case 4:chest.addItemToDrop(ItemManager.getRandomPotion(depth));break;
+            case 5:chest.addItemToDrop(ItemManager.getRandomScroll());break;
+            case 6:chest.addItemToDrop(ItemManager.getRandomWeapon(depth));break;
+            case 7:chest.addItemToDrop(ItemManager.getRandomArmor(depth));break;
         }
 
         return chest;
