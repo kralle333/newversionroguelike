@@ -140,7 +140,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         batch.setProjectionMatrix(mainCamera.combined);
         batch.begin();
         _gameStateUpdater.drawGameState(batch);
-        _gameStateUpdater.drawBattleAnimations(batch);
         batch.end();
     }
     private void renderGUI(SpriteBatch batch)
@@ -176,7 +175,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
             _font.draw(batch, gameWonText, Gdx.graphics.getWidth() / 2 - (_font.getBounds(gameWonText).width / 2), Gdx.graphics.getHeight() / 4 + 10);
         }
         batch.end();
-        _gameStateUpdater.drawSelectItemDialog(batch, shapeRenderer);
     }
 
     //Game state updating, restarting etc
@@ -243,7 +241,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         {
             if (_player.isMoving())
             {
-                _player.clearQueue();
+                _player.clearNextActions();
             }
             _goToMainMenuPrompt.show();
         }
@@ -316,15 +314,36 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
             _playerAction.setAction(_player, GameAction.Type.Search,_player.getCurrentTile(),null);
             _player.clearQueueAndSetAction(_playerAction);
         }
-        else if (_gameStateUpdater.isSelectingItem())
+        else if (_gameStateUpdater.isSelectingItemToIdentify())
         {
-            _gameStateUpdater.tap(x, y);
+            _inventory.tap(x, y);
+            if (!_inventory.isOpen())
+            {
+                _gameStateUpdater.resumeGameStateUpdating();
+                _player.clearNextActions();
+            }
+            else
+            {
+                Item item = _inventory.retrieveItem();
+                if (item != null && !item.isIdentified())
+                {
+                    String oldName = item.getName();
+                    item.identify();
+                    String newName = item.getName();
+                    GameConsole.addMessage(oldName + " was identified to be " + newName);
+                    _inventory.identifyItems(item);
+                    ItemManager.identifyItem(item);
+                    _gameStateUpdater.resumeGameStateUpdating();
+                    _inventory.hide();
+                }
+
+            }
         }
         else
         {
             if (_player.isMoving())
             {
-                _player.clearQueue();
+                _player.clearNextActions();
                 return;
             }
             Vector3 touchedPosition = new Vector3(x, y, 0);
@@ -358,7 +377,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
                 }
                 else if (touchedTile.getCharacter() != null && touchedTile.isAdjacent(_player.getCurrentTile()))
                 {
-                    _player.setAttackAction(touchedTile);
+                    _player.setAttackAction(touchedTile.getCharacter());
                 }
                 else
                 {

@@ -2,7 +2,6 @@ package uni.aau.game.helpers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import uni.aau.game.dda.Bot;
 import uni.aau.game.gameobjects.Character;
 import uni.aau.game.gameobjects.*;
 import uni.aau.game.gui.GameConsole;
@@ -12,9 +11,7 @@ import uni.aau.game.mapgeneration.DungeonMap;
 import uni.aau.game.mapgeneration.RandomGen;
 import uni.aau.game.mapgeneration.Tile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GameStateUpdater
 {
@@ -25,49 +22,59 @@ public class GameStateUpdater
     private Inventory _inventory;
     private DungeonMap _playedMap;
 
-    private HashMap<Character,Integer> _charactersToAct = new HashMap<Character, Integer>();
-    private final ArrayList<Monster> _monstersToRemove = new ArrayList<Monster>();
-    private static int _turn = 0;
+    private HashMap<Character,Integer> _characterTime = new HashMap<Character, Integer>();
+    private PriorityQueue<Character> _characterTurn;
+    public class CharacterSpeedComparator implements Comparator<Character>
+    {
+        @Override
+        public int compare(Character lhs, Character rhs)
+        {
+            return lhs.getCostOfNextAction()-rhs.getCostOfNextAction();
+        }
+    }
 
+    private static int _turn = 0;
     public static int getTurn()
     {
         return _turn;
     }
-
-    private int _costOfPlayerAction = 0;
-    private boolean _showingBattleAnimation = false;
+    private boolean _showingThrowingAnimation = false;
 
     public boolean isShowingAnimation()
     {
-        return _showingBattleAnimation;
+        return _showingThrowingAnimation;
     }
 
     //Animation
-    private final float _animationSpeed = 16;
-    private float _currentAnimationX;
-    private float _currentAnimationY;
+    private final float _throwAnimationSpeed = 16;
+    private float _thrownObjectX;
+    private float _thrownObjectY;
     private Tile _targetTile;
-    private Item _animatedItem;
+    private Item _thrownWeapon;
     private float _angleToTarget;
 
     //Select item dialog
-    private static boolean _selectItemDialog = false;
+    private boolean _selectItemDialog = false;
 
-    public static boolean isSelectingItem()
+    public boolean isSelectingItemToIdentify()
     {
         return _selectItemDialog;
     }
 
     public void setGameState(ArrayList<Monster> monsters, Player player, Inventory inventory, DungeonMap playedMap, ArrayList<Trap> traps)
     {
-        _turn = 0;
+        _turn = 1;
         _player = player;
         _monsters = monsters;
+
+        _characterTime.clear();
+        _characterTime.put(_player,0);
         for(Monster monster : _monsters)
         {
-            _charactersToAct.put(monster, 0);
+            _characterTime.put(monster, 0);
         }
-        _charactersToAct.put(_player,0);
+        _characterTurn = new PriorityQueue<Character>(_monsters.size()+1,new CharacterSpeedComparator());
+
         _inventory = inventory;
         _playedMap = playedMap;
         _traps = traps;
@@ -76,170 +83,105 @@ public class GameStateUpdater
         _player.getCurrentTile().setLight(Tile.LightAmount.Light,_player.getLanternStrength(), _player.getLanternStrength());
     }
 
+    public void resumeGameStateUpdating()
+    {
+        if(_selectItemDialog)
+        {
+            _selectItemDialog = false;
+        }
+        else if(_showingThrowingAnimation)
+        {
+            _showingThrowingAnimation = false;
+        }
+    }
+
+    //Update:
     public void updateGameState()
     {
-        if (_showingBattleAnimation)
+        if (!_selectItemDialog && !_showingThrowingAnimation)
         {
-            handleAnimation();
+            handleExecutionOfActions();
         }
-        else if (!_selectItemDialog)
+        else if (_showingThrowingAnimation)
         {
-            handleActionExecution();
-        }
-    }
-    private void updateGasses()
-    {
-        for (Gas gas : _gasClouds)
-        {
-            gas.update();
-        }
-    }
+            //Move the object closer to the target
+            _thrownObjectX += (float) Math.cos(_angleToTarget) * _throwAnimationSpeed;
+            _thrownObjectY += (float) Math.sin(_angleToTarget) * _throwAnimationSpeed;
 
-    private void handleAnimation()
-    {
-        _currentAnimationX += (float) Math.cos(_angleToTarget) * _animationSpeed;
-        _currentAnimationY += (float) Math.sin(_angleToTarget) * _animationSpeed;
-        if (Math.abs(_currentAnimationX - (_targetTile.getX() * 32)) <= _animationSpeed &&
-                Math.abs(_currentAnimationY - (_targetTile.getY() * 32)) <= _animationSpeed)
-        {
+            //If the object is close enough-> do effects
+            if (Math.abs(_thrownObjectX - (_targetTile.getX() * 32)) <= _throwAnimationSpeed &&
+                    Math.abs(_thrownObjectY - (_targetTile.getY() * 32)) <= _throwAnimationSpeed)
+            {
 
-            if (_animatedItem instanceof Potion)//Use the potion on the tile
-            {
-                usePotion((Potion) _animatedItem, _targetTile.getCharacter(), _targetTile);
-            }
-            else if (_targetTile.getCharacter() != null && //Damage if ranged weapon
-                    _animatedItem instanceof Weapon &&
-                    (((Weapon) _animatedItem).isRanged()))
-            {
-                _targetTile.getCharacter().damage(((Weapon) _animatedItem).getIdentifiedMaxDamage());
-            }
-            else //Otherwise the item lands on the tile
-            {
-                _targetTile.addItem(_animatedItem);
-
-            }
-            _showingBattleAnimation = false;
-            _targetTile = null;
-            _animatedItem = null;
-            _currentAnimationX = 0;
-            _currentAnimationY = 0;
-        }
-    }
-
-    public void tap(float x, float y)
-    {
-        if (_selectItemDialog)
-        {
-            _inventory.tap(x, y);
-            if (!_inventory.isOpen())
-            {
-                _selectItemDialog = false;
-                _player.clearQueue();
-            }
-            else
-            {
-                Item item = _inventory.retrieveItem();
-                if (item != null && !item.isIdentified())//(item instanceof Armor || item instanceof Weapon))
+                if (_thrownWeapon instanceof Potion)//Use the potion on the tile
                 {
-                    String oldName = item.getName();
-                    item.identify();
-                    String newName = item.getName();
-                    GameConsole.addMessage(oldName + " was identified to be " + newName);
-                    _inventory.identifyItems(item);
-                    ItemManager.identifyItem(item);
-                    _selectItemDialog = false;
-                    _inventory.hide();
+                    usePotion((Potion) _thrownWeapon, _targetTile.getCharacter(), _targetTile);
                 }
+                else if (_targetTile.getCharacter() != null && //Damage if ranged weapon
+                        _thrownWeapon instanceof Weapon &&
+                        (((Weapon) _thrownWeapon).isRanged()))
+                {
+                    _targetTile.getCharacter().damage(((Weapon) _thrownWeapon).getIdentifiedMaxDamage());
+                }
+                else //Otherwise the item lands on the tile
+                {
+                    _targetTile.addItem(_thrownWeapon);
 
+                }
+                _showingThrowingAnimation = false;
+                _targetTile = null;
+                _thrownWeapon = null;
+                _thrownObjectX = 0;
+                _thrownObjectY = 0;
             }
         }
     }
 
-    //Returns true if trap activated
-    private boolean checkForAndActivateTrap(Tile tile)
-    {
-        Trap trapOnTile = tile.getTrap();
-        if (trapOnTile != null && !trapOnTile.hasBeenActivated())
-        {
-            trapOnTile.activate();
-            if (trapOnTile.hasCreatedGas())
-            {
-                _gasClouds.add(trapOnTile.retrieveCreatedGas());
-            }
-            return true;
-        }
-        return false;
-    }
-    private void handleActionExecution()
+    //
+    // ACTION EXECUTION
+    //
+    private void handleExecutionOfActions()
     {
         GameAction playerAction = _player.getNextAction();
-
-        if (playerAction != null)
+        if(playerAction != null)
         {
-            _costOfPlayerAction=playerAction.getExpectedDuration();
-            for (Map.Entry<Character,Integer> monsterEntry: _charactersToAct.entrySet())
+            //Record the time of the next action of characters
+            int playerActionCost = playerAction.getCost();
+            executeAction(playerAction);
+            for(Monster monster : _monsters)
             {
-                _charactersToAct.put(monsterEntry.getKey(),monsterEntry.getValue()+_costOfPlayerAction);
+                    monster.setNextAction(_player);
+                    //Let the time a monster has to act be the time the player's action take
+                    _characterTime.put(monster, _characterTime.get(monster) + playerActionCost);
+                    _characterTurn.add(monster);
             }
-        }
-        boolean wasPlayerAttacked = false;
-        GameAction monsterAction;
-        if(_costOfPlayerAction>0)
-        {
-            int monstersLeft = _charactersToAct.size();
-            while (monstersLeft > 0)
+
+            //Execute actions, starting with the quickest ones, but only if the character has enough time
+            while(!_characterTurn.isEmpty())
             {
-                for (Map.Entry<Character, Integer> characterEntry : _charactersToAct.entrySet())
+                Character character = _characterTurn.peek();
+                if(_characterTime.get(character)>0 && !character.isDead())
                 {
-                    if (characterEntry.getValue() > 0)
+
+                    _characterTime.put(character, _characterTime.get(character) - character.getCostOfNextAction());
+                    executeAction(character.getNextAction());
+                    //Can only be a monster if there is time left,
+                    // because the cost of the player's action = the time given to characters
+                    if(_characterTime.get(character)>0)
                     {
-                        if(characterEntry.getKey() == _player)
-                        {
-                            executeAction(playerAction);
-                            _charactersToAct.put(characterEntry.getKey(), characterEntry.getValue() - _costOfPlayerAction);
-                        }
-                        else
-                        {
-                            Monster monster = (Monster)characterEntry.getKey();
-                            monsterAction = monster.createNextAction(_player);
-                            if (monsterAction == null)
-                            {
-                                _monstersToRemove.add(monster);
-                                monstersLeft--;
-                            }
-                            else
-                            {
-                                _charactersToAct.put(characterEntry.getKey(), characterEntry.getValue() - monsterAction.getExpectedDuration());
-                                executeAction(monsterAction);
-                                if(!wasPlayerAttacked && monsterAction.getType() == GameAction.Type.Attack && monsterAction.getTargetTile()==_player.getCurrentTile())
-                                {
-                                    wasPlayerAttacked = true;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        monstersLeft--;
+                        ((Monster)character).setNextAction(_player);
                     }
                 }
-                for(Monster toRemove : _monstersToRemove)
-                {
-                    _monsters.remove(toRemove);
-                    _charactersToAct.remove(toRemove);
-                }
-                _monstersToRemove.clear();
 
-                if(monstersLeft>0)
+                if(_characterTime.get(character)<=0 ||character.isDead())
                 {
-                    _turn++;
-                    updateGasses();
+                    _characterTurn.poll();
                 }
             }
-            if(wasPlayerAttacked && _player.isMoving())
+            _turn++;
+            for (Gas gas : _gasClouds)
             {
-                //Clear the queue if the player was attacked while moving around
-                _player.clearQueue();
+                gas.update();
             }
         }
     }
@@ -255,8 +197,9 @@ public class GameStateUpdater
                 case Paralysed:
                     if (RandomGen.getRandomInt(0, 100) > 50)
                     {
-                        GameConsole.addMessage(action.getOwner().getName() + " is paralysed and cannot act");
+                        GameConsole.addMessage(action.getOwner().getName() + " is paralyzed and cannot act");
                         action.getOwner().decreaseStatusEffectTimer();
+                        action.getOwner().clearCurrentAction();
                         return;
                     }
                     else
@@ -266,7 +209,7 @@ public class GameStateUpdater
                     }
                 case Poisoned:
                     GameConsole.addMessage(action.getOwner().getName() + " is poisoned");
-                    action.getOwner().damage(RandomGen.getRandomInt(action.getOwner().getMaxHitPoints() / 10, action.getOwner().getMaxHitPoints() / 8));
+                    action.getOwner().damage(RandomGen.getRandomInt(action.getOwner().getHitpoints() / 10,action.getOwner().getHitpoints() / 8));
                     action.getOwner().decreaseStatusEffectTimer();
                     break;
             }
@@ -297,27 +240,27 @@ public class GameStateUpdater
                 _player.getCurrentTile().addItem(action.getTargetItem());
                 break;
             case Throw:
-                _animatedItem = action.getTargetItem();
+                _thrownWeapon = action.getTargetItem();
                 _targetTile = action.getTargetTile();
-                _showingBattleAnimation = true;
-                _currentAnimationX = action.getOwner().getCurrentTile().getX() * 32;
-                _currentAnimationY = action.getOwner().getCurrentTile().getY() * 32;
-                _angleToTarget = (float) Math.atan2(action.getTargetTile().getY() * 32 - _currentAnimationY, action.getTargetTile().getX() * 32 - _currentAnimationX);
+                _showingThrowingAnimation = true;
+                _thrownObjectX = action.getOwner().getCurrentTile().getX() * 32;
+                _thrownObjectY = action.getOwner().getCurrentTile().getY() * 32;
+                _angleToTarget = (float) Math.atan2(action.getTargetTile().getY() * 32 - _thrownObjectY, action.getTargetTile().getX() * 32 - _thrownObjectX);
                 if (_angleToTarget < 0)
                 {
                     _angleToTarget += 2 * Math.PI;
                 }
-                if (_animatedItem instanceof Weapon && ((Weapon) _animatedItem).isRanged())
+                if (_thrownWeapon instanceof Weapon && ((Weapon) _thrownWeapon).isRanged())
                 {
-                    ((Weapon) _animatedItem).decreaseRangedAmmo();
-                    if (((Weapon) _animatedItem).getAmmoCount() == 0)
+                    ((Weapon) _thrownWeapon).decreaseRangedAmmo();
+                    if (((Weapon) _thrownWeapon).getAmmoCount() == 0)
                     {
-                        _inventory.removeItem(_animatedItem);
+                        _inventory.removeItem(_thrownWeapon);
                     }
                 }
                 else
                 {
-                    _inventory.removeItem(_animatedItem);
+                    _inventory.removeItem(_thrownWeapon);
                 }
                 break;
             case Use:
@@ -336,11 +279,13 @@ public class GameStateUpdater
                 }
                 break;
         }
+        //Remove the action as being the next action
+        action.getOwner().clearCurrentAction();
     }
 
     private void executeAttack(GameAction action)
     {
-        Character defender = action.getTargetTile().getCharacter();
+        Character defender = action.getTargetCharacter();
         Character attacker = action.getOwner();
         attacker.attack(defender);
         if (defender.isDead())
@@ -348,8 +293,9 @@ public class GameStateUpdater
             if (defender instanceof Monster)
             {
                 _player.retrieveExperience((Monster) (defender));
+                _monsters.remove(defender);
             }
-            else if (defender instanceof Player || defender instanceof Bot)
+            else if (defender instanceof Player)
             {
                 _player.setKilledBy(attacker.getName());
             }
@@ -363,10 +309,15 @@ public class GameStateUpdater
         if (character == _player)
         {
             _inventory.step();
-
-            if (checkForAndActivateTrap(newTile))
+            Trap trapOnTile = newTile.getTrap();
+            if (trapOnTile != null && !trapOnTile.hasBeenActivated())
             {
-                _player.clearQueue();
+                trapOnTile.activate();
+                if (trapOnTile.hasCreatedGas())
+                {
+                    _gasClouds.add(trapOnTile.retrieveCreatedGas());
+                }
+                //Player was hurt by trap
                 if (_player.isDead())
                 {
                     _player.setKilledBy("trap");
@@ -410,6 +361,9 @@ public class GameStateUpdater
         }
     }
 
+    //
+    // Scroll and potion activation
+    //
     private void useScroll(Scroll scroll)
     {
         switch (scroll.getType())
@@ -474,7 +428,10 @@ public class GameStateUpdater
 
     }
 
+
+    //
     //Drawing
+    //
     public void drawGameState(SpriteBatch batch)
     {
         _playedMap.draw(batch);
@@ -493,21 +450,10 @@ public class GameStateUpdater
         {
             monster.draw(batch);
         }
-    }
-
-    public void drawBattleAnimations(SpriteBatch batch)
-    {
-        if (_showingBattleAnimation)
+        if (_showingThrowingAnimation)
         {
-            _animatedItem.draw(batch, _currentAnimationX, _currentAnimationY);
+            _thrownWeapon.draw(batch, _thrownObjectX, _thrownObjectY);
         }
     }
 
-    public void drawSelectItemDialog(SpriteBatch batch, ShapeRenderer shapeRenderer)
-    {
-        if (_selectItemDialog)
-        {
-            _inventory.draw(batch, shapeRenderer);
-        }
-    }
 }

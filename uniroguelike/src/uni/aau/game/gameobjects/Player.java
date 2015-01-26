@@ -23,13 +23,6 @@ public class Player extends Character
     public String getKilledBy(){return _killedBy;}
     public void setKilledBy(String killedBy){_killedBy = killedBy;}
 
-    
-
-    public boolean isMoving()
-    {
-        return actionQueue.size()>0 && actionQueue.get(0) != null && actionQueue.get(0).getType() == GameAction.Type.Move;
-    }
-
     public Player(String name)
     {
         super(name,_startStr,5,_startHp);
@@ -109,6 +102,7 @@ public class Player extends Character
         {
             _killedBy = "poison";
         }
+        movementQueue.clear();
     }
 
     @Override
