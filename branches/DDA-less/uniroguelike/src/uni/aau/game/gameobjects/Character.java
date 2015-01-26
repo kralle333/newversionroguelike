@@ -42,7 +42,7 @@ public class Character
     protected Armor _equippedArmor;
     public Armor getEquippedArmor(){return _equippedArmor;}
     public int getArmorDefense(){return _equippedArmor==null?0:_equippedArmor.getIdentifiedDefense();}
-    private Weapon _equippedWeapon;
+    protected Weapon _equippedWeapon;
     public Weapon getEquippedWeapon(){return _equippedWeapon;}
     public int getWeaponAttack(){return _equippedWeapon==null?0:_equippedWeapon.getIdentifiedMaxDamage();}
 
@@ -184,6 +184,7 @@ public class Character
     {
         if(tile.getCharacter() ==null)
         {
+
             currentTile.removeCharacter();
             placeOnTile(tile);
         }
@@ -207,11 +208,11 @@ public class Character
     {
 
         int hitChance=_equippedWeapon!=null?(int)_equippedWeapon.getAttackSpeed():0;
-        int failChance=5+_dodgeChance;
+        int failChance=5+target.getDodgeChance();
         int damage = 0;
 
         int result = RandomGen.getRandomInt(0,100);
-        if(result>=97)
+        if(result>=96)
         {
             damage = getMaxAttackPower()*2;
             GameConsole.addMessage(_name+" landed a critical hit on "+target.getName()+"! Was dealt "+damage+" damage.");
