@@ -245,10 +245,10 @@ public class Room
 
         switch (orientation)
         {
-            case West:doorTile.setTextureRegion(new Vector2(1,4));break;
-            case East:doorTile.setTextureRegion(new Vector2(1,3));break;
-            case North:doorTile.setTextureRegion(new Vector2(0,3));break;
-            case South:doorTile.setTextureRegion(new Vector2(0,4));break;
+            case West:doorTile.setTextureRegion(AssetManager.getTileSetPosition("wDoor"));break;
+            case East:doorTile.setTextureRegion(AssetManager.getTileSetPosition("eDoor"));break;
+            case North:doorTile.setTextureRegion(AssetManager.getTileSetPosition("nDoor"));break;
+            case South:doorTile.setTextureRegion(AssetManager.getTileSetPosition("sDoor"));break;
         }
 
         //Get local coordinates

@@ -177,7 +177,7 @@ public class DungeonMap extends BSPMapNode
     {
         Tile stairTile = getRandomEmptyTile();
         stairTile.setType(Tile.Types.StairCase);
-        stairTile.setTextureRegion(new Vector2(2,3));
+        stairTile.setTextureRegion(AssetManager.getTileSetPosition("stairs"));
     }
 
     public Tile getRandomEmptyTile()

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import uni.aau.game.gameobjects.Monster;
 import uni.aau.game.gameobjects.Player;
+import uni.aau.game.helpers.AssetManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,7 +95,7 @@ public class Corridor
 
         for(int a=x0+1;a<junctionPoint;a++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, a, y0,this,new Vector2(1,0)));
+            _tiles.add(new Tile(Tile.Types.Floor, a, y0,this,AssetManager.getTileSetPosition("nCorridor")));
         }
         if(Math.abs(y0-y1)>0)//Multiple tiles in junction
         {
@@ -103,11 +104,11 @@ public class Corridor
             ArrayList<Tile> junction = new ArrayList<Tile>();
                 for(int y = smallestY;y<=biggestY;y++)
                 {
-                    if(y==smallestY && smallestY == y0){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(2,0)));}
-                    else if(y==smallestY && smallestY == y1){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(0,0)));}
-                    else if(y==biggestY && biggestY == y1){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(0,2)));}
-                    else if(y==biggestY && biggestY == y0){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(2,2)));}
-                    else {junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,new Vector2(0,1)));}
+                    if(y==smallestY && smallestY == y0){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this, AssetManager.getTileSetPosition("neCorridor")));}
+                    else if(y==smallestY && smallestY == y1){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,AssetManager.getTileSetPosition("nwCorridor")));}
+                    else if(y==biggestY && biggestY == y1){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,AssetManager.getTileSetPosition("swCorridor")));}
+                    else if(y==biggestY && biggestY == y0){junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,AssetManager.getTileSetPosition("seCorridor")));}
+                    else {junction.add(new Tile(Tile.Types.Floor, junctionPoint, y,this,AssetManager.getTileSetPosition("wCorridor")));}
                 }
             //To ensure that the path is in the correct order
             if(smallestY == y1)
@@ -118,12 +119,12 @@ public class Corridor
         }
         else//Only one in junction
         {
-            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0,this, new Vector2(1,0)));
+            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0,this, AssetManager.getTileSetPosition("nCorridor")));
         }
 
         for(int b=junctionPoint+1;b<x1;b++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, b, y1,this,new Vector2(1,0)));
+            _tiles.add(new Tile(Tile.Types.Floor, b, y1,this,AssetManager.getTileSetPosition("nCorridor")));
         }
     }
     private void createVerticalLine(int x0, int y0, int x1, int y1)
@@ -148,7 +149,7 @@ public class Corridor
 
         for(int a=y0+1;a<junctionPoint;a++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x0, a,this,new Vector2(0,1)));
+            _tiles.add(new Tile(Tile.Types.Floor, x0, a,this,AssetManager.getTileSetPosition("wCorridor")));
         }
 
         if(Math.abs(x1-x0)>0)//Multiple in junction
@@ -158,11 +159,11 @@ public class Corridor
             ArrayList<Tile> junction = new ArrayList<Tile>();
             for(int x = smallestX;x<=biggestX;x++)
             {
-                if(x==smallestX && smallestX == x1){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(0,0)));}
-                else if(x==smallestX && smallestX == x0){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(0,2)));}
-                else if(x==biggestX && biggestX == x1){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(2,0)));}
-                else if(x==biggestX && biggestX == x0){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(2,2)));}
-                else {junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,new Vector2(1,0)));}
+                if(x==smallestX && smallestX == x1){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,AssetManager.getTileSetPosition("nwCorridor")));}
+                else if(x==smallestX && smallestX == x0){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,AssetManager.getTileSetPosition("swCorridor")));}
+                else if(x==biggestX && biggestX == x1){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,AssetManager.getTileSetPosition("neCorridor")));}
+                else if(x==biggestX && biggestX == x0){junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,AssetManager.getTileSetPosition("seCorridor")));}
+                else {junction.add(new Tile(Tile.Types.Floor,x, junctionPoint,this,AssetManager.getTileSetPosition("nCorridor")));}
             }
             if(smallestX == x1)
             {
@@ -172,12 +173,12 @@ public class Corridor
         }
         else//Only one in junction point
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x0, junctionPoint,this,new Vector2(0,1)));
+            _tiles.add(new Tile(Tile.Types.Floor, x0, junctionPoint,this,AssetManager.getTileSetPosition("wCorridor")));
         }
 
         for(int b=junctionPoint+1;b<y1;b++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x1, b,this,new Vector2(0,1)));
+            _tiles.add(new Tile(Tile.Types.Floor, x1, b,this,AssetManager.getTileSetPosition("wCorridor")));
         }
     }
 

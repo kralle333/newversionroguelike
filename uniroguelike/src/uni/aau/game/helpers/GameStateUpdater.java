@@ -15,7 +15,6 @@ import uni.aau.game.mapgeneration.Tile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 public class GameStateUpdater
 {
@@ -26,7 +25,7 @@ public class GameStateUpdater
     private Inventory _inventory;
     private DungeonMap _playedMap;
 
-    private HashMap<Monster,Integer> _monstersToAct = new HashMap<Monster, Integer>();
+    private HashMap<Character,Integer> _charactersToAct = new HashMap<Character, Integer>();
     private final ArrayList<Monster> _monstersToRemove = new ArrayList<Monster>();
     private static int _turn = 0;
 
@@ -66,8 +65,9 @@ public class GameStateUpdater
         _monsters = monsters;
         for(Monster monster : _monsters)
         {
-            _monstersToAct.put(monster,0);
+            _charactersToAct.put(monster, 0);
         }
+        _charactersToAct.put(_player,0);
         _inventory = inventory;
         _playedMap = playedMap;
         _traps = traps;
@@ -172,40 +172,49 @@ public class GameStateUpdater
     }
     private void handleActionExecution()
     {
-        GameAction gameAction = _player.getNextAction();
+        GameAction playerAction = _player.getNextAction();
 
-        if (gameAction != null)
+        if (playerAction != null)
         {
-            executeAction(gameAction);
-            _costOfPlayerAction=gameAction.getExpectedDuration();
-            for (Map.Entry<Monster,Integer> monsterEntry: _monstersToAct.entrySet())
+            _costOfPlayerAction=playerAction.getExpectedDuration();
+            for (Map.Entry<Character,Integer> monsterEntry: _charactersToAct.entrySet())
             {
-                _monstersToAct.put(monsterEntry.getKey(),monsterEntry.getValue()+_costOfPlayerAction);
+                _charactersToAct.put(monsterEntry.getKey(),monsterEntry.getValue()+_costOfPlayerAction);
             }
         }
         boolean wasPlayerAttacked = false;
+        GameAction monsterAction;
         if(_costOfPlayerAction>0)
         {
-            int monstersLeft = _monstersToAct.size();
+            int monstersLeft = _charactersToAct.size();
             while (monstersLeft > 0)
             {
-                for (Map.Entry<Monster, Integer> monsterEntry : _monstersToAct.entrySet())
+                for (Map.Entry<Character, Integer> characterEntry : _charactersToAct.entrySet())
                 {
-                    if (monsterEntry.getValue() > 0)
+                    if (characterEntry.getValue() > 0)
                     {
-                        gameAction = monsterEntry.getKey().createNextAction(_player);
-                        if (gameAction == null)
+                        if(characterEntry.getKey() == _player)
                         {
-                            _monstersToRemove.add(monsterEntry.getKey());
-                            monstersLeft--;
+                            executeAction(playerAction);
+                            _charactersToAct.put(characterEntry.getKey(), characterEntry.getValue() - _costOfPlayerAction);
                         }
                         else
                         {
-                            _monstersToAct.put(monsterEntry.getKey(), monsterEntry.getValue() - gameAction.getExpectedDuration());
-                            executeAction(gameAction);
-                            if(!wasPlayerAttacked && gameAction.getType() == GameAction.Type.Attack && gameAction.getTargetTile()==_player.getCurrentTile())
+                            Monster monster = (Monster)characterEntry.getKey();
+                            monsterAction = monster.createNextAction(_player);
+                            if (monsterAction == null)
                             {
-                                wasPlayerAttacked = true;
+                                _monstersToRemove.add(monster);
+                                monstersLeft--;
+                            }
+                            else
+                            {
+                                _charactersToAct.put(characterEntry.getKey(), characterEntry.getValue() - monsterAction.getExpectedDuration());
+                                executeAction(monsterAction);
+                                if(!wasPlayerAttacked && monsterAction.getType() == GameAction.Type.Attack && monsterAction.getTargetTile()==_player.getCurrentTile())
+                                {
+                                    wasPlayerAttacked = true;
+                                }
                             }
                         }
                     }
@@ -214,12 +223,17 @@ public class GameStateUpdater
                         monstersLeft--;
                     }
                 }
-                _monsters.removeAll(_monstersToRemove);
+                for(Monster toRemove : _monstersToRemove)
+                {
+                    _monsters.remove(toRemove);
+                    _charactersToAct.remove(toRemove);
+                }
                 _monstersToRemove.clear();
-                updateGasses();
+
                 if(monstersLeft>0)
                 {
                     _turn++;
+                    updateGasses();
                 }
             }
             if(wasPlayerAttacked && _player.isMoving())
