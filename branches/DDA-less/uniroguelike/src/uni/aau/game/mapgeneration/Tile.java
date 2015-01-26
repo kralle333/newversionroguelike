@@ -24,9 +24,9 @@ public class Tile
     private Types _type;
     public Types getType(){return _type;}
     private TextureRegion _textureRegion;
-    public void setTextureRegion(Vector2 tileCoordinates)
+    public void setTextureRegion(TileSetCoordinate tileCoordinates)
     {
-        _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(),(int)tileCoordinates.x,(int)tileCoordinates.y,DungeonMap.TileSize,DungeonMap.TileSize);
+        _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(),tileCoordinates.x,tileCoordinates.y,DungeonMap.TileSize,DungeonMap.TileSize);
         _textureRegion.flip(false,true);
     }
 
@@ -119,7 +119,7 @@ public class Tile
         _lightAmount = LightAmount.Non;
     }
 
-    public Tile(Types type,int x, int y, Corridor owner,Vector2 tileTexture)
+    public Tile(Types type,int x, int y, Corridor owner,TileSetCoordinate tileTexture)
     {
         _tilePosition = new Vector2(x,y);
         _x=x;

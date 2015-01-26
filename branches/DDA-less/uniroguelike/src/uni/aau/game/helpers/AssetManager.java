@@ -70,10 +70,10 @@ public class AssetManager
         tileSetCoordinateMap.put("seWall",new TileSetCoordinate(7,2));
 
         //Doors - n=north,w=west,s=south,e=east
-        tileSetCoordinateMap.put("nCorridor",new TileSetCoordinate(0,3));
-        tileSetCoordinateMap.put("wCorridor",new TileSetCoordinate(1,3));
-        tileSetCoordinateMap.put("sCorridor",new TileSetCoordinate(0,4));
-        tileSetCoordinateMap.put("eCorridor",new TileSetCoordinate(1,4));
+        tileSetCoordinateMap.put("nDoor",new TileSetCoordinate(0,3));
+        tileSetCoordinateMap.put("wDoor",new TileSetCoordinate(1,3));
+        tileSetCoordinateMap.put("sDoor",new TileSetCoordinate(0,4));
+        tileSetCoordinateMap.put("eDoor",new TileSetCoordinate(1,4));
 
         //Misc
         tileSetCoordinateMap.put("stairs",new TileSetCoordinate(2,3));
