@@ -72,7 +72,7 @@ public class GameStateUpdater
         _playedMap = playedMap;
         _traps = traps;
         _gasClouds.clear();
-        _player.getCurrentTile().setLight(Tile.LightAmount.Shadow,_player.getLanternStrength()+2, _player.getLanternStrength()+2);
+        _player.getCurrentTile().setLight(Tile.LightAmount.Shadow, _player.getLanternStrength() + 2, _player.getLanternStrength() + 2);
         _player.getCurrentTile().setLight(Tile.LightAmount.Light,_player.getLanternStrength(), _player.getLanternStrength());
     }
 
@@ -87,57 +87,6 @@ public class GameStateUpdater
             handleActionExecution();
         }
     }
-
-    private void handleActionExecution()
-    {
-        GameAction gameAction = _player.getNextAction();
-
-        if (gameAction != null)
-        {
-            executeAction(gameAction);
-            _costOfPlayerAction=gameAction.getExpectedDuration();
-            for (Map.Entry<Monster,Integer> monsterEntry: _monstersToAct.entrySet())
-            {
-                _monstersToAct.put(monsterEntry.getKey(),monsterEntry.getValue()+_costOfPlayerAction);
-            }
-        }
-        if(_costOfPlayerAction>0)
-        {
-            int monstersLeft = _monstersToAct.size();
-            while (monstersLeft > 0)
-            {
-                for (Map.Entry<Monster, Integer> monsterEntry : _monstersToAct.entrySet())
-                {
-                    if (monsterEntry.getValue() > 0)
-                    {
-                        gameAction = monsterEntry.getKey().createNextAction(_player);
-                        if (gameAction == null)
-                        {
-                            _monstersToRemove.add(monsterEntry.getKey());
-                            monstersLeft--;
-                        }
-                        else
-                        {
-                            _monstersToAct.put(monsterEntry.getKey(), monsterEntry.getValue() - gameAction.getExpectedDuration());
-                            executeAction(gameAction);
-                        }
-                    }
-                    else
-                    {
-                        monstersLeft--;
-                    }
-                }
-                _monsters.removeAll(_monstersToRemove);
-                _monstersToRemove.clear();
-                updateGasses();
-                if(monstersLeft>0)
-                {
-                    _turn++;
-                }
-            }
-        }
-    }
-
     private void updateGasses()
     {
         for (Gas gas : _gasClouds)
@@ -220,6 +169,65 @@ public class GameStateUpdater
             return true;
         }
         return false;
+    }
+    private void handleActionExecution()
+    {
+        GameAction gameAction = _player.getNextAction();
+
+        if (gameAction != null)
+        {
+            executeAction(gameAction);
+            _costOfPlayerAction=gameAction.getExpectedDuration();
+            for (Map.Entry<Monster,Integer> monsterEntry: _monstersToAct.entrySet())
+            {
+                _monstersToAct.put(monsterEntry.getKey(),monsterEntry.getValue()+_costOfPlayerAction);
+            }
+        }
+        boolean wasPlayerAttacked = false;
+        if(_costOfPlayerAction>0)
+        {
+            int monstersLeft = _monstersToAct.size();
+            while (monstersLeft > 0)
+            {
+                for (Map.Entry<Monster, Integer> monsterEntry : _monstersToAct.entrySet())
+                {
+                    if (monsterEntry.getValue() > 0)
+                    {
+                        gameAction = monsterEntry.getKey().createNextAction(_player);
+                        if (gameAction == null)
+                        {
+                            _monstersToRemove.add(monsterEntry.getKey());
+                            monstersLeft--;
+                        }
+                        else
+                        {
+                            _monstersToAct.put(monsterEntry.getKey(), monsterEntry.getValue() - gameAction.getExpectedDuration());
+                            executeAction(gameAction);
+                            if(!wasPlayerAttacked && gameAction.getType() == GameAction.Type.Attack && gameAction.getTargetTile()==_player.getCurrentTile())
+                            {
+                                wasPlayerAttacked = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        monstersLeft--;
+                    }
+                }
+                _monsters.removeAll(_monstersToRemove);
+                _monstersToRemove.clear();
+                updateGasses();
+                if(monstersLeft>0)
+                {
+                    _turn++;
+                }
+            }
+            if(wasPlayerAttacked && _player.isMoving())
+            {
+                //Clear the queue if the player was attacked while moving around
+                _player.clearQueue();
+            }
+        }
     }
 
     private void executeAction(GameAction action)
@@ -350,10 +358,7 @@ public class GameStateUpdater
                     _player.setKilledBy("trap");
                 }
             }
-            _player.getCurrentTile().setLight(Tile.LightAmount.Shadow,_player.getLanternStrength(),_player.getLanternStrength());
             _player.moveTo(newTile);
-            _player.getCurrentTile().setLight(Tile.LightAmount.Shadow,_player.getLanternStrength()+2, _player.getLanternStrength()+2);
-            _player.getCurrentTile().setLight(Tile.LightAmount.Light,_player.getLanternStrength(), _player.getLanternStrength());
         }
         else
         {
@@ -396,25 +401,12 @@ public class GameStateUpdater
         switch (scroll.getType())
         {
             case Identify:
-                if (_player instanceof Bot)
-                {
-                    ((Bot) _player).selectItemToIdentify();
-                    _selectItemDialog = false;
-                    _inventory.hide();
-                }
-                else
-                {
                     _selectItemDialog = true;
                     _inventory.show();
-                }
                 break;
             case Teleport:
                 _player.moveTo(_playedMap.getRandomEmptyTile());
                 GameConsole.addMessage("Player was teleported to a random tile");
-                if (_player instanceof Bot)
-                {
-                    ((Bot) _player).usedTeleport();
-                }
                 break;
             case RemoveCurse:
                 _inventory.removeCurses();
