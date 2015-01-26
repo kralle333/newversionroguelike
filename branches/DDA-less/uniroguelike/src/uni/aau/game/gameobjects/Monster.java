@@ -17,7 +17,6 @@ public class Monster extends Character
     private TextureRegion _textureRegion;
     private int _experienceGiven;
     private float _pursueDistance = 4;
-    private GameAction _monsterAction;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
 
     public int retrieveExperienceGiven()
@@ -30,7 +29,7 @@ public class Monster extends Character
     public Monster(String name, int str, int hp, int def,int dodgeChance,int experienceGiven,Nature nature, TextureRegion textureRegion)
     {
         super(name, str,dodgeChance,hp);
-        _monsterAction = new GameAction();
+        nextAction = new GameAction();
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
         _textureRegion = textureRegion;
         _experienceGiven = experienceGiven;
@@ -41,7 +40,7 @@ public class Monster extends Character
         _droppedItems.add(item);
     }
 
-    public GameAction createNextAction(Player player)
+    public GameAction setNextAction(Player player)
     {
         if (_isDead)
         {
@@ -51,8 +50,8 @@ public class Monster extends Character
         {
             return pursuePlayer(player);
         }
-        _monsterAction.setAction(this, GameAction.Type.Wait, null, null);
-        return _monsterAction;
+        nextAction.setAction(this, GameAction.Type.Wait, null, null);
+        return nextAction;
     }
 
     private GameAction pursuePlayer(Player player)
@@ -76,19 +75,19 @@ public class Monster extends Character
         {
             if (nextTile.getCharacter() == player)
             {
-                _monsterAction.setAction(this, GameAction.Type.Attack, nextTile, null);
+                nextAction.setAction(this,player, GameAction.Type.Attack, nextTile, null);
             }
             else
             {
-                _monsterAction.setAction(this, GameAction.Type.Move, nextTile, null);
+                nextAction.setAction(this, GameAction.Type.Move, nextTile, null);
             }
         }
         else
         {
-            _monsterAction.setAction(this, GameAction.Type.Wait, null, null);
+            nextAction.setAction(this, GameAction.Type.Wait, null, null);
         }
 
-        return _monsterAction;
+        return nextAction;
     }
 
     public void draw(SpriteBatch batch)

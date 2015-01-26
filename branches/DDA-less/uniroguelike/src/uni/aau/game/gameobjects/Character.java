@@ -51,9 +51,23 @@ public class Character
     protected Tile currentTile;
     public Tile getCurrentTile(){return currentTile;}
 
-    protected ArrayList<GameAction> actionQueue = new ArrayList<GameAction>();
+    public int getCostOfNextAction()
+    {
+        if(isMoving())
+        {
+            return movementQueue.get(0).getCost();
+        }
+        return nextAction==null?0:nextAction.getCost();
+    }
+    public void clearCurrentAction(){nextAction.setAsEmpty();}
+    protected GameAction nextAction=new GameAction();
+    protected ArrayList<GameAction> movementQueue = new ArrayList<GameAction>();
     private String _name;
     public String getName(){return _name;}
+    public boolean isMoving()
+    {
+        return movementQueue.size()>0 && movementQueue.get(0) != null && movementQueue.get(0).getType() == GameAction.Type.Move;
+    }
 
     public Character(String name,int str,int dodgeChance, int hp)
     {
@@ -63,6 +77,8 @@ public class Character
         currentHp = hp;
         maxHp=hp;
         _dodgeChance = dodgeChance;
+
+        nextAction.setAction(this, GameAction.Type.Empty,null,null);
     }
 
 
@@ -109,50 +125,47 @@ public class Character
         int i=0;
         for(Tile tile : path)
         {
-            if(i>=actionQueue.size())
+            if(i>= movementQueue.size())
             {
-                actionQueue.add(new GameAction());
+                movementQueue.add(new GameAction());
             }
-            actionQueue.get(i).setAction(this, GameAction.Type.Move, tile, null);
+            movementQueue.get(i).setAction(this, GameAction.Type.Move, tile, null);
             i++;
         }
     }
     public void setThrowAction(Item selectedItem, Tile touchedTile)
     {
-        actionQueue.clear();
-        if(actionQueue.size()==0)
-        {
-            actionQueue.add(new GameAction());
-        }
-        actionQueue.get(0).setAction(this, GameAction.Type.Throw, touchedTile, selectedItem);
+        nextAction.setAction(this, GameAction.Type.Throw, touchedTile, selectedItem);
     }
-    public void setAttackAction(Tile enemyTile)
+    public void setAttackAction(Character character)
     {
-        if(actionQueue.size()==0)
-        {
-            actionQueue.add(new GameAction());
-        }
-        actionQueue.get(0).setAction(this, GameAction.Type.Attack, enemyTile, null);
+        nextAction.setAction(this,character, GameAction.Type.Attack,character.currentTile, null);
     }
 
     public void clearQueueAndSetAction(GameAction action)
     {
-        actionQueue.clear();
-        actionQueue.add(action);
+        clearNextActions();
+        nextAction.setAction(action);
     }
-    public void clearQueue()
+    public void clearNextActions()
     {
-        actionQueue.clear();
+        movementQueue.clear();
+        nextAction.setAction(this, GameAction.Type.Empty,null,null);
     }
 
     public GameAction getNextAction()
     {
-        if(actionQueue.size()>0)
+        if(isMoving())
         {
-            return actionQueue.remove(0);
+            return movementQueue.remove(0);
         }
 
-        return null;
+        if(nextAction.isEmpty())
+        {
+            return null;
+        }
+
+        return nextAction;
     }
 
     public int getMaxAttackPower()
