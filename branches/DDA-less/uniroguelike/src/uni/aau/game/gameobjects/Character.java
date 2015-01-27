@@ -220,9 +220,9 @@ public class Character
     public void attack(Character target)
     {
 
-        int hitChance=_equippedWeapon!=null?(int)_equippedWeapon.getAttackSpeed():0;
+        int hitChance=_equippedWeapon!=null?_equippedWeapon.getAttackSpeed():0;
         int failChance=5+target.getDodgeChance();
-        int damage = 0;
+        int damage;
 
         int result = RandomGen.getRandomInt(0,100);
         if(result>=96)
