@@ -4,6 +4,7 @@ package uni.aau.game.items;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import uni.aau.game.mapgeneration.RandomGen;
 
 
 public class Potion extends Item
@@ -91,8 +92,8 @@ public class Potion extends Item
         switch (_potionType)
         {
             case Healing: return depth*5;
-            case PoisonGas: return depth*2;
-            case ParaGas: return depth*2;
+            case PoisonGas: return RandomGen.getRandomInt(5,10);
+            case ParaGas: return RandomGen.getRandomInt(5,10);
             case Experience: return depth*3;
         }
         return -1;
