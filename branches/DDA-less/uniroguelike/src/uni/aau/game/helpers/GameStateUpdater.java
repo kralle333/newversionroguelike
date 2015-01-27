@@ -407,10 +407,6 @@ public class GameStateUpdater
 
             }
         }
-        else if (target != null && potion.getName() == "Potion of Hurt")
-        {
-            target.damage(potion.getPotency());
-        }
         else if (potion.getType() == Potion.PotionType.PoisonGas)
         {
             GameConsole.addMessage("A poisonous gas spreads from the bottle");
@@ -418,8 +414,8 @@ public class GameStateUpdater
         }
         else if (potion.getType() == Potion.PotionType.ParaGas)
         {
-            GameConsole.addMessage("A paralysing gas spreads from the bottle");
-            _gasClouds.add(new Gas(tile, Character.StatusEffect.Paralysed, potion.getPotency() / 2));
+            GameConsole.addMessage("A paralyzing gas spreads from the bottle");
+            _gasClouds.add(new Gas(tile, Character.StatusEffect.Paralysed, potion.getPotency()));
         }
         else
         {

@@ -6,29 +6,38 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import uni.aau.game.helpers.AssetManager;
+import uni.aau.game.helpers.TileSetCoordinate;
 import uni.aau.game.mapgeneration.DungeonMap;
 import uni.aau.game.mapgeneration.RandomGen;
 import uni.aau.game.mapgeneration.Tile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class Gas
 {
-    private HashMap<Tile,Integer> _gasTimerMap = new HashMap<Tile, Integer>();
-    private HashMap<Tile,TextureRegion> _gasTextures = new HashMap<Tile, TextureRegion>();
     private Character.StatusEffect _effect;
     private Color _color;
-    public boolean hasDisappeared(){return _gasTimerMap.isEmpty();}
+    private HashSet<Tile> _previousGasTiles = new HashSet<Tile>();
+    private HashMap<Tile,Integer> _gasDensityMap = new HashMap<Tile, Integer>();
+    private HashMap<Tile,TextureRegion> _gasTextures = new HashMap<Tile, TextureRegion>();
+
+    private HashMap<Tile,Integer> _toAdd = new HashMap<Tile, Integer>();
+    private HashSet<Tile> _tilesToRemove = new HashSet<Tile>();
+
+    private final int _reductionAmount = 3;
     private final int _getSmallerChance = 40;
     private final int _spreadChance = 75;
-    private int _effectTimer;
-    public Gas(Tile tile,Character.StatusEffect effect, int effectTimer)
+    public boolean hasDisappeared(){return _gasDensityMap.isEmpty();}
+
+    public Gas(Tile tile,Character.StatusEffect effect, int density)
     {
-        _gasTimerMap.put(tile,effectTimer);
+        _gasDensityMap.put(tile, density);
+        _gasTextures.put(tile,AssetManager.getTextureRegion("gas", getGasDensityTexture(density), 32, 32));
+
         _effect=effect;
-        _effectTimer=effectTimer;
-        _gasTextures.put(tile,AssetManager.getTextureRegion("gas", RandomGen.getRandomInt(0, 2),0,32,32));
         switch (_effect)
         {
             case Poisoned:_color=new Color(0.87f,0,1f,1);break;
@@ -37,81 +46,76 @@ public class Gas
         }
     }
 
-
-    private ArrayList<Tile> _tilesToAdd = new ArrayList<Tile>();
-    private ArrayList<Tile> _tilesToRemove = new ArrayList<Tile>();
     public void update()
     {
-        for(Tile tile : _gasTimerMap.keySet())
+
+        for(Tile gasTile : _gasDensityMap.keySet())
         {
-            for(Tile neighbour : tile.getWalkableNeighbours())
+            for(Tile neighbour : gasTile.getWalkableNeighbours())
             {
-                if(_gasTimerMap.get(tile)>0)
+
+                if (_gasDensityMap.get(neighbour) == null && !_previousGasTiles.contains(neighbour))
                 {
-                    if(RandomGen.getRandomInt(0, 100)<=_spreadChance && neighbour.getType() == Tile.Types.Floor)
+                    if (_gasDensityMap.get(gasTile) > _reductionAmount && RandomGen.getRandomInt(0, 100) <= _spreadChance)
                     {
-                        //Chance of spreading to neighbour
-                        if(_gasTimerMap.get(neighbour) == null)
-                        {
-                            if( _effectTimer>0)
-                            {
-                                _tilesToAdd.add(neighbour);
-                            }
-                        }
+                        _toAdd.put(neighbour, (_gasDensityMap.get(gasTile) -_reductionAmount));
                     }
                 }
-                else
+            }
+            if(_gasDensityMap.get(gasTile) > 0)
+            {
+                //Chance of getting smaller
+                if(RandomGen.getRandomInt(0, 100)<=_getSmallerChance)
                 {
-                    _tilesToRemove.add(tile);
-                    break;
+                    _gasDensityMap.put(gasTile,_gasDensityMap.get(gasTile)-_reductionAmount);
+                    if(_gasDensityMap.get(gasTile)<=0)
+                    {
+                        _tilesToRemove.add(gasTile);
+                    }
+                    else
+                    {
+                        _gasTextures.put(gasTile,AssetManager.getTextureRegion("gas", getGasDensityTexture(_gasDensityMap.get(gasTile)), 32, 32));
+                    }
                 }
             }
-            //Chance of getting smaller
-            if(RandomGen.getRandomInt(0, 100)<=_getSmallerChance)
-            {
-                _gasTimerMap.put(tile,_gasTimerMap.get(tile)-1);
-                _gasTextures.put(tile, AssetManager.getTextureRegion("gas",(int)(_gasTimerMap.get(tile)/4), 0, 32, 32));
-            }
         }
-
-        for(Tile tile : _tilesToAdd)
+        for(Map.Entry<Tile,Integer> entry : _toAdd.entrySet())
         {
-            _gasTimerMap.put(tile, _effectTimer);
-            _gasTextures.put(tile, AssetManager.getTextureRegion("gas",(int)(_gasTimerMap.get(tile)/4), 0, 32, 32));
+            _gasDensityMap.put(entry.getKey(),entry.getValue());
+            _gasTextures.put(entry.getKey(),AssetManager.getTextureRegion("gas", getGasDensityTexture(entry.getValue()), 32, 32));
         }
-        for(Tile tile : _tilesToRemove)
+        _toAdd.clear();
+        for(Tile toRemove : _tilesToRemove)
         {
-            _gasTextures.remove(tile);
-            _gasTimerMap.remove(tile);
+            _gasDensityMap.remove(toRemove);
+            _previousGasTiles.add(toRemove);
+            _gasTextures.remove(toRemove);
         }
-        _tilesToAdd.clear();
         _tilesToRemove.clear();
-
-        for(Tile tile : _gasTimerMap.keySet())
-        {
-            Character affectedCharacter = tile.getCharacter();
-            if(affectedCharacter != null)
-            {
-                switch (_effect)
-                {
-                    case Poisoned:affectedCharacter.giveStatusEffect(Character.StatusEffect.Poisoned,3);break;
-                    case Paralysed:affectedCharacter.giveStatusEffect(Character.StatusEffect.Paralysed,1);break;
-                }
-            }
-        }
-        _effectTimer--;
     }
+
+    private TileSetCoordinate getGasDensityTexture(int density)
+    {
+        if(density>=1 && density<=3)
+        {
+            return AssetManager.getTileSetPosition("lvl1Gas");
+        }
+        else if(density>=4 && density<=8)
+        {
+            return AssetManager.getTileSetPosition("lvl2Gas");
+        }
+        else
+        {
+            return AssetManager.getTileSetPosition("lvl3Gas");
+        }
+    }
+
     public void draw(SpriteBatch batch)
     {
         batch.setColor(_color);
-        int index = 0;
-        for(Tile tile : _gasTimerMap.keySet())
+        for(Tile tile : _gasDensityMap.keySet())
         {
-            if(tile.getLightAmount()== Tile.LightAmount.Light)
-            {
-                batch.draw(_gasTextures.get(tile), tile.getX() * DungeonMap.TileSize, tile.getY() * DungeonMap.TileSize);
-            }
-            index++;
+            batch.draw(_gasTextures.get(tile), tile.getX() * DungeonMap.TileSize, tile.getY() * DungeonMap.TileSize, DungeonMap.TileSize, DungeonMap.TileSize);
         }
         batch.setColor(Color.WHITE);
     }

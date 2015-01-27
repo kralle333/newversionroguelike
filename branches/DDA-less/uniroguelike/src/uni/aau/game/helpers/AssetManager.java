@@ -71,13 +71,18 @@ public class AssetManager
 
         //Doors - n=north,w=west,s=south,e=east
         tileSetCoordinateMap.put("nDoor",new TileSetCoordinate(0,3));
-        tileSetCoordinateMap.put("wDoor",new TileSetCoordinate(1,3));
+        tileSetCoordinateMap.put("eDoor",new TileSetCoordinate(1,3));
         tileSetCoordinateMap.put("sDoor",new TileSetCoordinate(0,4));
-        tileSetCoordinateMap.put("eDoor",new TileSetCoordinate(1,4));
+        tileSetCoordinateMap.put("wDoor",new TileSetCoordinate(1,4));
 
         //Misc
         tileSetCoordinateMap.put("stairs",new TileSetCoordinate(2,3));
         tileSetCoordinateMap.put("chest",new TileSetCoordinate(2,4));
+
+        //Gas levels
+        tileSetCoordinateMap.put("lvl1Gas",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("lvl2Gas",new TileSetCoordinate(1,0));
+        tileSetCoordinateMap.put("lvl3Gas",new TileSetCoordinate(2,0));
     }
     public static BitmapFont getFont(String string)
     {
@@ -91,6 +96,10 @@ public class AssetManager
     {
         TileSetCoordinate tile = getTileSetPosition(tileSetPositionKey);
         return new TextureRegion(_assets.get(path),tile.x*width,tile.y*height,width,height);
+    }
+    public static TextureRegion getTextureRegion(String path,TileSetCoordinate tileSetCoordinate,int width, int height)
+    {
+        return getTextureRegion(path,tileSetCoordinate.x,tileSetCoordinate.y,width,height);
     }
     public static TextureRegion getTextureRegion(String path,int xIndex, int yIndex,int width, int height)
     {
