@@ -1,7 +1,7 @@
 package uni.aau.game.helpers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import uni.aau.game.gameobjects.Character;
 import uni.aau.game.gameobjects.*;
 import uni.aau.game.gui.GameConsole;
@@ -11,7 +11,10 @@ import uni.aau.game.mapgeneration.DungeonMap;
 import uni.aau.game.mapgeneration.RandomGen;
 import uni.aau.game.mapgeneration.Tile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class GameStateUpdater
 {
@@ -45,12 +48,12 @@ public class GameStateUpdater
         return _showingThrowingAnimation;
     }
 
-    //Animation
+    //Thrown item variables
     private final float _throwAnimationSpeed = 16;
     private float _thrownObjectX;
     private float _thrownObjectY;
+    private Item _thrownObject;
     private Tile _targetTile;
-    private Item _thrownWeapon;
     private float _angleToTarget;
 
     //Select item dialog
@@ -113,24 +116,43 @@ public class GameStateUpdater
                     Math.abs(_thrownObjectY - (_targetTile.getY() * 32)) <= _throwAnimationSpeed)
             {
 
-                if (_thrownWeapon instanceof Potion)//Use the potion on the tile
+                if (_thrownObject instanceof Potion)//Use the potion on the tile
                 {
-                    usePotion((Potion) _thrownWeapon, _targetTile.getCharacter(), _targetTile);
+                    usePotion((Potion) _thrownObject, _targetTile.getCharacter(), _targetTile);
                 }
-                else if (_targetTile.getCharacter() != null && //Damage if ranged weapon
-                        _thrownWeapon instanceof Weapon &&
-                        (((Weapon) _thrownWeapon).isRanged()))
+                else if (_targetTile.getCharacter() != null && _thrownObject instanceof Weapon)
                 {
-                    _targetTile.getCharacter().damage(((Weapon) _thrownWeapon).getIdentifiedMaxDamage());
+                    Weapon thrownWeapon = (Weapon)_thrownObject;
+                    int damage=0;
+                    if(thrownWeapon.isRanged() && RandomGen.getRandomInt(1,100)>20+_targetTile.getCharacter().getDodgeChance())//Get ranged damage
+                    {
+                        damage =  thrownWeapon.getRandomDamage();
+                    }
+                    else if(RandomGen.getRandomInt(1,100)>50+_targetTile.getCharacter().getDodgeChance())//Get damage from a sword etc being thrown
+                    {
+                        damage = thrownWeapon.getRandomDamage()/2;
+                    }
+
+                    if(damage>0)
+                    {
+                        GameConsole.addMessage(_targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getName());
+                        _targetTile.getCharacter().damage(damage);
+
+                    }
+                    else
+                    {
+                        _targetTile.addItem(thrownWeapon);
+                        GameConsole.addMessage(thrownWeapon.getName()+" landed on the floor");
+                    }
                 }
                 else //Otherwise the item lands on the tile
                 {
-                    _targetTile.addItem(_thrownWeapon);
-
+                    _targetTile.addItem(_thrownObject);
+                    GameConsole.addMessage(_thrownObject.getName()+" landed on the floor");
                 }
                 _showingThrowingAnimation = false;
                 _targetTile = null;
-                _thrownWeapon = null;
+                _thrownObject = null;
                 _thrownObjectX = 0;
                 _thrownObjectY = 0;
             }
@@ -140,11 +162,14 @@ public class GameStateUpdater
     //
     // ACTION EXECUTION
     //
+    private float timeToNextTurn = 0.0f;
+    private final float turnDurationInSeconds = 0.08f;
     private void handleExecutionOfActions()
     {
-        GameAction playerAction = _player.getNextAction();
-        if(playerAction != null)
+        GameAction playerAction;
+        if(timeToNextTurn<=0&&(playerAction=_player.getNextAction())!= null)
         {
+            timeToNextTurn = turnDurationInSeconds;
             //Record the time of the next action of characters
             int playerActionCost = playerAction.getCost();
             executeAction(playerAction);
@@ -184,6 +209,11 @@ public class GameStateUpdater
                 gas.update();
             }
         }
+        else if(timeToNextTurn>0)
+        {
+            timeToNextTurn-=Gdx.graphics.getDeltaTime();
+        }
+
     }
 
     private void executeAction(GameAction action)
@@ -240,7 +270,7 @@ public class GameStateUpdater
                 _player.getCurrentTile().addItem(action.getTargetItem());
                 break;
             case Throw:
-                _thrownWeapon = action.getTargetItem();
+                _thrownObject = action.getTargetItem();
                 _targetTile = action.getTargetTile();
                 _showingThrowingAnimation = true;
                 _thrownObjectX = action.getOwner().getCurrentTile().getX() * 32;
@@ -250,17 +280,17 @@ public class GameStateUpdater
                 {
                     _angleToTarget += 2 * Math.PI;
                 }
-                if (_thrownWeapon instanceof Weapon && ((Weapon) _thrownWeapon).isRanged())
+                if (_thrownObject instanceof Weapon && ((Weapon) _thrownObject).isRanged())
                 {
-                    ((Weapon) _thrownWeapon).decreaseRangedAmmo();
-                    if (((Weapon) _thrownWeapon).getAmmoCount() == 0)
+                    ((Weapon) _thrownObject).decreaseRangedAmmo();
+                    if (((Weapon) _thrownObject).getAmmoCount() == 0)
                     {
-                        _inventory.removeItem(_thrownWeapon);
+                        _inventory.removeItem(_thrownObject);
                     }
                 }
                 else
                 {
-                    _inventory.removeItem(_thrownWeapon);
+                    _inventory.removeItem(_thrownObject);
                 }
                 break;
             case Use:
@@ -448,7 +478,7 @@ public class GameStateUpdater
         }
         if (_showingThrowingAnimation)
         {
-            _thrownWeapon.draw(batch, _thrownObjectX, _thrownObjectY);
+            _thrownObject.draw(batch, _thrownObjectX, _thrownObjectY);
         }
     }
 
