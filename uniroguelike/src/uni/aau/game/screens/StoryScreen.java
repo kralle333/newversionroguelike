@@ -19,12 +19,11 @@ import uni.aau.game.mapgeneration.RandomGen;
 
 public class StoryScreen implements Screen, GestureDetector.GestureListener
 {
-    private final String _storyToBeShown = "400 years ago, the evil necromancer Xthal Saladom was vanquished and his remains sealed in The Brimstone Tower." +
-            "Since then there have been peace in the kingdom of Nasia, "+
-            "but recently there have been many reports of monsters travellers using the roads close to the tower. And some farmers even claim to have seen" +
-            "mystical flashes of red light coming from the tower. \n \n" +
-            "Jasmal, the queen of Nasia, has tasked you with investigating these occurrences and to determine the cause of these phenomenons such that travellers " +
-            "again can travel these lands without fear of being harmed.";
+    private final String _storyToBeShown = "400 years ago, the evil necromancer Xthal Saladom was vanquished and his remains sealed in The Brimstone Tower. " +
+            "Since then there have been peace in the kingdom of Nasia, " +
+            "but recently there have been many reports of monsters attacking travellers on the roads close to the tower. " +
+            "Some farmers in the area even claim to have seen mystical flashes of red light coming from the tower.\n\n" +
+            "Jasmal, the queen of Nasia, has tasked you with investigating these occurrences and to determine the cause of these phenomenons such that travellers again can travel these lands without fear of being harmed.";
 
     private BitmapFont _font;
     private ShapeRenderer _shapeRenderer = new ShapeRenderer();
