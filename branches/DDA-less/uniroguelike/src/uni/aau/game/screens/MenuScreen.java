@@ -28,45 +28,36 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     private Button startButton;
     private Button highScoreButton;
     private Button exitGameButton;
+    private Color _buttonColor =new Color(0.6f,0.07f,0.07f,1f);
 
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera guiCamera;
     private BitmapFont _font;
-    private Input.TextInputListener inputListener;
     private boolean _isShowingTextInput = false;
+    private final String _gameTitle;
+    private Vector2 _titlePosition;
 
     public MenuScreen()
     {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         float buttonWidth = w*0.2f;
-        float buttonHeight = h*0.15f;
+        float buttonHeight = h*0.12f;
         AssetManager.initialize();
-        inputListener = new Input.TextInputListener()
-        {
-            @Override
-            public void input(String s)
-            {
-                RoguelikeGame.getGameInstance().setScreen(new PlayScreen(s));
-            }
 
-            @Override
-            public void canceled()
-            {
-                _isShowingTextInput=false;
-            }
-        };
-        startButton = new Button((w*0.5f-(buttonWidth/2)),(h*0.5f-buttonHeight),buttonWidth,buttonHeight,"Start Game", Color.RED);
-        highScoreButton = new Button((w*0.5f-(buttonWidth/2)),(h*0.7f-buttonHeight),buttonWidth,buttonHeight,"High scores",Color.RED);
-        exitGameButton = new Button((w*0.5f-(buttonWidth/2)),(h*0.9f-buttonHeight),buttonWidth,buttonHeight,"Exit Game",Color.RED);
+        startButton = new Button((w*0.5f-(buttonWidth/2)),(h*0.55f-buttonHeight),buttonWidth,buttonHeight,"Start Game",_buttonColor);
+        highScoreButton = new Button((w*0.5f-(buttonWidth/2)),(h*0.7f-buttonHeight),buttonWidth,buttonHeight,"High scores",_buttonColor);
+        exitGameButton = new Button((w*0.5f-(buttonWidth/2)),(h*0.85f-buttonHeight),buttonWidth,buttonHeight,"Exit Game",_buttonColor);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         guiCamera = new OrthographicCamera(w, h);
         guiCamera.setToOrtho(true, w, h);
-        _font = AssetManager.getFont("description");
-        Gdx.input.setInputProcessor(new GestureDetector(this));
 
+        _gameTitle = "The Brimstone Tower";
+        _font = AssetManager.getFont("description");
+        _titlePosition = new Vector2(Gdx.graphics.getWidth() / 2 - _font.getBounds(_gameTitle).width, Gdx.graphics.getHeight()*0.15f);
+        Gdx.input.setInputProcessor(new GestureDetector(this));
     }
 
     @Override
@@ -79,14 +70,13 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
 
         batch.setProjectionMatrix(guiCamera.combined);
         shapeRenderer.setProjectionMatrix(guiCamera.combined);
-        startButton.draw(batch,shapeRenderer);
+        startButton.draw(batch, shapeRenderer);
         highScoreButton.draw(batch,shapeRenderer);
         exitGameButton.draw(batch,shapeRenderer);
         batch.begin();
         _font.setScale(2);
-        _font.draw(batch,"Dungeons of Doom",Gdx.graphics.getWidth()/2-(_font.getBounds("Dungeons of Doom").width/2),_font.getBounds("Dungeons of Doom").height+10);
+        _font.draw(batch, _gameTitle, _titlePosition.x,_titlePosition.y);
         _font.setScale(1);
-        //_font.draw(batch,"Everything made by Kristian Pilegaard Jensen",Gdx.graphics.getWidth()/2-(_font.getBounds("Everything made by Kristian Pilegaard Jensen").width/2),Gdx.graphics.getHeight()-_font.getBounds("Everything").height);
         batch.end();
     }
 
@@ -104,10 +94,9 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         {
             if(startButton.isTouched(x, y))
             {
-
-                _isShowingTextInput = true;
-                Gdx.input.getTextInput(inputListener, "Input name", "Hero");
-            } else if(highScoreButton.isTouched(x, y))
+                RoguelikeGame.getGameInstance().setScreen(new StoryScreen());
+            }
+            else if(highScoreButton.isTouched(x, y))
             {
                 RoguelikeGame.getGameInstance().setScreen(new HighScoreScreen());
             } else if(exitGameButton.isTouched(x, y))
