@@ -24,6 +24,7 @@ public class Button
     public float getHeight(){return _height;}
     private String _text;
     public String getText(){return _text;}
+    public void setText(String newText){_text=newText;}
     private BitmapFont _font;
     private TextureRegion _textureRegion = null;
     private boolean _isHidden = false;
