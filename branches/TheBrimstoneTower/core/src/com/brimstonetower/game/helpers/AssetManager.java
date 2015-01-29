@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import java.util.HashMap;
 
@@ -28,16 +29,41 @@ public class AssetManager
             _assets.put("scroll", new Texture(Gdx.files.internal("data/scrollTileSet.png")));
             _assets.put("gas", new Texture(Gdx.files.internal("data/gasCloud.png")));
             _assets.put("trap", new Texture(Gdx.files.internal("data/trap.png")));
-            _fonts.put("description", new BitmapFont(Gdx.files.internal("data/DungeonFont.fnt"), Gdx.files.internal("data/DungeonFont.png"), true));
             for (Texture t : _assets.values())
             {
                 t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
             }
             initializeTileSetCoordinateMap();
 
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/DungeonFont.TTF"));
+            FreeTypeFontGenerator.FreeTypeFontParameter parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
+            parameters.flip = true;
+            parameters.characters = FreeTypeFontGenerator.DEFAULT_CHARS;
+            parameters.minFilter= Texture.TextureFilter.Nearest;
+            parameters.magFilter= Texture.TextureFilter.Nearest;
+            int maxSize = 200;
+            BitmapFont font;
+            int widthToFit = Gdx.graphics.getWidth()*5/8;
+            int heightToFit = Gdx.graphics.getHeight()/20;
+            String testString = "Playerblabla landed a critical hit on the target! Was dealt 304 damage.";
+
+            do
+            {
+                font=generator.generateFont(parameters);
+                BitmapFont.TextBounds textDimensions = font.getBounds(testString);
+                if(textDimensions.width>widthToFit || textDimensions.height>heightToFit)
+                {
+                    break;
+                }
+                parameters.size+=2;
+            }while(parameters.size<maxSize);
+            font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            _fonts.put("description",font);
+            generator.dispose();
 
         }
     }
+
 
     private static void initializeTileSetCoordinateMap()
     {

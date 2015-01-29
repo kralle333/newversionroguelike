@@ -157,12 +157,19 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         {
             _gameOverWindow.draw(batch, shapeRenderer);
         }
+        final Vector2 namePos = new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
+        final Vector2 levelPos = new Vector2(namePos.x,namePos.y*2+_font.getBounds("Height").height);
+        final Vector2 hpPos = new Vector2(levelPos.x+_font.getBounds("Lvl: 100     ").width,levelPos.y);
+        final Vector2 strPos = new Vector2(hpPos.x+_font.getBounds("Hp: 1000/1000     ").width, levelPos.y);
+        final Vector2 expPos = new Vector2(strPos.x+_font.getBounds("Str: 100/100     ").width,levelPos.y);
+
         batch.begin();
-        _font.draw(batch, "Level " + _player.getLevel(), 10, 10);
-        _font.draw(batch, "Hitpoints: " + _player.getHitpoints() + "/" + _player.getMaxHitPoints(), 200, 10);
-        _font.draw(batch, "Strength: " + _player.getCurrentStr() + "/" + _player.getMaxStr(), 450, 10);
-        _font.draw(batch, "Experience: " + _player.getExperience() + "/" + _player.getExperienceToNextLevel(), 650, 10);
-        _font.draw(batch, "Depth: " + _depth, 900, 10);
+        _font.draw(batch, "Name: " + _player.getName(), namePos.x, namePos.y);
+        _font.draw(batch, "Lvl: "+_player.getLevel(),levelPos.x,levelPos.y);
+        _font.draw(batch, "Hp: " + _player.getHitpoints() + "/" + _player.getMaxHitPoints(),hpPos.x, hpPos.y);
+        _font.draw(batch, "Str: " + _player.getCurrentStr() + "/" + _player.getMaxStr(), strPos.x,strPos.y);
+        _font.draw(batch, "Exp: " + _player.getExperience() + "/" + _player.getExperienceToNextLevel(),expPos.x, expPos.y);
+        _font.draw(batch, "Floor: " + _depth, Gdx.graphics.getWidth()/2, 10);
         if (_currentScreenState == ScreenState.GameOver)
         {
             _font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2 - 40, Gdx.graphics.getHeight() / 4 + 10);
