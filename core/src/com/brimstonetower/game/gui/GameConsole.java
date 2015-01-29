@@ -19,14 +19,16 @@ public class GameConsole
     private static int messagesAdded = 0;
     private static BitmapFont _font;
     private static Window _frame;
+    private static Vector2 _textOffset;
 
     public static void setup(int x, int y)
     {
         _position = new Vector2(x, y);
         _font = AssetManager.getFont("description");
         _font.setColor(Color.WHITE);
-        _frame = new Window(x, y, Gdx.graphics.getWidth() - (3 * (Gdx.graphics.getHeight() / 5 + 16)), Gdx.graphics.getHeight() / 4, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
+        _frame = new Window(x, y, Gdx.graphics.getWidth()*5/8, Gdx.graphics.getHeight() / 5, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
         _frame.show();
+        _textOffset=new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
     }
 
     public static void reset()
@@ -51,7 +53,7 @@ public class GameConsole
         int startIndex = Math.max(drawIndex, 0);
         for (int i = startIndex; i < drawIndex + _linesToShow; i++)
         {
-            _font.draw(batch, messages[i], _position.x + 10, _position.y + 10 + (30 * (i - startIndex)));
+            _font.draw(batch, messages[i], _position.x + _textOffset.x, _position.y + _textOffset.y + ((_textOffset.y*3.5f) * (i - startIndex)));
         }
         batch.end();
     }

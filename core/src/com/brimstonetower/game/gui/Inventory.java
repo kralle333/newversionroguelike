@@ -248,11 +248,11 @@ public class Inventory extends Window
         float height = Gdx.graphics.getHeight();
         if (_equippedWeapon != null)
         {
-            _equippedWeapon.draw(batch, width - (height / 4) - 4, 4, 2);
+            _equippedWeapon.draw(batch, width - (height / 4) - 4, 4,height/400);
         }
         if (_equippedArmor != null)
         {
-            _equippedArmor.draw(batch, width - (height / 8) - 4, 4, 2);
+            _equippedArmor.draw(batch, width - (height / 8) - 4, 4, height/400);
         }
         batch.end();
     }
