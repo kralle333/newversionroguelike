@@ -79,6 +79,14 @@ public class DungeonMap extends BSPMapNode
         }
     }
 
+    public Tile getTouchedTile(int tileX, int tileY)
+    {
+        if(tileX>=0 && tileX<getWidth() && tileY>=0 && tileY<getHeight())
+        {
+            return getTile(tileX,tileY,this);
+        }
+        return null;
+    }
     public Tile getTouchedTile(float windowX, float windowY)
     {
         if (windowX < getWidth() * TileSize && windowY < getHeight() * TileSize)

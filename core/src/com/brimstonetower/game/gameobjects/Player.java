@@ -4,16 +4,18 @@ package com.brimstonetower.game.gameobjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gui.GameConsole;
+import com.brimstonetower.game.helpers.AssetManager;
 import com.brimstonetower.game.items.Item;
 import com.brimstonetower.game.items.ItemManager;
 import com.brimstonetower.game.items.Potion;
+import com.brimstonetower.game.mapgeneration.DungeonGenerator;
+import com.brimstonetower.game.mapgeneration.DungeonMap;
 import com.brimstonetower.game.mapgeneration.Tile;
 
 public class Player extends GameCharacter
 {
-    private Texture _texture;
-    private final String _texturePath = "data/player.png";
     private static int _startHp = 30;
     private static int _startStr = 2;
     private int _lanternStrength = 3;
@@ -37,9 +39,9 @@ public class Player extends GameCharacter
 
     public Player(String name)
     {
-        super(name, _startStr, 5, _startHp);
-        _texture = new Texture(Gdx.files.internal(_texturePath));
+        super(name, _startStr, 5, _startHp, AssetManager.getTextureRegion("player", "player", DungeonMap.TileSize, DungeonMap.TileSize));
         super.equip(ItemManager.getWeapon(0, 0));//Player starts with sword
+        _texture.flip(false, true);
         _equippedWeapon.identify();
     }
 
@@ -104,10 +106,6 @@ public class Player extends GameCharacter
         tile.setLight(Tile.LightAmount.Light, _lanternStrength, _lanternStrength);
     }
 
-    public void draw(SpriteBatch batch)
-    {
-        batch.draw(_texture, _position.x, _position.y, _texture.getWidth(), _texture.getHeight(), 0, 0, _texture.getWidth(), _texture.getHeight(), false, true);
-    }
 
     @Override
     public void damage(int damage)

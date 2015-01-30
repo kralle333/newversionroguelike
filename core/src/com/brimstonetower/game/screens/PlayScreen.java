@@ -1,8 +1,6 @@
 package com.brimstonetower.game.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -26,7 +24,7 @@ import com.brimstonetower.game.helpers.*;
 
 import java.util.ArrayList;
 
-public class PlayScreen implements Screen, GestureDetector.GestureListener
+public class PlayScreen implements Screen, GestureDetector.GestureListener, InputProcessor
 {
     private final OrthographicCamera mainCamera;
     private final OrthographicCamera guiCamera;
@@ -48,7 +46,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
     private Button _openInventoryButton;
     private Button _searchFloorButton;
     private SelectedItemWindow _selectedItemWindow;
-    private Window _playerInfoWindowFrame;
+    private PlayerInfoWindowFrame _playerInfoWindowFrame;
     private Window _gameOverWindow;
     private Window _goToMainMenuPrompt;
 
@@ -81,25 +79,26 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
 
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-
         _font = AssetManager.getFont("description");
-        Gdx.input.setInputProcessor(new GestureDetector(this));
         initializeGuiElements((int) w, (int) h);
+
+        InputMultiplexer im = new InputMultiplexer();
+        GestureDetector gd = new GestureDetector(this);
+        im.addProcessor(gd);
+        im.addProcessor(this);
+        Gdx.input.setInputProcessor(im);
+
         createNewDungeon();
     }
-
     private void initializeGuiElements(int width, int height)
     {
         float buttonWidth = (height / 5);
         float buttonHeight = (height / 5);
-        GameConsole.setup(4, (int) (height - buttonHeight));
-        _openInventoryButton = new Button(width - buttonWidth, height - buttonHeight, buttonWidth, buttonHeight, "Inventory", new Color(0.6f, 0.2f, 0, 1));
-        _waitActionButton = new Button(_openInventoryButton.getX() - buttonWidth - 16, height - buttonHeight, buttonWidth, buttonHeight, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
-        _searchFloorButton = new Button(_waitActionButton.getX() - buttonWidth - 16, height - buttonHeight, buttonWidth, buttonHeight, "Search", new Color(0, 0.6f, 0.2f, 1));
-        _playerInfoWindowFrame = new Window(2, 2, width - 4, height / 10 - 4, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
+
+        _playerInfoWindowFrame = new PlayerInfoWindowFrame(2, 2, width - 4, (int)(_font.getBounds("Sample").height*2.5f), new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
         _playerInfoWindowFrame.show();
 
-        _inventory = new Inventory(width - (2 * height / 3) - 4, height - (2 * height / 3) - (height / 5) - 4, 2 * height / 3, 2 * height / 3, Color.GRAY, 2, Color.BLUE);
+        _inventory = new Inventory(width/2 - (2 * height / 3)/2, height - (2 * height / 3) - (height / 5) - 4, 2 * height / 3, 2 * height / 3, Color.GRAY, 2, Color.BLUE);
         _selectedItemWindow = new SelectedItemWindow(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2, Color.GRAY, 2, Color.GRAY);
 
         _gameOverWindow = new Window(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2, Color.GRAY, 2, Color.BLUE);
@@ -113,6 +112,22 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         _goToMainMenuPrompt.addButton("Cancel", 0, 0, 0.33f, 0.2f, Color.BLUE);
         _goToMainMenuPrompt.addButton("Go to main menu", 0, 0, 0.33f, 0.2f, Color.RED);
         _goToMainMenuPrompt.arrangeButtons(0.1f, 0.7f, 0.1f, 0, 2);
+        if(width<height)
+        {
+            GameConsole.setup(4, (int) (height - Gdx.graphics.getHeight() / 8),Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8);
+            _waitActionButton = new Button(width/2-buttonWidth/2, GameConsole.getPosition().y- (buttonHeight/2)*1.1f, buttonWidth, buttonHeight/2, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
+            _openInventoryButton = new Button(_waitActionButton.getX()+buttonWidth, GameConsole.getPosition().y- (buttonHeight/2)*1.1f, buttonWidth, buttonHeight/2, "Inventory", new Color(0.6f, 0.2f, 0, 1));
+            _searchFloorButton = new Button(_waitActionButton.getX()-buttonWidth, GameConsole.getPosition().y- (buttonHeight/2)*1.1f, buttonWidth, buttonHeight/2, "Search", new Color(0, 0.6f, 0.2f, 1));
+            _inventory.hideEquippedItems();
+        }
+        else
+        {
+            GameConsole.setup(4, (int) (height - buttonHeight),Gdx.graphics.getWidth()*5/8, Gdx.graphics.getHeight() / 5);
+            _openInventoryButton = new Button(width - buttonWidth, height - buttonHeight, buttonWidth, buttonHeight, "Inventory", new Color(0.6f, 0.2f, 0, 1));
+            _waitActionButton = new Button(_openInventoryButton.getX() - (buttonWidth*1.1f), height - buttonHeight, buttonWidth, buttonHeight, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
+            _searchFloorButton = new Button(_waitActionButton.getX() - (buttonWidth*1.1f), height - buttonHeight, buttonWidth, buttonHeight, "Search", new Color(0, 0.6f, 0.2f, 1));
+            _inventory.showEquippedItems();
+        }
     }
 
 
@@ -144,7 +159,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
     {
         batch.setProjectionMatrix(guiCamera.combined);
         shapeRenderer.setProjectionMatrix(guiCamera.combined);
-        _playerInfoWindowFrame.draw(batch, shapeRenderer);
         _openInventoryButton.draw(batch, shapeRenderer);
         _waitActionButton.draw(batch, shapeRenderer);
         _searchFloorButton.draw(batch, shapeRenderer);
@@ -157,19 +171,10 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         {
             _gameOverWindow.draw(batch, shapeRenderer);
         }
-        final Vector2 namePos = new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
-        final Vector2 levelPos = new Vector2(namePos.x,namePos.y*2+_font.getBounds("Height").height);
-        final Vector2 hpPos = new Vector2(levelPos.x+_font.getBounds("Lvl: 100     ").width,levelPos.y);
-        final Vector2 strPos = new Vector2(hpPos.x+_font.getBounds("Hp: 1000/1000     ").width, levelPos.y);
-        final Vector2 expPos = new Vector2(strPos.x+_font.getBounds("Str: 100/100     ").width,levelPos.y);
+
 
         batch.begin();
-        _font.draw(batch, "Name: " + _player.getName(), namePos.x, namePos.y);
-        _font.draw(batch, "Lvl: "+_player.getLevel(),levelPos.x,levelPos.y);
-        _font.draw(batch, "Hp: " + _player.getHitpoints() + "/" + _player.getMaxHitPoints(),hpPos.x, hpPos.y);
-        _font.draw(batch, "Str: " + _player.getCurrentStr() + "/" + _player.getMaxStr(), strPos.x,strPos.y);
-        _font.draw(batch, "Exp: " + _player.getExperience() + "/" + _player.getExperienceToNextLevel(),expPos.x, expPos.y);
-        _font.draw(batch, "Floor: " + _depth, Gdx.graphics.getWidth()/2, 10);
+        _playerInfoWindowFrame.draw(batch,shapeRenderer,_player,_depth);
         if (_currentScreenState == ScreenState.GameOver)
         {
             _font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2 - 40, Gdx.graphics.getHeight() / 4 + 10);
@@ -205,8 +210,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         _currentDungeonMap = DungeonGenerator.GenerateCompleteDungeon(_depth);
         _currentDungeonMap.addPlayer(_player);
         _gameStateUpdater.setGameState(_currentDungeonMap.getMonsters(), _player, _inventory, _currentDungeonMap, _currentDungeonMap.getTraps());
-        mainCamera.position.x = _player.getPosition().x;
-        mainCamera.position.y = _player.getPosition().y;
     }
 
     private void restartGame()
@@ -225,6 +228,12 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
         if (_currentScreenState == ScreenState.Moving)
         {
             _gameStateUpdater.updateGameState();
+            if(_player.isMoving())
+            {
+                mainCamera.position.x = _player.getPosition().x;
+                mainCamera.position.y = _player.getPosition().y;
+            }
+
         }
         else if (_currentScreenState == ScreenState.ShowingAnimation)
         {
@@ -244,6 +253,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
             }
         }
 
+        //Keyboard controls
         if (Gdx.input.isKeyPressed(Input.Keys.BACK) || Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
         {
             if (_player.isMoving())
@@ -253,6 +263,53 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
             _goToMainMenuPrompt.show();
         }
     }
+
+    @Override
+    public boolean keyDown(int keycode)
+    {
+        Tile newTile = null;
+        switch (keycode)
+        {
+            case Input.Keys.LEFT:
+            case Input.Keys.A:
+                newTile = _currentDungeonMap.getTouchedTile((int)(_player.getCurrentTile().getTilePosition().x-1),(int)(_player.getCurrentTile().getTilePosition().y));
+                break;
+            case Input.Keys.UP:
+            case Input.Keys.W:
+                newTile = _currentDungeonMap.getTouchedTile((int)(_player.getCurrentTile().getTilePosition().x),(int)(_player.getCurrentTile().getTilePosition().y-1));
+                break;
+            case Input.Keys.RIGHT:
+            case Input.Keys.D:
+                newTile = _currentDungeonMap.getTouchedTile((int)(_player.getCurrentTile().getTilePosition().x+1),(int)(_player.getCurrentTile().getTilePosition().y));
+                break;
+            case Input.Keys.DOWN:
+            case Input.Keys.S:
+                newTile = _currentDungeonMap.getTouchedTile((int)(_player.getCurrentTile().getTilePosition().x),(int)(_player.getCurrentTile().getTilePosition().y+1));
+                break;
+            case Input.Keys.SPACE:
+                if(_player.getCurrentTile().containsItem())
+                {
+                    _playerAction.setAction(_player, GameAction.Type.PickUp,_player.getCurrentTile(),null);
+                    _player.clearQueueAndSetAction(_playerAction);
+                    return true;
+                }
+        }
+        if(newTile != null && newTile.isWalkable())
+        {
+            if(newTile.getCharacter() != null)
+            {
+                _player.setAttackAction(newTile.getCharacter());
+            }
+            else
+            {
+                _playerAction.setAction(_player, GameAction.Type.Move,newTile,null);
+                ArrayList<Tile> pathToTile = PathFinder.getPath(_player.getCurrentTile(),newTile);
+                _player.setMovementActions(pathToTile);
+            }
+        }
+        return true;
+    }
+
 
     //Tap handling
     @Override
@@ -396,7 +453,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
                     }
                 }
                 else if (touchedTile.getCharacter() != null && touchedTile.isAdjacent(_player.getCurrentTile()))
-                {
+                   {
                     _player.setAttackAction(touchedTile.getCharacter());
                 }
                 else
@@ -566,5 +623,46 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener
     }
 
 
+    @Override
+    public boolean keyUp(int keycode)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount)
+    {
+        return false;
+    }
 }
 

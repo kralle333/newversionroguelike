@@ -139,7 +139,6 @@ public class Button
                 shapeRenderer.rect(_x, _y, _width, _height);
                 shapeRenderer.end();
                 Gdx.gl.glDisable(GL20.GL_BLEND);
-
                 batch.begin();
                 _font.draw(batch, _text, _x + (_width / 2) - (_font.getBounds(_text).width / 2), _y + (_height / 2) - (_font.getBounds(_text).height / 2));
                 batch.end();

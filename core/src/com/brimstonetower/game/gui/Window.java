@@ -15,20 +15,15 @@ import java.util.HashMap;
 public class Window
 {
     protected Rectangle _windowRectangle;
+    public int getWidth(){return (int)_windowRectangle.getWidth();}
+    public int getHeight(){return (int)_windowRectangle.getHeight();}
     protected Color _windowColor;
 
     protected int _frameSize;
     protected Color _frameColor;
 
-    public enum ButtonStyle
-    {
-        FreeForm, Sorted
-    }
-
-    private ButtonStyle _buttonStyle;
     private HashMap<String, Button> _nameButtonMap = new HashMap<String, Button>();
     protected boolean _isOpen;
-
     public boolean isOpen()
     {
         return _isOpen;
@@ -38,11 +33,11 @@ public class Window
     {
         _isOpen = true;
     }
-
     public void hide()
     {
         _isOpen = false;
     }
+
 
 
     public Window(int x, int y, int width, int height, Color color, int frameSize, Color frameColor)

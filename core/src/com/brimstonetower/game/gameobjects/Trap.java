@@ -67,7 +67,7 @@ public class Trap
         _statusEffect = gasEffect;
         _effectTime = gasTimer;
         _isGas = true;
-        _texture = new Texture(Gdx.files.internal("data/trap.png"));
+        _texture = new Texture(Gdx.files.internal("art/trap.png"));
         if (gasEffect == GameCharacter.StatusEffect.Paralysed)
         {
             _color = Color.YELLOW;
