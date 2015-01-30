@@ -15,6 +15,8 @@ public class GameConsole
     private static String[] messages = new String[100000];
     private static Vector2 _position;
     public static Vector2 getPosition(){return _position;}
+    public static int getWidth(){return _frame.getWidth();}
+    public static int getHeight(){return _frame.getHeight();}
     private static int _linesToShow;
     private static int drawIndex;
     private static int messagesAdded = 0;

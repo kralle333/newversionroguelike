@@ -288,7 +288,7 @@ public class Tile
                 break;
         }
         batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
-        if (_lightAmount == LightAmount.Light)
+        if (_lightAmount != LightAmount.Non)
         {
             for (Item item : _items)
             {

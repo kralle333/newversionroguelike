@@ -20,45 +20,37 @@ public class Item
     }
 
     protected boolean _isIdentified = false;
-
     public boolean isIdentified()
     {
         return _isIdentified;
     }
 
     protected TextureRegion _textureRegion;
-
     public TextureRegion getTextureRegion()
     {
         return _textureRegion;
     }
 
     private boolean _hasCurse;
-
     public boolean hasCurse()
     {
         return _hasCurse;
     }
-
     public void removeCurse()
     {
         _hasCurse = false;
     }
-
     protected boolean _isCurseKnown = false;
-
     public void showCurse()
     {
         _isCurseKnown = true;
     }
-
     public boolean isCurseKnown()
     {
         return _isCurseKnown;
     }
 
     private boolean _stackable = false;
-
     public boolean isStackable()
     {
         return _stackable;
