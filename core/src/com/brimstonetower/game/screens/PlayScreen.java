@@ -35,6 +35,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private static int _depth = 1;
     private DungeonMap _currentDungeonMap;
     private Player _player;
+    private Tile _previousPlayerPosition;
     private String playerName;
     private GameAction _playerAction;
     private final GameStateUpdater _gameStateUpdater = new GameStateUpdater();
@@ -228,12 +229,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         if (_currentScreenState == ScreenState.Moving)
         {
             _gameStateUpdater.updateGameState();
-            if(_player.isMoving())
-            {
-                mainCamera.position.x = _player.getPosition().x;
-                mainCamera.position.y = _player.getPosition().y;
-            }
-
         }
         else if (_currentScreenState == ScreenState.ShowingAnimation)
         {
@@ -242,6 +237,12 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             {
                 _currentScreenState = ScreenState.Moving;
             }
+        }
+        if(_previousPlayerPosition!=_player.getCurrentTile())
+        {
+            _previousPlayerPosition = _player.getCurrentTile();
+            mainCamera.position.x = _player.getPosition().x+(DungeonMap.TileSize/2);
+            mainCamera.position.y = _player.getPosition().y+(DungeonMap.TileSize/2)+GameConsole.getHeight()-_playerInfoWindowFrame.getHeight();
         }
         if (_player.isDead())
         {
@@ -536,7 +537,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     @Override
     public boolean pan(float x, float y, float dx, float dy)
     {
-        mainCamera.translate(-dx, -dy);
+        mainCamera.translate(-dx/mainCamera.zoom, -dy/mainCamera.zoom);
         mainCamera.update();
         return true;
     }
@@ -559,12 +560,13 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         shapeRenderer.dispose();
         AssetManager.disposeAll();
     }
-    //NOT CURRENTLY USED
 
     @Override
     public void resize(int w, int h)
     {
+        initializeGuiElements(w,h);
     }
+    //NOT CURRENTLY USED
 
     @Override
     public boolean touchDown(float v, float v2, int i, int i2)
