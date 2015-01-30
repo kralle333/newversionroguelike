@@ -18,7 +18,6 @@ public class Monster extends GameCharacter
     }
 
     private Nature _nature;
-    private TextureRegion _textureRegion;
     private int _experienceGiven;
     private float _pursueDistance = 4;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
@@ -32,10 +31,9 @@ public class Monster extends GameCharacter
 
     public Monster(String name, int str, int hp, int def, int dodgeChance, int experienceGiven, Nature nature, TextureRegion textureRegion)
     {
-        super(name, str, dodgeChance, hp);
+        super(name, str, dodgeChance, hp,textureRegion);
         nextAction = new GameAction();
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
-        _textureRegion = textureRegion;
         _experienceGiven = experienceGiven;
         _nature = nature;
     }
@@ -95,11 +93,12 @@ public class Monster extends GameCharacter
         return nextAction;
     }
 
+    @Override
     public void draw(SpriteBatch batch)
     {
         if (!_isDead && currentTile.getLightAmount() == Tile.LightAmount.Light)
         {
-            batch.draw(_textureRegion, _position.x, _position.y);
+            super.draw(batch);
         }
     }
 

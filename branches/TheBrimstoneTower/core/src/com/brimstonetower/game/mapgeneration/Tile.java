@@ -20,9 +20,9 @@ public class Tile
     //Tile attributes
     public enum Types
     {
-        Wall, Floor, Door, StairCase, WallLight, FloorLight, Empty
+        Wall, Floor, Door, StairCase, Empty
     }
-
+    public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door;}
     public enum LightAmount
     {
         Non, Shadow, Light
@@ -80,7 +80,6 @@ public class Tile
     private ArrayList<Tile> nonWalkableNeighbours = new ArrayList<Tile>();
 
     //Items
-    //private Item _item;
     private ArrayList<Item> _items = new ArrayList<Item>();
 
     public ArrayList<Item> getItems()

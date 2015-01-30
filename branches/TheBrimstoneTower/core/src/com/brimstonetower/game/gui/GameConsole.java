@@ -14,21 +14,23 @@ public class GameConsole
 {
     private static String[] messages = new String[100000];
     private static Vector2 _position;
-    private static final int _linesToShow = 4;
-    private static int drawIndex = -_linesToShow;
+    public static Vector2 getPosition(){return _position;}
+    private static int _linesToShow;
+    private static int drawIndex;
     private static int messagesAdded = 0;
     private static BitmapFont _font;
     private static Window _frame;
     private static Vector2 _textOffset;
 
-    public static void setup(int x, int y)
+    public static void setup(int x, int y, int width, int height)
     {
         _position = new Vector2(x, y);
         _font = AssetManager.getFont("description");
-        _font.setColor(Color.WHITE);
-        _frame = new Window(x, y, Gdx.graphics.getWidth()*5/8, Gdx.graphics.getHeight() / 5, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
+        _frame = new Window(x, y, width,height, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
         _frame.show();
         _textOffset=new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
+        _linesToShow = (int)((height)/((_textOffset.y*2f)+_font.getBounds("Test console message").height));
+        drawIndex = -_linesToShow;
     }
 
     public static void reset()
@@ -40,7 +42,7 @@ public class GameConsole
 
     public static void addMessage(String message)
     {
-        messages[messagesAdded] = "[" + GameStateUpdater.getTurn() + "] " + message;
+        messages[messagesAdded] = "[" + GameStateUpdater.getTurn() + "]" + message;
         messagesAdded++;
         drawIndex++;
     }

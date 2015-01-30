@@ -37,6 +37,16 @@ public class Inventory extends Window
         return toReturn;
     }
 
+    private boolean _showEquippedItems = false;
+    public void showEquippedItems()
+    {
+        _showEquippedItems=true;
+    }
+    public void hideEquippedItems()
+    {
+        _showEquippedItems=false;
+    }
+
     private Player _player;
     private final int maxItems = 16;
     private final BitmapFont _descriptionFont;
@@ -243,17 +253,20 @@ public class Inventory extends Window
             }
             batch.end();
         }
-        batch.begin();
-        float width = Gdx.graphics.getWidth();
-        float height = Gdx.graphics.getHeight();
-        if (_equippedWeapon != null)
+        if(_showEquippedItems)
         {
-            _equippedWeapon.draw(batch, width - (height / 4) - 4, 4,height/400);
+            batch.begin();
+            float width = Gdx.graphics.getWidth();
+            float height = Gdx.graphics.getHeight();
+            if (_equippedWeapon != null)
+            {
+                _equippedWeapon.draw(batch, width - (height / 4) - 4, 4, height / 400);
+            }
+            if (_equippedArmor != null)
+            {
+                _equippedArmor.draw(batch, width - (height / 8) - 4, 4, height / 400);
+            }
+            batch.end();
         }
-        if (_equippedArmor != null)
-        {
-            _equippedArmor.draw(batch, width - (height / 8) - 4, 4, height/400);
-        }
-        batch.end();
     }
 }

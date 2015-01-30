@@ -20,53 +20,34 @@ public class AssetManager
     {
         if (!_isInitialized)
         {
-            _assets.put("player", new Texture(Gdx.files.internal("data/player.png")));
-            _assets.put("monster", new Texture(Gdx.files.internal("data/monsterTileSet.png")));
-            _assets.put("tile", new Texture(Gdx.files.internal("data/tileset.png")));
-            _assets.put("armor", new Texture(Gdx.files.internal("data/armorTileSet.png")));
-            _assets.put("weapon", new Texture(Gdx.files.internal("data/weaponTileSet.png")));
-            _assets.put("potion", new Texture(Gdx.files.internal("data/potionTileSet.png")));
-            _assets.put("scroll", new Texture(Gdx.files.internal("data/scrollTileSet.png")));
-            _assets.put("gas", new Texture(Gdx.files.internal("data/gasCloud.png")));
-            _assets.put("trap", new Texture(Gdx.files.internal("data/trap.png")));
-            for (Texture t : _assets.values())
-            {
-                t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-            }
+            initializeTextures();
             initializeTileSetCoordinateMap();
-
-            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/DungeonFont.TTF"));
-            FreeTypeFontGenerator.FreeTypeFontParameter parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
-            parameters.flip = true;
-            parameters.characters = FreeTypeFontGenerator.DEFAULT_CHARS;
-            parameters.minFilter= Texture.TextureFilter.Nearest;
-            parameters.magFilter= Texture.TextureFilter.Nearest;
-            int maxSize = 200;
-            BitmapFont font;
-            int widthToFit = Gdx.graphics.getWidth()*5/8;
-            int heightToFit = Gdx.graphics.getHeight()/20;
-            String testString = "Playerblabla landed a critical hit on the target! Was dealt 304 damage.";
-
-            do
-            {
-                font=generator.generateFont(parameters);
-                BitmapFont.TextBounds textDimensions = font.getBounds(testString);
-                if(textDimensions.width>widthToFit || textDimensions.height>heightToFit)
-                {
-                    break;
-                }
-                parameters.size+=2;
-            }while(parameters.size<maxSize);
-            font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            _fonts.put("description",font);
-            generator.dispose();
-
+            initializeFonts();
         }
     }
 
+    private static void initializeTextures()
+    {
+        _assets.put("player", new Texture(Gdx.files.internal("art/player.png")));
+        _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
+        _assets.put("tile", new Texture(Gdx.files.internal("art/tileset.png")));
+        _assets.put("armor", new Texture(Gdx.files.internal("art/armorTileSet.png")));
+        _assets.put("weapon", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
+        _assets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
+        _assets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
+        _assets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
+        _assets.put("trap", new Texture(Gdx.files.internal("art/trap.png")));
+        for (Texture t : _assets.values())
+        {
+            t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        }
+    }
 
     private static void initializeTileSetCoordinateMap()
     {
+        //Player
+        tileSetCoordinateMap.put("player",new TileSetCoordinate(0,0));
+
         //Floor tiles
         tileSetCoordinateMap.put("floor1", new TileSetCoordinate(3, 3));
         tileSetCoordinateMap.put("floor2", new TileSetCoordinate(4, 3));
@@ -108,6 +89,37 @@ public class AssetManager
         tileSetCoordinateMap.put("lvl1Gas", new TileSetCoordinate(0, 0));
         tileSetCoordinateMap.put("lvl2Gas", new TileSetCoordinate(1, 0));
         tileSetCoordinateMap.put("lvl3Gas", new TileSetCoordinate(2, 0));
+    }
+
+    private static void initializeFonts()
+    {
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/mono.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameters.flip = true;
+        parameters.characters = FreeTypeFontGenerator.DEFAULT_CHARS;
+        parameters.minFilter= Texture.TextureFilter.Nearest;
+        parameters.magFilter= Texture.TextureFilter.Nearest;
+        int maxSize = 200;
+        BitmapFont font;
+        int widthToFit = Gdx.graphics.getWidth()*5/8;
+        int heightToFit = Gdx.graphics.getHeight()/20;
+        String testString = "Playerblabla landed a critical hit on the target! Was dealt 304 damage.";
+
+        do
+        {
+            font=generator.generateFont(parameters);
+            BitmapFont.TextBounds textDimensions = font.getBounds(testString);
+            if(textDimensions.width>widthToFit || textDimensions.height>heightToFit)
+            {
+                break;
+            }
+            parameters.size+=2;
+        }while(parameters.size<maxSize);
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        _fonts.put("description",font);
+        generator.dispose();
+
     }
 
     public static BitmapFont getFont(String string)

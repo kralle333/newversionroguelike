@@ -185,6 +185,13 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="Kristian">
+      <words>
+        <w>poller</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TheBrimstoneTower.iml" filepath="$PROJECT_DIR$/TheBrimstoneTower.iml" />

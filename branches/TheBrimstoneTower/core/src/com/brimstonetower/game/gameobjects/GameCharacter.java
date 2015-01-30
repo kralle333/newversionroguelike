@@ -1,8 +1,11 @@
 package com.brimstonetower.game.gameobjects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gui.GameConsole;
+import com.brimstonetower.game.helpers.AssetManager;
 import com.brimstonetower.game.helpers.GameAction;
 import com.brimstonetower.game.items.Armor;
 import com.brimstonetower.game.items.Item;
@@ -15,6 +18,13 @@ import java.util.ArrayList;
 
 public class GameCharacter
 {
+
+    private String _name;
+    public String getName()
+    {
+        return _name;
+    }
+
     protected float maxHp;
     protected float currentHp;
 
@@ -22,7 +32,6 @@ public class GameCharacter
     {
         return (int) maxHp;
     }
-
     public int getHitpoints()
     {
         return (int) currentHp;
@@ -35,21 +44,18 @@ public class GameCharacter
     {
         return (int) maxStr;
     }
-
     public int getCurrentStr()
     {
         return (int) currentStr;
     }
 
     protected int _dodgeChance;
-
     public int getDodgeChance()
     {
         return _dodgeChance;
     }
 
     protected int level = 1;
-
     public int getLevel()
     {
         return level;
@@ -57,12 +63,10 @@ public class GameCharacter
 
     protected int experience = 0;
     protected int experienceToNextLevel = 10;
-
     public int getExperience()
     {
         return experience;
     }
-
     public int getExperienceToNextLevel()
     {
         return experienceToNextLevel;
@@ -74,54 +78,45 @@ public class GameCharacter
     }
 
     private StatusEffect _currentStatusEffect;
-
     public StatusEffect getCurrentStatusEffect()
     {
         return _currentStatusEffect;
     }
-
     private int _statusEffectTimer;
 
     protected boolean _isDead = false;
-
     public boolean isDead()
     {
         return _isDead;
     }
 
+    //Equipment
     protected Armor _equippedArmor;
-
     public Armor getEquippedArmor()
     {
         return _equippedArmor;
     }
-
     public int getArmorDefense()
     {
         return _equippedArmor == null ? 0 : _equippedArmor.getIdentifiedDefense();
     }
-
     protected Weapon _equippedWeapon;
-
     public Weapon getEquippedWeapon()
     {
         return _equippedWeapon;
     }
-
     public int getWeaponAttack()
     {
         return _equippedWeapon == null ? 0 : _equippedWeapon.getIdentifiedMaxDamage();
     }
 
     protected Vector2 _position;
-
     public Vector2 getPosition()
     {
         return _position;
     }
 
     protected Tile currentTile;
-
     public Tile getCurrentTile()
     {
         return currentTile;
@@ -140,22 +135,17 @@ public class GameCharacter
     {
         nextAction.setAsEmpty();
     }
-
     protected GameAction nextAction = new GameAction();
     protected ArrayList<GameAction> movementQueue = new ArrayList<GameAction>();
-    private String _name;
-
-    public String getName()
-    {
-        return _name;
-    }
 
     public boolean isMoving()
     {
         return movementQueue.size() > 0 && movementQueue.get(0) != null && movementQueue.get(0).getType() == GameAction.Type.Move;
     }
 
-    public GameCharacter(String name, int str, int dodgeChance, int hp)
+    protected TextureRegion _texture;
+
+    public GameCharacter(String name, int str, int dodgeChance, int hp,TextureRegion texture)
     {
         _name = name;
         currentStr = str;
@@ -163,7 +153,7 @@ public class GameCharacter
         currentHp = hp;
         maxHp = hp;
         _dodgeChance = dodgeChance;
-
+        _texture= texture;
         nextAction.setAction(this, GameAction.Type.Empty, null, null);
     }
 
@@ -363,6 +353,11 @@ public class GameCharacter
         _isDead = true;
         currentTile.removeCharacter();
         //Inherit
+    }
+
+    public void draw(SpriteBatch batch)
+    {
+        batch.draw(_texture, _position.x, _position.y);
     }
 
 
