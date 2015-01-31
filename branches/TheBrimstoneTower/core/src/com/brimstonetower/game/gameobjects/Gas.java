@@ -41,26 +41,8 @@ public class Gas
     {
         _effect = effect;
         _gasDensityMap.put(tile, 10);
-        _gasTextures.put(tile, AssetManager.getTextureRegion("gas", getGasDensityTexture(10), 32, 32));
+        _gasTextures.put(tile, AssetManager.getTextureRegion("gas", getGasDensityKey( 10), 32, 32));
         _color = effect.getColor();
-    }
-    public Gas(Tile tile, GameCharacter.StatusEffect effect, int density)
-    {
-        _gasDensityMap.put(tile, density);
-        _gasTextures.put(tile, AssetManager.getTextureRegion("gas", getGasDensityTexture(density), 32, 32));
-
-        _statusEffect = effect;
-        switch (_statusEffect)
-        {
-            case Poisoned:
-                _color = new Color(0.87f, 0, 1f, 1);
-                break;
-            case Paralysed:
-                _color = new Color(0.9f, 0.9f, 0, 1);
-                break;
-            default:
-                Gdx.app.log("Gas", "Unknown cloud type! " + _statusEffect);
-        }
     }
 
     public void update()
@@ -94,7 +76,7 @@ public class Gas
                     }
                     else
                     {
-                        _gasTextures.put(gasTile, AssetManager.getTextureRegion("gas", getGasDensityTexture(_gasDensityMap.get(gasTile)), 32, 32));
+                        _gasTextures.put(gasTile, AssetManager.getTextureRegion("gas", getGasDensityKey( _gasDensityMap.get(gasTile)), 32, 32));
                     }
                 }
             }
@@ -102,7 +84,7 @@ public class Gas
         for (Map.Entry<Tile, Integer> entry : _toAdd.entrySet())
         {
             _gasDensityMap.put(entry.getKey(), entry.getValue());
-            _gasTextures.put(entry.getKey(), AssetManager.getTextureRegion("gas", getGasDensityTexture(entry.getValue()), 32, 32));
+            _gasTextures.put(entry.getKey(), AssetManager.getTextureRegion("gas", getGasDensityKey( entry.getValue()), 32, 32));
         }
         _toAdd.clear();
         for (Tile toRemove : _tilesToRemove)
@@ -114,19 +96,19 @@ public class Gas
         _tilesToRemove.clear();
     }
 
-    private TileSetCoordinate getGasDensityTexture(int density)
+    private String getGasDensityKey(int density)
     {
         if (density >= 1 && density <= 3)
         {
-            return AssetManager.getTileSetPosition("lvl1Gas");
+            return "type"+RandomGen.getRandomInt(1, 4)+".1Gas";
         }
         else if (density >= 4 && density <= 8)
         {
-            return AssetManager.getTileSetPosition("lvl2Gas");
+            return "type"+RandomGen.getRandomInt(1, 4)+".2Gas";
         }
         else
         {
-            return AssetManager.getTileSetPosition("lvl3Gas");
+            return "type"+RandomGen.getRandomInt(1, 4)+".3Gas";
         }
     }
 

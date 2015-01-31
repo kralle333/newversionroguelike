@@ -207,10 +207,23 @@ public class GameStateUpdater
                 }
             }
             _turn++;
+
+            //Update clouds and remove ones that are not yet active
+            final ArrayList<Gas> _gassesToRemove = new ArrayList<Gas>();
             for (Gas gas : _gasClouds)
             {
                 gas.update();
+                if(gas.hasDisappeared())
+                {
+                    _gassesToRemove.add(gas);
+                }
             }
+            for(Gas gas : _gassesToRemove)
+            {
+                _gasClouds.remove(gas);
+            }
+
+            //Apply effects
             _player.updateEffects();
             for(Monster monster :_monsters)
             {
@@ -428,22 +441,18 @@ public class GameStateUpdater
 
     private void usePotion(Potion potion, GameCharacter target, Tile tile)
     {
-
-        if (target != null)
+        if(potion.getEffect().getType() == Effect.Type.Gas)
         {
-            if(potion.getEffect().getType() == Effect.Type.Gas)
+            GameConsole.addMessage("A "+potion.getColor()+" gas spreads from the bottle");
+            _gasClouds.add(new Gas(tile,potion.getEffect()));
+        }
+        else if(potion.getEffect().getType() == Effect.Type.Instant)
+        {
+            if(tile == null)
             {
-                GameConsole.addMessage("A "+potion.getColor()+" gas spreads from the bottle");
-                _gasClouds.add(new Gas(tile,potion.getEffect()));
+                GameConsole.addMessage(target.getName()+" drank the "+potion.getColor()+" potion");
             }
-            else if(potion.getEffect().getType() == Effect.Type.Instant)
-            {
-                if(tile == null)
-                {
-                    GameConsole.addMessage(target.getName()+" drank the "+potion.getColor()+" potion");
-                }
-                target.giveEffect(potion.getEffect());
-            }
+            target.giveEffect(potion.getEffect());
         }
         else
         {

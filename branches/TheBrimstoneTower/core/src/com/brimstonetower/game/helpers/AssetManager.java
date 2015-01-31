@@ -86,9 +86,18 @@ public class AssetManager
         tileSetCoordinateMap.put("chest", new TileSetCoordinate(2, 4));
 
         //Gas levels
-        tileSetCoordinateMap.put("lvl1Gas", new TileSetCoordinate(0, 0));
-        tileSetCoordinateMap.put("lvl2Gas", new TileSetCoordinate(1, 0));
-        tileSetCoordinateMap.put("lvl3Gas", new TileSetCoordinate(2, 0));
+        tileSetCoordinateMap.put("type1.1Gas", new TileSetCoordinate(0, 0));
+        tileSetCoordinateMap.put("type1.2Gas", new TileSetCoordinate(1, 0));
+        tileSetCoordinateMap.put("type1.3Gas", new TileSetCoordinate(2, 0));
+        tileSetCoordinateMap.put("type2.1Gas", new TileSetCoordinate(0, 1));
+        tileSetCoordinateMap.put("type2.2Gas", new TileSetCoordinate(1, 1));
+        tileSetCoordinateMap.put("type2.3Gas", new TileSetCoordinate(2, 1));
+        tileSetCoordinateMap.put("type3.1Gas", new TileSetCoordinate(0, 2));
+        tileSetCoordinateMap.put("type3.2Gas", new TileSetCoordinate(1, 2));
+        tileSetCoordinateMap.put("type3.3Gas", new TileSetCoordinate(2, 2));
+        tileSetCoordinateMap.put("type4.1Gas", new TileSetCoordinate(0, 3));
+        tileSetCoordinateMap.put("type4.2Gas", new TileSetCoordinate(1, 3));
+        tileSetCoordinateMap.put("type4.3Gas", new TileSetCoordinate(2, 3));
     }
 
     private static void initializeFonts()
