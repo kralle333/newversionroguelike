@@ -18,7 +18,6 @@ import java.util.Map;
 
 public class Gas
 {
-    private GameCharacter.StatusEffect _statusEffect;
     private Effect _effect;
     private Color _color;
     private HashSet<Tile> _previousGasTiles = new HashSet<Tile>();

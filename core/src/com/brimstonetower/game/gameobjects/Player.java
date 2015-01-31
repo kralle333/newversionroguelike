@@ -89,7 +89,7 @@ public class Player extends GameCharacter
     {
         currentTile.setLight(Tile.LightAmount.Shadow, _lanternStrength, _lanternStrength);
         super.moveTo(tile);
-        tile.setLight(Tile.LightAmount.Shadow, _lanternStrength + 2, _lanternStrength + 2);
+        tile.setLight(Tile.LightAmount.Shadow, _lanternStrength*2, _lanternStrength*2);
         tile.setLight(Tile.LightAmount.Light, _lanternStrength, _lanternStrength);
     }
 

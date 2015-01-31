@@ -1,22 +1,66 @@
 package com.brimstonetower.game.helpers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.gui.Inventory;
-import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.items.*;
 import com.brimstonetower.game.mapgeneration.DungeonMap;
 import com.brimstonetower.game.mapgeneration.RandomGen;
 import com.brimstonetower.game.mapgeneration.Tile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class GameStateUpdater
 {
+
+    private class DamageIndicator
+    {
+        public float fallSpeedX;
+        public float fallSpeedY;
+        public Vector2 position;
+        public String textToShow;
+        public Color color;
+        public float secondsActive;
+        public float timeLeft;
+        public boolean isVisible(){return timeLeft>0;}
+
+        public DamageIndicator(float fallSpeedX, float fallSpeedY,Vector2 position, String textToShow, Color color, float secondsActive)
+        {
+            this.textToShow = textToShow;
+            this.fallSpeedX = fallSpeedX;
+            this.fallSpeedY = fallSpeedY;
+            this.position =position;
+            this.color = color;
+            this.secondsActive = secondsActive;
+            this.timeLeft = secondsActive;
+        }
+
+        public void update()
+        {
+            position.x+=fallSpeedX;
+            position.y+=fallSpeedY;
+            timeLeft-=Gdx.app.getGraphics().getDeltaTime();
+        }
+        public void draw(BitmapFont font, SpriteBatch batch)
+        {
+            font.setColor(color.r, color.g, color.b, timeLeft / secondsActive);
+            font.draw(batch, textToShow, (int) position.x, (int) position.y);
+            font.setColor(Color.WHITE);
+        }
+    }
+
     private Player _player;
     private ArrayList<Monster> _monsters;
     private ArrayList<Gas> _gasClouds = new ArrayList<Gas>();
+    private ArrayList<DamageIndicator> _damageIndicators = new ArrayList<DamageIndicator>();
     private ArrayList<Trap> _traps = new ArrayList<Trap>();
     private Inventory _inventory;
     private DungeonMap _playedMap;
@@ -55,12 +99,8 @@ public class GameStateUpdater
     private Tile _targetTile;
     private float _angleToTarget;
 
-    //Hit animation
-
-
     //Select item dialog
     private boolean _selectItemDialog = false;
-
     public boolean isSelectingItemToIdentify()
     {
         return _selectItemDialog;
@@ -213,19 +253,19 @@ public class GameStateUpdater
             for (Gas gas : _gasClouds)
             {
                 gas.update();
-                if(gas.hasDisappeared())
+                if (gas.hasDisappeared())
                 {
                     _gassesToRemove.add(gas);
                 }
             }
-            for(Gas gas : _gassesToRemove)
+            for (Gas gas : _gassesToRemove)
             {
                 _gasClouds.remove(gas);
             }
 
             //Apply effects
             _player.updateEffects();
-            for(Monster monster :_monsters)
+            for (Monster monster : _monsters)
             {
                 monster.updateEffects();
             }
@@ -267,9 +307,9 @@ public class GameStateUpdater
                 _thrownObject = action.getTargetItem();
                 _targetTile = action.getTargetTile();
                 _showingThrowingAnimation = true;
-                _thrownObjectX = action.getOwner().getCurrentTile().getX() * 32;
-                _thrownObjectY = action.getOwner().getCurrentTile().getY() * 32;
-                _angleToTarget = (float) Math.atan2(action.getTargetTile().getY() * 32 - _thrownObjectY, action.getTargetTile().getX() * 32 - _thrownObjectX);
+                _thrownObjectX = action.getOwner().getCurrentTile().getX() * DungeonMap.TileSize;
+                _thrownObjectY = action.getOwner().getCurrentTile().getY() * DungeonMap.TileSize;
+                _angleToTarget = (float) Math.atan2(action.getTargetTile().getY() * DungeonMap.TileSize - _thrownObjectY, action.getTargetTile().getX() * 32 - _thrownObjectX);
                 if (_angleToTarget < 0)
                 {
                     _angleToTarget += 2 * Math.PI;
@@ -312,18 +352,27 @@ public class GameStateUpdater
         GameCharacter defender = action.getTargetCharacter();
         GameCharacter attacker = action.getOwner();
         attacker.attack(defender);
-        if (defender.isDead())
+        Color indicatorColor = Color.MAGENTA;
+
+        if (defender instanceof Monster)
         {
-            if (defender instanceof Monster)
+            indicatorColor = Color.GREEN;
+            if (defender.isDead())
             {
                 _player.retrieveExperience((Monster) (defender));
                 _monsters.remove(defender);
             }
-            else if (defender instanceof Player)
+        }
+        else if (defender instanceof Player)
+        {
+            indicatorColor = Color.RED;
+            if (defender.isDead())
             {
                 _player.setKilledBy(attacker.getName());
             }
         }
+        _damageIndicators.add(new DamageIndicator(0,0.8f,new Vector2(defender.getPosition().x+(DungeonMap.TileSize/2),defender.getPosition().y),String.valueOf(attacker.getDealtDamage()), indicatorColor, 0.5f));
+
     }
 
     private void executeMoveAction(GameAction action)
@@ -335,25 +384,25 @@ public class GameStateUpdater
             Trap trapOnTile = newTile.getTrap();
             if (trapOnTile != null && !trapOnTile.hasBeenActivated())
             {
-                int chanceToBeat =RandomGen.getRandomInt(1,100);
-                if(chanceToBeat>=5)
+                int chanceToBeat = RandomGen.getRandomInt(1, 100);
+                if (chanceToBeat >= 5)
                 {
-                    GameConsole.addMessage(_player.getName()+" spotted a trap");
+                    GameConsole.addMessage(_player.getName() + " spotted a trap");
                     _player.clearNextActions();
                     return;
                 }
                 else
                 {
-                    String trapMessage = _player.getName()+" stepped on a trap ";
+                    String trapMessage = _player.getName() + " stepped on a trap ";
 
-                    chanceToBeat = RandomGen.getRandomInt(0,100);
-                    if(_player.getDodgeRate()>=chanceToBeat)
+                    chanceToBeat = RandomGen.getRandomInt(0, 100);
+                    if (_player.getDodgeRate() >= chanceToBeat)
                     {
-                        trapMessage+=", but didn't activate it";
+                        trapMessage += ", but didn't activate it";
                     }
                     else
                     {
-                        trapMessage+="and activated it";
+                        trapMessage += "and activated it";
                         trapOnTile.activate();
                         if (trapOnTile.hasCreatedGas())
                         {
@@ -441,16 +490,16 @@ public class GameStateUpdater
 
     private void usePotion(Potion potion, GameCharacter target, Tile tile)
     {
-        if(potion.getEffect().getType() == Effect.Type.Gas)
+        if (potion.getEffect().getType() == Effect.Type.Gas)
         {
-            GameConsole.addMessage("A "+potion.getColor()+" gas spreads from the bottle");
-            _gasClouds.add(new Gas(tile,potion.getEffect()));
+            GameConsole.addMessage("A " + potion.getColor() + " gas spreads from the bottle");
+            _gasClouds.add(new Gas(tile, potion.getEffect()));
         }
-        else if(potion.getEffect().getType() == Effect.Type.Instant)
+        else if (potion.getEffect().getType() == Effect.Type.Instant)
         {
-            if(tile == null)
+            if (tile == null)
             {
-                GameConsole.addMessage(target.getName()+" drank the "+potion.getColor()+" potion");
+                GameConsole.addMessage(target.getName() + " drank the " + potion.getColor() + " potion");
             }
             target.giveEffect(potion.getEffect());
         }
@@ -487,6 +536,25 @@ public class GameStateUpdater
         {
             _thrownObject.draw(batch, _thrownObjectX, _thrownObjectY);
         }
+        final ArrayList<DamageIndicator> damageIndicatorsToRemove = new ArrayList<DamageIndicator>();
+        damageIndicatorsToRemove.clear();
+        for (DamageIndicator damageIndicator : _damageIndicators)
+        {
+            damageIndicator.update();
+            if(damageIndicator.isVisible())
+            {
+                damageIndicator.draw(AssetManager.getFont("description"),batch);
+            }
+            else
+            {
+                damageIndicatorsToRemove.add(damageIndicator);
+            }
+        }
+        for(DamageIndicator toRemove : damageIndicatorsToRemove)
+        {
+            _damageIndicators.remove(toRemove);
+        }
+
     }
 
 }

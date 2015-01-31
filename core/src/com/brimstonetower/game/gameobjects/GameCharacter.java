@@ -26,12 +26,11 @@ public class GameCharacter
     }
 
     protected int maxHp;
-    protected int tempMaxHpModifier;
     protected int currentHp;
 
     public int getMaxHitPoints()
     {
-        return maxHp+tempMaxHpModifier;
+        return maxHp;
     }
     public int getHitpoints()
     {
@@ -39,12 +38,11 @@ public class GameCharacter
     }
 
     protected int maxStr;
-    protected int tempMaxStrModifier;
     protected int currentStr;
 
     public int getMaxStr()
     {
-        return maxStr+tempMaxStrModifier;
+        return maxStr;
     }
     public int getCurrentStr()
     {
@@ -52,7 +50,6 @@ public class GameCharacter
     }
 
     protected int dodgeRate;
-    protected int tempDodgeRateModifier = 0;
     public int getDodgeRate()
     {
         return dodgeRate;
@@ -80,18 +77,6 @@ public class GameCharacter
     }
 
     private ArrayList<Effect> _currentEffects = new ArrayList<Effect>();
-
-    public enum StatusEffect
-    {
-        Healthy, Poisoned, Paralysed
-    }
-
-    private StatusEffect _currentStatusEffect;
-    public StatusEffect getCurrentStatusEffect()
-    {
-        return _currentStatusEffect;
-    }
-    private int _statusEffectTimer;
 
     protected boolean _isDead = false;
     public boolean isDead()
@@ -150,6 +135,8 @@ public class GameCharacter
     }
 
     protected TextureRegion _texture;
+    private int _dealtDamage = 0;
+    public int getDealtDamage(){return _dealtDamage;}
 
     public GameCharacter(String name, int str, int dodgeChance, int hp,TextureRegion texture)
     {
@@ -256,14 +243,6 @@ public class GameCharacter
         return nextAction;
     }
 
-    public void decreaseStatusEffectTimer()
-    {
-        _statusEffectTimer--;
-        if (_statusEffectTimer <= 0)
-        {
-            _currentStatusEffect = StatusEffect.Healthy;
-        }
-    }
 
     public void placeOnTile(Tile tile)
     {
@@ -371,28 +350,28 @@ public class GameCharacter
 
         int hitChance = _equippedWeapon != null ? _equippedWeapon.getAttackSpeed() : 0;
         int failChance = 5 + target.getDodgeRate();
-        int damage;
+
 
         int result = RandomGen.getRandomInt(0, 100);
         if (result >= 96)
         {
-            damage = getMaxAttackPower() * 2;
-            GameConsole.addMessage(_name + " landed a critical hit on " + target.getName() + "! Was dealt " + damage + " damage.");
-            target.damage(damage);
+            _dealtDamage = getMaxAttackPower() * 2;
+            GameConsole.addMessage(_name + " landed a critical hit on " + target.getName() + "!");
+            target.damage(_dealtDamage);
         }
         else if (result > (failChance - hitChance))
         {
-            damage = (_equippedWeapon != null ? _equippedWeapon.getRandomDamage() : 0) + getCurrentStr();
-            if (damage / 4 < target.getArmorDefense())
+            _dealtDamage = (_equippedWeapon != null ? _equippedWeapon.getRandomDamage() : 0) + getCurrentStr();
+            if (_dealtDamage / 4 < target.getArmorDefense())
             {
-                damage -= damage / 4;
+                _dealtDamage -= _dealtDamage / 4;
             }
-            else if (damage / 2 < target.getArmorDefense())
+            else if (_dealtDamage / 2 < target.getArmorDefense())
             {
-                damage -= damage / 2;
+                _dealtDamage -= _dealtDamage / 2;
             }
-            GameConsole.addMessage(_name + " attacks " + target.getName() + "! Target lost " + damage + " hp.");
-            target.damage(damage);
+            GameConsole.addMessage(_name + " attacks " + target.getName() + "!");
+            target.damage(_dealtDamage);
         }
         else
         {

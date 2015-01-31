@@ -16,10 +16,6 @@ public class Trap
     private Tile _occupiedTile;
     private Effect _effect;
 
-    private GameCharacter.StatusEffect _statusEffect;
-    private int _damage;
-    private int _effectTime;
-    private boolean _isGas;
     private boolean _hasBeenDiscovered = false;
     private boolean _hasBeenActivated = false;
 
@@ -49,46 +45,7 @@ public class Trap
         _effect = effect;
     }
 
-    public Trap(int damage, GameCharacter.StatusEffect effect)
-    {
-        _damage = damage;
-        _statusEffect = effect;
-        _texture = AssetManager.getTexture("trap");
-        _isGas = false;
-        if (effect == GameCharacter.StatusEffect.Paralysed)
-        {
-            _color = Color.YELLOW;
-        }
-        else if (effect == GameCharacter.StatusEffect.Poisoned)
-        {
-            _color = new Color(0.6f, 0f, 0.6f, 1);
-        }
-        else
-        {
-            _color = Color.GRAY;
-        }
-    }
 
-    public Trap(GameCharacter.StatusEffect gasEffect, int gasTimer)
-    {
-        _damage = 0;
-        _statusEffect = gasEffect;
-        _effectTime = gasTimer;
-        _isGas = true;
-        _texture = new Texture(Gdx.files.internal("art/trap.png"));
-        if (gasEffect == GameCharacter.StatusEffect.Paralysed)
-        {
-            _color = Color.YELLOW;
-        }
-        else if (gasEffect == GameCharacter.StatusEffect.Poisoned)
-        {
-            _color = new Color(0.6f, 0f, 0.6f, 1);
-        }
-        else
-        {
-            _color = Color.GRAY;
-        }
-    }
 
     public void reveal()
     {
