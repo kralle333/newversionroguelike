@@ -250,7 +250,7 @@ public class ItemManager
         randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
         potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
         potionRegion.flip(false, true);
-        _availablePotions.add(new Potion(Effect.createGasEffect("Death","haunting cries rip your soul apart",-5,0,0,0,0,Color.BLACK,true), false, potionRegion,convertPotionTypeIndexToColor(randomType)));
+        _availablePotions.add(new Potion(Effect.createGasEffect("Death","haunting cries rip your soul apart",-5,0,0,0,0,Color.DARK_GRAY,true), false, potionRegion,convertPotionTypeIndexToColor(randomType)));
     }
 
     private static String getRandomScrollName()
