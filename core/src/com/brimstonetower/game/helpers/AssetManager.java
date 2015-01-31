@@ -37,6 +37,8 @@ public class AssetManager
         _assets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
         _assets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
         _assets.put("trap", new Texture(Gdx.files.internal("art/trap.png")));
+        _assets.put("testPlayer",new Texture(Gdx.files.internal("MainHeroDesign.png")));
+
         for (Texture t : _assets.values())
         {
             t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -46,7 +48,8 @@ public class AssetManager
     private static void initializeTileSetCoordinateMap()
     {
         //Player
-        tileSetCoordinateMap.put("player",new TileSetCoordinate(0,0));
+        //tileSetCoordinateMap.put("player",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("testPlayer",new TileSetCoordinate(0,32));
 
         //Floor tiles
         tileSetCoordinateMap.put("floor1", new TileSetCoordinate(3, 3));
