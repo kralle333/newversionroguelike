@@ -111,9 +111,9 @@ public class AssetManager
         parameters.magFilter= Texture.TextureFilter.Nearest;
         int maxSize = 200;
         BitmapFont font;
-        int widthToFit = Gdx.graphics.getWidth()*5/8;
+        int widthToFit = Gdx.graphics.getWidth()*5/8-(Gdx.graphics.getWidth()/128);
         int heightToFit = Gdx.graphics.getHeight()/20;
-        String testString = "Playerblabla landed a critical hit on the target! Was dealt 304 damage.";
+        String testString = "Playerblab landed a critical hit on the target!";
 
         do
         {

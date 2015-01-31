@@ -34,6 +34,15 @@ public class GameConsole
         _linesToShow = (int)((height)/((_textOffset.y*2f)+_font.getBounds("Test console message").height));
         drawIndex = -_linesToShow;
     }
+    public static void reposition(int x, int y, int width, int height)
+    {
+        _position.x = x;
+        _position.y=y;
+        _frame.reposition(x,y,width,height);
+        _textOffset.x=Gdx.graphics.getWidth()/128;
+        _textOffset.y=Gdx.graphics.getWidth()/128;
+        _linesToShow = (int)((height)/((_textOffset.y*2f)+_font.getBounds("Test console message").height));
+    }
 
     public static void reset()
     {
@@ -44,7 +53,7 @@ public class GameConsole
 
     public static void addMessage(String message)
     {
-        messages[messagesAdded] = "[" + GameStateUpdater.getTurn() + "]" + message;
+        messages[messagesAdded] = message;
         messagesAdded++;
         drawIndex++;
     }

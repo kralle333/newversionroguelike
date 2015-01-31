@@ -514,8 +514,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             }
             else
             {
-                if (_player.getCurrentStatusEffect() != GameCharacter.StatusEffect.Paralysed)
-                {
+
                     if (selectedAction.getType() == GameAction.Type.Equip)
                     {
                         _inventory.equip(_selectedItemWindow.retrieveItem());
@@ -536,7 +535,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                     {
                         _inventory.removeItem(_selectedItemWindow.retrieveItem());
                     }
-                }
+
                 _player.clearQueueAndSetAction(selectedAction);
                 _selectedItemWindow.hide();
                 _currentScreenState = ScreenState.Moving;

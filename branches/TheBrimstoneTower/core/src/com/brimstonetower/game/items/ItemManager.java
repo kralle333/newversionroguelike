@@ -89,7 +89,7 @@ public class ItemManager
 
     public static Weapon getWeapon(int type, int power)
     {
-        return _availableWeapons.get(power * 4 + type);
+        return new Weapon(_availableWeapons.get(power * 4 + type),0);
     }
 
     public static Weapon getRandomWeapon(int depth)
