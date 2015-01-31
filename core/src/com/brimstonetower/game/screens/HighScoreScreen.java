@@ -39,9 +39,9 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
         HighScoreIO.initialize();
         _font = AssetManager.getFont("description");
         batch = new SpriteBatch();
-        float bW = Gdx.graphics.getWidth() / 4;
-        float bH = Gdx.graphics.getHeight() / 8;
-        mainMenuButton = new Button(Gdx.graphics.getWidth() / 2 - bW / 2, Gdx.graphics.getHeight() - Gdx.graphics.getHeight() / 6 - (bH / 2), bW, bH, "Main Menu", Color.BLUE);
+        int bW = Gdx.graphics.getWidth() / 4;
+        int bH = Gdx.graphics.getHeight() / 8;
+        mainMenuButton = new Button((int)(Gdx.graphics.getWidth() / 2 - (bW / 2)), (int)(Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Main Menu", Color.BLUE);
         renderer = new ShapeRenderer();
         guiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         guiCamera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

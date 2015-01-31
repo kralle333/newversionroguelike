@@ -14,30 +14,36 @@ import com.brimstonetower.game.helpers.AssetManager;
 public class Button
 {
     private Color _color;
-    private float _x;
+    private int _x;
 
-    public float getX()
+    public int getX()
     {
         return _x;
     }
 
-    private float _y;
+    private int _y;
 
-    public float getY()
+    public int getY()
     {
         return _y;
     }
 
-    private float _width;
-
-    public float getWidth()
+    private int _width;
+    public void setWidth(int width)
+    {
+        _width=width;
+    }
+    public int getWidth()
     {
         return _width;
     }
 
-    private float _height;
-
-    public float getHeight()
+    private int _height;
+    public void setHeight(int height)
+    {
+        _height = height;
+    }
+    public int getHeight()
     {
         return _height;
     }
@@ -70,7 +76,7 @@ public class Button
         _scale = newScale;
     }
 
-    public Button(float x, float y, float width, float height, String text, Color color)
+    public Button(int x,int y,int width,int height, String text, Color color)
     {
         _x = x;
         _y = y;
@@ -82,7 +88,7 @@ public class Button
         _hitRectangle = new Rectangle(x, y, width, height);
     }
 
-    public Button(float x, float y, TextureRegion region, String text)
+    public Button(int x,int y, TextureRegion region, String text)
     {
         _x = x;
         _y = y;
@@ -94,6 +100,17 @@ public class Button
         _hitRectangle = new Rectangle(x, y, _width, _height);
     }
 
+    public void reposition(int x, int y,int width, int height)
+    {
+        _x=x;
+        _y=y;
+        _width=width;
+        _height=height;
+        _hitRectangle.x = x;
+        _hitRectangle.y = y;
+        _hitRectangle.width=width;
+        _hitRectangle.height=height;
+    }
     public void hide()
     {
         _isHidden = true;
@@ -109,7 +126,7 @@ public class Button
         _color = newColor;
     }
 
-    public void reposition(float x, float y)
+    public void reposition(int x, int y)
     {
         _x = x;
         _y = y;

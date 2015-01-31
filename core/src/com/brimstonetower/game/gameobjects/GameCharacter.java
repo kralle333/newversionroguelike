@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.helpers.GameAction;
 import com.brimstonetower.game.items.Armor;
 import com.brimstonetower.game.items.Item;
@@ -25,35 +25,42 @@ public class GameCharacter
         return _name;
     }
 
-    protected float maxHp;
-    protected float currentHp;
+    protected int maxHp;
+    protected int tempMaxHpModifier;
+    protected int currentHp;
 
     public int getMaxHitPoints()
     {
-        return (int) maxHp;
+        return maxHp+tempMaxHpModifier;
     }
     public int getHitpoints()
     {
-        return (int) currentHp;
+        return currentHp;
     }
 
-    protected float maxStr;
-    protected float currentStr;
+    protected int maxStr;
+    protected int tempMaxStrModifier;
+    protected int currentStr;
 
     public int getMaxStr()
     {
-        return (int) maxStr;
+        return maxStr+tempMaxStrModifier;
     }
     public int getCurrentStr()
     {
-        return (int) currentStr;
+        return currentStr;
     }
 
-    protected int _dodgeChance;
-    public int getDodgeChance()
+    protected int dodgeRate;
+    protected int tempDodgeRateModifier = 0;
+    public int getDodgeRate()
     {
-        return _dodgeChance;
+        return dodgeRate;
     }
+
+    //Only applied from effects, use armor or weapon otherwise!
+    protected int defense = 0;
+    protected int attackSpeed = 0;
 
     protected int level = 1;
     public int getLevel()
@@ -71,6 +78,8 @@ public class GameCharacter
     {
         return experienceToNextLevel;
     }
+
+    private ArrayList<Effect> _currentEffects = new ArrayList<Effect>();
 
     public enum StatusEffect
     {
@@ -101,13 +110,10 @@ public class GameCharacter
         return _equippedArmor == null ? 0 : _equippedArmor.getIdentifiedDefense();
     }
     protected Weapon _equippedWeapon;
-    public Weapon getEquippedWeapon()
+    public Weapon getEquippedWeapon() { return _equippedWeapon;}
+    public int getMaxAttackPower()
     {
-        return _equippedWeapon;
-    }
-    public int getWeaponAttack()
-    {
-        return _equippedWeapon == null ? 0 : _equippedWeapon.getIdentifiedMaxDamage();
+        return _equippedWeapon != null ? _equippedWeapon.getIdentifiedMaxDamage() + getCurrentStr() : getCurrentStr();
     }
 
     protected Vector2 _position;
@@ -152,7 +158,7 @@ public class GameCharacter
         maxStr = str;
         currentHp = hp;
         maxHp = hp;
-        _dodgeChance = dodgeChance;
+        dodgeRate = dodgeChance;
         _texture= texture;
         nextAction.setAction(this, GameAction.Type.Empty, null, null);
     }
@@ -250,17 +256,6 @@ public class GameCharacter
         return nextAction;
     }
 
-    public int getMaxAttackPower()
-    {
-        return _equippedWeapon != null ? _equippedWeapon.getIdentifiedMaxDamage() + getCurrentStr() : getCurrentStr();
-    }
-
-    public void giveStatusEffect(StatusEffect effect, int turns)
-    {
-        _currentStatusEffect = effect;
-        _statusEffectTimer = turns;
-    }
-
     public void decreaseStatusEffectTimer()
     {
         _statusEffectTimer--;
@@ -287,7 +282,69 @@ public class GameCharacter
         }
     }
 
+    //Effects
+    public void giveEffect(Effect effect)
+    {
+        _currentEffects.add(effect);
+    }
+    public void updateEffects()
+    {
+        final ArrayList<Effect> effectsToRemove = new ArrayList<Effect>();
+        for(Effect effect : _currentEffects)
+        {
+            //Temporary:                                            Instant/Permanent:
+            if((effect.isThereTurnsLeft() && !effect.isActive()) || effect.isPermanent())
+            {
+                applyEffect(effect);
+            }
 
+            if(effect.isActive() && !effect.isThereTurnsLeft())
+            {
+                effectsToRemove.add(effect);
+            }
+        }
+        for(Effect toRemove : effectsToRemove)
+        {
+            removeEffect(toRemove);
+        }
+    }
+    protected void applyEffect(Effect effect)
+    {
+        //Hp manipulation
+        if(effect.getHitPointsChange()>0) {heal(effect.getHitPointsChange());}
+        else{damage(-effect.getHitPointsChange());}
+        maxHp +=effect.getMaxHitPointsChange();
+
+        //Strength
+        currentStr += Math.min(effect.getStrengthChange(),maxStr-currentStr);
+        maxStr +=effect.getMaxStrengthChange();
+        currentStr+=effect.getMaxStrengthChange();
+
+        //Misc
+        attackSpeed+=effect.getAttackSpeedChange();
+        defense+=effect.getDefenseChange();
+        dodgeRate+=effect.getDodgeRateChange();
+
+        if(effect.isActive() || effect.isPermanent())
+        {
+            effect.decreaseTurns();
+        }
+        else
+        {
+            effect.activate();
+        }
+    }
+    private void removeEffect(Effect effect)
+    {
+        if(!effect.isPermanent())
+        {
+            effect.reverseEffects();
+            applyEffect(effect);
+        }
+        _currentEffects.remove(effect);
+    }
+
+    //Combat related methods
     public void heal(int hitpoints)
     {
         currentHp += hitpoints;
@@ -301,12 +358,19 @@ public class GameCharacter
             GameConsole.addMessage(_name + " was healed " + hitpoints + " hitpoints");
         }
     }
-
+    public void damage(int damage)
+    {
+        currentHp -= damage;
+        if (currentHp <= 0)
+        {
+            kill();
+        }
+    }
     public void attack(GameCharacter target)
     {
 
         int hitChance = _equippedWeapon != null ? _equippedWeapon.getAttackSpeed() : 0;
-        int failChance = 5 + target.getDodgeChance();
+        int failChance = 5 + target.getDodgeRate();
         int damage;
 
         int result = RandomGen.getRandomInt(0, 100);
@@ -336,17 +400,6 @@ public class GameCharacter
         }
 
     }
-
-    public void damage(int damage)
-    {
-        currentHp -= damage;
-        if (currentHp <= 0)
-        {
-            kill();
-        }
-    }
-
-
     public void kill()
     {
         GameConsole.addMessage(_name + " was killed");
@@ -355,6 +408,7 @@ public class GameCharacter
         //Inherit
     }
 
+    //Drawing
     public void draw(SpriteBatch batch)
     {
         batch.draw(_texture, _position.x, _position.y);

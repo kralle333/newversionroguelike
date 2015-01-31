@@ -10,10 +10,7 @@ import com.brimstonetower.game.mapgeneration.DungeonMap;
 import com.brimstonetower.game.mapgeneration.RandomGen;
 import com.brimstonetower.game.mapgeneration.Tile;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class GameStateUpdater
 {
@@ -57,6 +54,9 @@ public class GameStateUpdater
     private Item _thrownObject;
     private Tile _targetTile;
     private float _angleToTarget;
+
+    //Hit animation
+
 
     //Select item dialog
     private boolean _selectItemDialog = false;
@@ -126,11 +126,11 @@ public class GameStateUpdater
                 {
                     Weapon thrownWeapon = (Weapon) _thrownObject;
                     int damage = 0;
-                    if (thrownWeapon.isRanged() && RandomGen.getRandomInt(1, 100) > 20 + _targetTile.getCharacter().getDodgeChance())//Get ranged damage
+                    if (thrownWeapon.isRanged() && RandomGen.getRandomInt(1, 100) > 20 + _targetTile.getCharacter().getDodgeRate())//Get ranged damage
                     {
                         damage = thrownWeapon.getRandomDamage();
                     }
-                    else if (RandomGen.getRandomInt(1, 100) > 50 + _targetTile.getCharacter().getDodgeChance())//Get damage from a sword etc being thrown
+                    else if (RandomGen.getRandomInt(1, 100) > 50 + _targetTile.getCharacter().getDodgeRate())//Get damage from a sword etc being thrown
                     {
                         damage = thrownWeapon.getRandomDamage() / 2;
                     }
@@ -211,6 +211,11 @@ public class GameStateUpdater
             {
                 gas.update();
             }
+            _player.updateEffects();
+            for(Monster monster :_monsters)
+            {
+                monster.updateEffects();
+            }
         }
         else if (timeToNextTurn > 0)
         {
@@ -221,33 +226,6 @@ public class GameStateUpdater
 
     private void executeAction(GameAction action)
     {
-
-        //Check status effects
-        if (action.getOwner() != null && action.getOwner().getCurrentStatusEffect() != null)
-        {
-            switch (action.getOwner().getCurrentStatusEffect())
-            {
-                case Paralysed:
-                    if (RandomGen.getRandomInt(0, 100) > 50)
-                    {
-                        GameConsole.addMessage(action.getOwner().getName() + " is paralyzed and cannot act");
-                        action.getOwner().decreaseStatusEffectTimer();
-                        action.getOwner().clearCurrentAction();
-                        return;
-                    }
-                    else
-                    {
-                        action.getOwner().decreaseStatusEffectTimer();
-                        break;
-                    }
-                case Poisoned:
-                    GameConsole.addMessage(action.getOwner().getName() + " is poisoned");
-                    action.getOwner().damage(RandomGen.getRandomInt(action.getOwner().getHitpoints() / 10, action.getOwner().getHitpoints() / 8));
-                    action.getOwner().decreaseStatusEffectTimer();
-                    break;
-            }
-        }
-
         switch (action.getType())
         {
             case Move:
@@ -341,21 +319,43 @@ public class GameStateUpdater
         GameCharacter character = action.getOwner();
         if (character == _player)
         {
-            _inventory.step();
             Trap trapOnTile = newTile.getTrap();
             if (trapOnTile != null && !trapOnTile.hasBeenActivated())
             {
-                trapOnTile.activate();
-                if (trapOnTile.hasCreatedGas())
+                int chanceToBeat =RandomGen.getRandomInt(1,100);
+                if(chanceToBeat>=5)
                 {
-                    _gasClouds.add(trapOnTile.retrieveCreatedGas());
+                    GameConsole.addMessage(_player.getName()+" spotted a trap");
+                    _player.clearNextActions();
+                    return;
                 }
-                //Player was hurt by trap
-                if (_player.isDead())
+                else
                 {
-                    _player.setKilledBy("trap");
+                    String trapMessage = _player.getName()+" stepped on a trap ";
+
+                    chanceToBeat = RandomGen.getRandomInt(0,100);
+                    if(_player.getDodgeRate()>=chanceToBeat)
+                    {
+                        trapMessage+=", but didn't activate it";
+                    }
+                    else
+                    {
+                        trapMessage+="and activated it";
+                        trapOnTile.activate();
+                        if (trapOnTile.hasCreatedGas())
+                        {
+                            _gasClouds.add(trapOnTile.retrieveCreatedGas());
+                        }
+                        //Player was hurt by trap
+                        if (_player.isDead())
+                        {
+                            _player.setKilledBy("trap");
+                        }
+                    }
+                    GameConsole.addMessage(trapMessage);
                 }
             }
+            _inventory.step();
             _player.moveTo(newTile);
         }
         else
@@ -428,27 +428,22 @@ public class GameStateUpdater
 
     private void usePotion(Potion potion, GameCharacter target, Tile tile)
     {
-        if (target != null && potion.getType() == Potion.PotionType.Healing)
-        {
-            target.heal(potion.getPotency());
-        }
-        else if (target != null && potion.getType() == Potion.PotionType.Experience)
-        {
-            if (target == _player)
-            {
-                _player.retrieveExperience(potion);
 
+        if (target != null)
+        {
+            if(potion.getEffect().getType() == Effect.Type.Gas)
+            {
+                GameConsole.addMessage("A "+potion.getColor()+" gas spreads from the bottle");
+                _gasClouds.add(new Gas(tile,potion.getEffect()));
             }
-        }
-        else if (potion.getType() == Potion.PotionType.PoisonGas)
-        {
-            GameConsole.addMessage("A poisonous gas spreads from the bottle");
-            _gasClouds.add(new Gas(tile, GameCharacter.StatusEffect.Poisoned, potion.getPotency()));
-        }
-        else if (potion.getType() == Potion.PotionType.ParaGas)
-        {
-            GameConsole.addMessage("A paralyzing gas spreads from the bottle");
-            _gasClouds.add(new Gas(tile, GameCharacter.StatusEffect.Paralysed, potion.getPotency()));
+            else if(potion.getEffect().getType() == Effect.Type.Instant)
+            {
+                if(tile == null)
+                {
+                    GameConsole.addMessage(target.getName()+" drank the "+potion.getColor()+" potion");
+                }
+                target.giveEffect(potion.getEffect());
+            }
         }
         else
         {
