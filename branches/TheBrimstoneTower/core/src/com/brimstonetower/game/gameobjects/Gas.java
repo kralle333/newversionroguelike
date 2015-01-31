@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.mapgeneration.DungeonMap;
 import com.brimstonetower.game.mapgeneration.RandomGen;
@@ -17,7 +18,8 @@ import java.util.Map;
 
 public class Gas
 {
-    private GameCharacter.StatusEffect _effect;
+    private GameCharacter.StatusEffect _statusEffect;
+    private Effect _effect;
     private Color _color;
     private HashSet<Tile> _previousGasTiles = new HashSet<Tile>();
     private HashMap<Tile, Integer> _gasDensityMap = new HashMap<Tile, Integer>();
@@ -35,13 +37,20 @@ public class Gas
         return _gasDensityMap.isEmpty();
     }
 
+    public Gas(Tile tile, Effect effect)
+    {
+        _effect = effect;
+        _gasDensityMap.put(tile, 10);
+        _gasTextures.put(tile, AssetManager.getTextureRegion("gas", getGasDensityTexture(10), 32, 32));
+        _color = effect.getColor();
+    }
     public Gas(Tile tile, GameCharacter.StatusEffect effect, int density)
     {
         _gasDensityMap.put(tile, density);
         _gasTextures.put(tile, AssetManager.getTextureRegion("gas", getGasDensityTexture(density), 32, 32));
 
-        _effect = effect;
-        switch (_effect)
+        _statusEffect = effect;
+        switch (_statusEffect)
         {
             case Poisoned:
                 _color = new Color(0.87f, 0, 1f, 1);
@@ -50,7 +59,7 @@ public class Gas
                 _color = new Color(0.9f, 0.9f, 0, 1);
                 break;
             default:
-                Gdx.app.log("Gas", "Unknown cloud type! " + _effect);
+                Gdx.app.log("Gas", "Unknown cloud type! " + _statusEffect);
         }
     }
 
@@ -59,9 +68,12 @@ public class Gas
 
         for (Tile gasTile : _gasDensityMap.keySet())
         {
+            if(gasTile.getCharacter()!=null)
+            {
+                gasTile.getCharacter().giveEffect(_effect);
+            }
             for (Tile neighbour : gasTile.getWalkableNeighbours())
             {
-
                 if (_gasDensityMap.get(neighbour) == null && !_previousGasTiles.contains(neighbour))
                 {
                     if (_gasDensityMap.get(gasTile) > _reductionAmount && RandomGen.getRandomInt(0, 100) <= _spreadChance)

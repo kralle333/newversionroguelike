@@ -31,15 +31,15 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
 
     public MenuScreen()
     {
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-        float buttonWidth = w * 0.2f;
-        float buttonHeight = h * 0.12f;
+        int w = (int)Gdx.graphics.getWidth();
+        int h = (int)Gdx.graphics.getHeight();
+        int buttonWidth = (int)(w * 0.2f);
+        int buttonHeight = (int)(h * 0.12f);
         AssetManager.initialize();
 
-        startButton = new Button((w * 0.5f - (buttonWidth / 2)), (h * 0.55f - buttonHeight), buttonWidth, buttonHeight, "Start Game", _buttonColor);
-        highScoreButton = new Button((w * 0.5f - (buttonWidth / 2)), (h * 0.7f - buttonHeight), buttonWidth, buttonHeight, "High scores", _buttonColor);
-        exitGameButton = new Button((w * 0.5f - (buttonWidth / 2)), (h * 0.85f - buttonHeight), buttonWidth, buttonHeight, "Exit Game", _buttonColor);
+        startButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.55f - buttonHeight), buttonWidth, buttonHeight, "Start Game", _buttonColor);
+        highScoreButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.7f - buttonHeight), buttonWidth, buttonHeight, "High scores", _buttonColor);
+        exitGameButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.85f - buttonHeight), buttonWidth, buttonHeight, "Exit Game", _buttonColor);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         guiCamera = new OrthographicCamera(w, h);

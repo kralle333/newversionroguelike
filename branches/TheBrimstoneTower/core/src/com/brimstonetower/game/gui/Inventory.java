@@ -77,18 +77,16 @@ public class Inventory extends Window
         _player = player;
         _equippedWeapon = null;
         _equippedArmor = null;
-        if (_player.getEquippedArmor() != null)
-        {
-            addItem(_player.getEquippedArmor());
-            equip(_player.getEquippedArmor());
-        }
         if (_player.getEquippedWeapon() != null)
         {
             addItem(_player.getEquippedWeapon());
             equip(_player.getEquippedWeapon());
         }
-
-
+        if (_player.getEquippedArmor() != null)
+        {
+            addItem(_player.getEquippedArmor());
+            equip(_player.getEquippedArmor());
+        }
     }
 
     public void addItem(Item item)

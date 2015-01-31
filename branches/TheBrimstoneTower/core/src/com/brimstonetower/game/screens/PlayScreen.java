@@ -81,7 +81,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         _font = AssetManager.getFont("description");
-        initializeGuiElements((int) w, (int) h);
+        setupGuiElements();
+        repositionGuiElements((int) w, (int) h);
 
         InputMultiplexer im = new InputMultiplexer();
         GestureDetector gd = new GestureDetector(this);
@@ -91,42 +92,65 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
         createNewDungeon();
     }
-    private void initializeGuiElements(int width, int height)
+    private void setupGuiElements()
     {
-        float buttonWidth = (height / 5);
-        float buttonHeight = (height / 5);
+        _openInventoryButton = new Button(0,0,10,10, "Inventory", new Color(0.6f, 0.2f, 0, 1));
+        _waitActionButton = new Button(0,0,10,10, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
+        _searchFloorButton = new Button(0,0,10,10,"Search",new Color(0, 0.6f, 0.2f, 1));
 
-        _playerInfoWindowFrame = new PlayerInfoWindowFrame(2, 2, width - 4, (int)(_font.getBounds("Sample").height*2.5f), new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
-        _playerInfoWindowFrame.show();
+        //Shown when pressing back or escape
+        _goToMainMenuPrompt = new Window(0,0,10,10,Color.GRAY,2,Color.BLUE);
+        _goToMainMenuPrompt.addButton("Cancel", 0, 0, 0.33f, 0.2f, Color.BLUE);
+        _goToMainMenuPrompt.addButton("Go to main menu", 0, 0, 0.33f, 0.2f, Color.RED);
 
-        _inventory = new Inventory(width/2 - (2 * height / 3)/2, height - (2 * height / 3) - (height / 5) - 4, 2 * height / 3, 2 * height / 3, Color.GRAY, 2, Color.BLUE);
-        _selectedItemWindow = new SelectedItemWindow(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2, Color.GRAY, 2, Color.GRAY);
-
-        _gameOverWindow = new Window(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2, Color.GRAY, 2, Color.BLUE);
+        //Shown when you lose or win
+        _gameOverWindow = new Window(0,0,10,10,Color.GRAY, 2, Color.BLACK);
         _gameOverWindow.addButton("Main Menu", 0, 0, 0.33f, 0.2f, Color.RED);
         _gameOverWindow.addButton("High Scores", 0, 0, 0.33f, 0.2f, Color.BLUE);
         _gameOverWindow.addButton("Play Again", 0, 0, 0.33f, 0.2f, Color.GREEN);
 
+        //Shows an item
+        _selectedItemWindow = new SelectedItemWindow(0,0,10,10,Color.GRAY, 2, Color.GRAY);
+
+        //Inventory
+        _inventory = new Inventory(0,0,10,10, Color.GRAY, 2, Color.BLUE);
+
+        //Info about the player
+        _playerInfoWindowFrame = new PlayerInfoWindowFrame(0,0,10,10, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
+        _playerInfoWindowFrame.show();
+    }
+
+    private void repositionGuiElements(int width, int height)
+    {
+        int buttonWidth = (height / 5);
+        int buttonHeight = (height / 5);
+
+        _playerInfoWindowFrame.reposition(2, 2, width - 4, (int) (_font.getBounds("Sample").height * 2.5f));
+
+        _inventory.reposition(width/2 - (2 * height / 3)/2, height - (2 * height / 3) - (height / 5) - 4, 2 * height / 3, 2 * height / 3);
+
+        _selectedItemWindow.reposition(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2);
+
+        _gameOverWindow.reposition(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2);
         _gameOverWindow.arrangeButtons(0.001f, 0.7f, 0.01f, 0, 3);
 
-        _goToMainMenuPrompt = new Window(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2, Color.GRAY, 2, Color.BLUE);
-        _goToMainMenuPrompt.addButton("Cancel", 0, 0, 0.33f, 0.2f, Color.BLUE);
-        _goToMainMenuPrompt.addButton("Go to main menu", 0, 0, 0.33f, 0.2f, Color.RED);
+        _goToMainMenuPrompt.reposition(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2);
         _goToMainMenuPrompt.arrangeButtons(0.1f, 0.7f, 0.1f, 0, 2);
         if(width<height)
         {
-            GameConsole.setup(4, (int) (height - Gdx.graphics.getHeight() / 8),Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8);
-            _waitActionButton = new Button(width/2-buttonWidth/2, GameConsole.getPosition().y- (buttonHeight/2)*1.1f, buttonWidth, buttonHeight/2, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
-            _openInventoryButton = new Button(_waitActionButton.getX()+buttonWidth, GameConsole.getPosition().y- (buttonHeight/2)*1.1f, buttonWidth, buttonHeight/2, "Inventory", new Color(0.6f, 0.2f, 0, 1));
-            _searchFloorButton = new Button(_waitActionButton.getX()-buttonWidth, GameConsole.getPosition().y- (buttonHeight/2)*1.1f, buttonWidth, buttonHeight/2, "Search", new Color(0, 0.6f, 0.2f, 1));
+            int buttonY = (int) (GameConsole.getPosition().y - ((buttonHeight / 2) * 1.1f));
+            GameConsole.setup(4, (height - Gdx.graphics.getHeight() / 8),Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8);
+            _waitActionButton.reposition(width / 2 - buttonWidth / 2, buttonY, buttonWidth, buttonHeight / 2);
+            _openInventoryButton.reposition(_waitActionButton.getX()+buttonWidth,buttonY, buttonWidth, buttonHeight/2);
+            _searchFloorButton.reposition(_waitActionButton.getX() - buttonWidth,buttonY, buttonWidth, buttonHeight / 2);
             _inventory.hideEquippedItems();
         }
         else
         {
-            GameConsole.setup(4, (int) (height - buttonHeight),Gdx.graphics.getWidth()*5/8, Gdx.graphics.getHeight() / 5);
-            _openInventoryButton = new Button(width - buttonWidth, height - buttonHeight, buttonWidth, buttonHeight, "Inventory", new Color(0.6f, 0.2f, 0, 1));
-            _waitActionButton = new Button(_openInventoryButton.getX() - (buttonWidth*1.1f), height - buttonHeight, buttonWidth, buttonHeight, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
-            _searchFloorButton = new Button(_waitActionButton.getX() - (buttonWidth*1.1f), height - buttonHeight, buttonWidth, buttonHeight, "Search", new Color(0, 0.6f, 0.2f, 1));
+            GameConsole.setup(4, (height - buttonHeight),Gdx.graphics.getWidth()*5/8, Gdx.graphics.getHeight() / 5);
+            _openInventoryButton.reposition(width - buttonWidth, height - buttonHeight, buttonWidth, buttonHeight);
+            _waitActionButton.reposition(_openInventoryButton.getX() - (int)(buttonWidth*1.1f), height - buttonHeight, buttonWidth, buttonHeight);
+            _searchFloorButton.reposition(_waitActionButton.getX() - (int)(buttonWidth*1.1f), height - buttonHeight, buttonWidth, buttonHeight);
             _inventory.showEquippedItems();
         }
     }
@@ -564,7 +588,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     @Override
     public void resize(int w, int h)
     {
-        initializeGuiElements(w,h);
+        repositionGuiElements(w, h);
     }
     //NOT CURRENTLY USED
 

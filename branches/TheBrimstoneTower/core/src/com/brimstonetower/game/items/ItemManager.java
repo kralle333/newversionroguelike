@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.mapgeneration.RandomGen;
 
 import java.util.ArrayList;
@@ -130,10 +131,10 @@ public class ItemManager
         return new Armor(toCopy, bonusArmor);
     }
 
-    public static Potion getRandomPotion(int potency)
+    public static Potion getRandomPotion()
     {
         Potion toCopy = _availablePotions.get(RandomGen.getRandomInt(0, _availablePotions.size() - 1));
-        return new Potion(toCopy, potency);
+        return new Potion(toCopy);
     }
 
     public static Scroll getRandomScroll()
@@ -244,23 +245,12 @@ public class ItemManager
         Vector2 randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
         TextureRegion potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
         potionRegion.flip(false, true);
-        _availablePotions.add(new Potion("Potion of Healing", "Heals some health", false, potionRegion, 0, convertPotionTypeIndexToColor(randomType)));
+        _availablePotions.add(new Potion(Effect.createInstantEffect("Healing","heals you",10,0,0,0,0,0,true),false,potionRegion,convertPotionTypeIndexToColor(randomType)));
 
         randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
         potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
         potionRegion.flip(false, true);
-        _availablePotions.add(new Potion("Potion of Experience", "Use to get experience", false, potionRegion, 0, convertPotionTypeIndexToColor(randomType)));
-
-        randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
-        potionRegion.flip(false, true);
-        _availablePotions.add(new Potion("Potion of Poison Gas", "Spreads a poisonous gas", false, potionRegion, 0, convertPotionTypeIndexToColor(randomType)));
-
-        randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
-        potionRegion.flip(false, true);
-        _availablePotions.add(new Potion("Potion of Paralysis Gas", "Spreads a paralysing gas", false, potionRegion, 0, convertPotionTypeIndexToColor(randomType)));
-
+        _availablePotions.add(new Potion(Effect.createGasEffect("Death","haunting cries rip your soul apart",-5,0,0,0,0,Color.BLACK,true), false, potionRegion,convertPotionTypeIndexToColor(randomType)));
     }
 
     private static String getRandomScrollName()

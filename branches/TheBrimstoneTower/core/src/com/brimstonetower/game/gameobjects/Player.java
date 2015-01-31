@@ -1,16 +1,12 @@
 package com.brimstonetower.game.gameobjects;
 
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.items.Item;
 import com.brimstonetower.game.items.ItemManager;
 import com.brimstonetower.game.items.Potion;
-import com.brimstonetower.game.mapgeneration.DungeonGenerator;
 import com.brimstonetower.game.mapgeneration.DungeonMap;
 import com.brimstonetower.game.mapgeneration.Tile;
 
@@ -66,15 +62,6 @@ public class Player extends GameCharacter
         return getArmorDefense() + getMaxAttackPower() + level + maxStr + maxHp + experience;
     }
 
-    public void retrieveExperience(Potion potion)
-    {
-        experience += potion.getPotency();
-        if (experience >= experienceToNextLevel)
-        {
-            levelUp();
-        }
-    }
-
 
     public void levelUp()
     {
@@ -82,8 +69,8 @@ public class Player extends GameCharacter
 
         level++;
         experienceToNextLevel *= 2;
-        maxHp = calculateNewStat(_startHp, 2000, level, 99);
-        maxStr = calculateNewStat(_startStr, 100, level, 99);
+        maxHp = (int) calculateNewStat((float) _startHp, 2000, level, 99);
+        maxStr = (int) calculateNewStat((float) _startStr, 100, level, 99);
 
         currentStr = maxStr;
 
@@ -106,15 +93,17 @@ public class Player extends GameCharacter
         tile.setLight(Tile.LightAmount.Light, _lanternStrength, _lanternStrength);
     }
 
+    @Override
+    protected void applyEffect(Effect effect)
+    {
+        GameConsole.addMessage(effect.getEffectDescription());
+        super.applyEffect(effect);
+    }
 
     @Override
     public void damage(int damage)
     {
         super.damage(damage);
-        if (getCurrentStatusEffect() == StatusEffect.Poisoned)
-        {
-            _killedBy = "poison";
-        }
         movementQueue.clear();
     }
 

@@ -35,24 +35,39 @@ public class SelectedItemWindow extends Window
         return toReturn;
     }
 
+    private boolean _isInitialized = false;
     private Player _player;
     private BitmapFont _descriptionFont;
 
     public SelectedItemWindow(int x, int y, int width, int height, Color color, int frameSize, Color frameColor)
     {
         super(x, y, width, height, color, frameSize, frameColor);
-        addButton("Use", 0.1f, 0.85f, 0.25f, 0.10f, Color.BLUE);
+        addButton("Use", 0.10f, 0.85f, 0.25f, 0.10f, Color.BLUE);
         addButton("Equip", 0.10f, 0.85f, 0.25f, 0.10f, Color.BLUE);
         addButton("Throw", 0.40f, 0.85f, 0.25f, 0.10f, Color.BLUE);
         addButton("Drop", 0.70f, 0.85f, 0.25f, 0.10f, Color.BLUE);
         hideButton("Equip");
         _selectedAction = new GameAction();
         _descriptionFont = AssetManager.getFont("description");
+        _isInitialized=true;
     }
 
     public void reset(Player player)
     {
         _player = player;
+    }
+
+    @Override
+    public void reposition(int x, int y, int width, int height)
+    {
+        if(_isInitialized)
+        {
+            super.reposition(x, y, width, height);
+            getButton("Use").reposition(x+(int) (width * 0.10f), y+(int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
+            getButton("Equip").reposition(x+(int) (width * 0.10f),y+ (int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
+            getButton("Throw").reposition(x+(int) (width * 0.40f),y+ (int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
+            getButton("Drop").reposition(x+(int) (width * 0.7f),y+ (int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
+        }
     }
 
     public void tap(float x, float y)

@@ -7,12 +7,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.mapgeneration.DungeonMap;
 import com.brimstonetower.game.mapgeneration.Tile;
 
 public class Trap
 {
     private Tile _occupiedTile;
+    private Effect _effect;
+
     private GameCharacter.StatusEffect _statusEffect;
     private int _damage;
     private int _effectTime;
@@ -39,6 +42,11 @@ public class Trap
         Gas toReturn = _createdGas;
         _createdGas = null;
         return toReturn;
+    }
+
+    public Trap(Effect effect)
+    {
+        _effect = effect;
     }
 
     public Trap(int damage, GameCharacter.StatusEffect effect)
@@ -98,23 +106,16 @@ public class Trap
             {
                 _hasBeenDiscovered = false;
             }
-            GameConsole.addMessage("Trap was triggered");
             GameCharacter affectedCharacter = _occupiedTile.getCharacter();
+            if (_effect.getType()== Effect.Type.Gas)
+            {
+                _createdGas = new Gas(_occupiedTile, _effect);
+            }
             if (affectedCharacter != null)
             {
-                if (_damage > 0)
-                {
-                    affectedCharacter.damage(_damage);
-                }
-                if (!_isGas && _statusEffect != null)
-                {
-                    affectedCharacter.giveStatusEffect(_statusEffect, _effectTime);
-                }
+                affectedCharacter.giveEffect(_effect);
             }
-            if (_isGas)
-            {
-                _createdGas = new Gas(_occupiedTile, _statusEffect, _effectTime);
-            }
+
             _hasBeenActivated = true;
         }
     }

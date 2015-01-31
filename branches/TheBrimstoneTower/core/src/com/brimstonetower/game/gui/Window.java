@@ -42,10 +42,16 @@ public class Window
 
     public Window(int x, int y, int width, int height, Color color, int frameSize, Color frameColor)
     {
-        _windowRectangle = new Rectangle(x, y, width, height);
+        _windowRectangle = new Rectangle();
         _windowColor = color;
         _frameSize = frameSize;
         _frameColor = frameColor;
+        reposition(x,y,width,height);
+    }
+
+    public void reposition(int x, int y, int width, int height)
+    {
+        _windowRectangle.set(x,y,width,height);
     }
 
     public void reset()
@@ -65,18 +71,23 @@ public class Window
             return;
         }
 
-        float x = _windowRectangle.x + startXLocal - xGap;
-        float y = _windowRectangle.y + startYLocal - yGap;
-        float buttonWidth = _windowRectangle.width / buttonsPerRow;
+        int x = (int)_windowRectangle.x + startXLocal;
+        int y = (int)_windowRectangle.y + startYLocal;
+        int widthForButtons = (int)(_windowRectangle.width-((buttonsPerRow-1)*xGap));
+        widthForButtons-=startXLocal*2<widthForButtons?(2*startXLocal):widthForButtons/10;
+        int buttonWidth =  widthForButtons/ buttonsPerRow;
+
+        int heightForButtons = (int)(_windowRectangle.width-((buttonsPerRow-1)*xGap));
+        heightForButtons-=startYLocal*2<heightForButtons?(2*startYLocal):heightForButtons/10;
+        int buttonHeight =  heightForButtons/ buttonsPerRow;
         for (Button button : _nameButtonMap.values())
         {
-            button.setScale(buttonWidth / button.getWidth());
-            button.reposition(x + xGap, y + yGap);
-            x += buttonWidth;
+            button.reposition(x,y,buttonWidth,buttonHeight);
+            x += buttonWidth+xGap;
             if (x + button.getWidth() > _windowRectangle.x + _windowRectangle.width)
             {
-                x = _windowRectangle.x + startXLocal;
-                y += buttonWidth;
+                x = (int)_windowRectangle.x + startXLocal;
+                y += buttonHeight+yGap;
             }
             if (y > _windowRectangle.y + _windowRectangle.getHeight())
             {
@@ -92,8 +103,8 @@ public class Window
             return;
         }
 
-        float x = _windowRectangle.x + startXLocal;
-        float y = _windowRectangle.y + startYLocal;
+        int x = (int)_windowRectangle.x + startXLocal;
+        int y = (int)_windowRectangle.y + startYLocal;
         for (Button button : _nameButtonMap.values())
         {
 
@@ -102,7 +113,7 @@ public class Window
             x += button.getWidth();
             if (x + button.getWidth() > _windowRectangle.x + _windowRectangle.width)
             {
-                x = _windowRectangle.x + startXLocal;
+                x = (int)_windowRectangle.x + startXLocal;
                 y += button.getHeight();
             }
             if (y > _windowRectangle.y + _windowRectangle.getHeight())
@@ -125,10 +136,12 @@ public class Window
 
     public Button addButton(String buttonText, float percentX, float percentY, float percentWidth, float percentHeight, Color color)
     {
-        float buttonX = _windowRectangle.x + (_windowRectangle.width * percentX);
-        float buttonY = _windowRectangle.y + (_windowRectangle.height * percentY);
+        int buttonX = (int)(_windowRectangle.x + (_windowRectangle.width * percentX));
+        int buttonY = (int)(_windowRectangle.y + (_windowRectangle.height * percentY));
+        int width = (int)(_windowRectangle.width * percentWidth);
+        int height= (int)( _windowRectangle.height * percentHeight);
 
-        _nameButtonMap.put(buttonText, new Button(buttonX, buttonY, _windowRectangle.width * percentWidth, _windowRectangle.height * percentHeight, buttonText, color));
+        _nameButtonMap.put(buttonText, new Button(buttonX, buttonY,width, height, buttonText, color));
         return _nameButtonMap.get(buttonText);
     }
 

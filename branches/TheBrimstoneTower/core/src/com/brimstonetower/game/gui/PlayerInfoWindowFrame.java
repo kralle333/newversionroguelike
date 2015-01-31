@@ -18,18 +18,28 @@ public class PlayerInfoWindowFrame extends Window
     private Vector2 hpPos;
     private Vector2 strPos;
     private Vector2 expPos;
+    private boolean _isInitialized = false;
 
     public PlayerInfoWindowFrame(int x, int y, int width, int height,Color color,int frameSize, Color frameColor)
     {
         super(x,y,width,height,color,frameSize,frameColor);
         _font = AssetManager.getFont("description");
-        namePos = new Vector2(x+(Gdx.graphics.getWidth()/128),y+(Gdx.graphics.getWidth()/128));
-        levelPos = new Vector2(namePos.x,namePos.y+height-_font.getBounds("Height").height);
-        hpPos = new Vector2(levelPos.x+_font.getBounds("Lvl: 100     ").width,levelPos.y);
-        strPos = new Vector2(hpPos.x+_font.getBounds("Hp: 1000/1000     ").width, levelPos.y);
-        expPos = new Vector2(strPos.x+_font.getBounds("Str: 100/100     ").width,levelPos.y);
+        _isInitialized=true;
     }
 
+    @Override
+    public void reposition(int x, int y, int width, int height)
+    {
+        if(_isInitialized)
+        {
+            super.reposition(x, y, width, height);
+            namePos = new Vector2(x + (Gdx.graphics.getWidth() / 128), y + (Gdx.graphics.getWidth() / 128));
+            levelPos = new Vector2(namePos.x, namePos.y + height - _font.getBounds("Height").height);
+            hpPos = new Vector2(levelPos.x + _font.getBounds("Lvl: 100     ").width, levelPos.y);
+            strPos = new Vector2(hpPos.x + _font.getBounds("Hp: 1000/1000     ").width, levelPos.y);
+            expPos = new Vector2(strPos.x + _font.getBounds("Str: 100/100     ").width, levelPos.y);
+        }
+    }
 
     public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer,Player player, int depth)
     {

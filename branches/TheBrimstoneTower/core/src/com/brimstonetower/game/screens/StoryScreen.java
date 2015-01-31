@@ -47,11 +47,11 @@ public class StoryScreen implements Screen, GestureDetector.GestureListener
         _camera = new OrthographicCamera();
         _camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        float buttonWidth = Gdx.graphics.getWidth() * 0.2f;
-        float buttonHeight = Gdx.graphics.getHeight() * 0.12f;
-        _nameButton = new Button(Gdx.graphics.getWidth() / 2 - buttonWidth / 2, Gdx.graphics.getHeight() * 0.85f, buttonWidth, buttonHeight, "Name: " + _nameOfPlayer, _buttonColor);
-        _goBackButton = new Button(_nameButton.getX() - buttonWidth * 1.5f, Gdx.graphics.getHeight() * 0.85f, buttonWidth, buttonHeight, "Go back", _buttonColor);
-        _playGameButton = new Button(_nameButton.getX() + buttonWidth * 1.5f, Gdx.graphics.getHeight() * 0.85f, buttonWidth, buttonHeight, "Play", _buttonColor);
+        int buttonWidth = (int)(Gdx.graphics.getWidth() * 0.2f);
+        int buttonHeight = (int)(Gdx.graphics.getHeight() * 0.12f);
+        _nameButton = new Button(Gdx.graphics.getWidth() / 2 - (buttonWidth / 2),(int)( Gdx.graphics.getHeight() * 0.85f), buttonWidth, buttonHeight, "Name: " + _nameOfPlayer, _buttonColor);
+        _goBackButton = new Button((_nameButton.getX() - buttonWidth * 3/2), (int)(Gdx.graphics.getHeight() * 0.85f), buttonWidth, buttonHeight, "Go back", _buttonColor);
+        _playGameButton = new Button((_nameButton.getX() + buttonWidth * 3/2), (int)(Gdx.graphics.getHeight() * 0.85f), buttonWidth, buttonHeight, "Play", _buttonColor);
 
         Gdx.input.setInputProcessor(new GestureDetector(this));
 

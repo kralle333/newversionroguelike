@@ -90,31 +90,28 @@ public class MonsterGenerator
         TextureRegion chestRegion = AssetManager.getTextureRegion("tile", "chest", DungeonMap.TileSize, DungeonMap.TileSize);
         chestRegion.flip(false, true);
         Monster chest = new Monster("Chest", 0, 1, 0, 1, 0, Monster.Nature.Passive, chestRegion);
-        int itemType = RandomGen.getRandomInt(0, 5);//Chests more likely to spawn scrolls and potions
+        int itemType = RandomGen.getRandomInt(0, 6);//Chests more likely to spawn scrolls and potions
         switch (itemType)
         {
             case 0:
-                chest.addItemToDrop(ItemManager.getRandomPotion(depth));
+                chest.addItemToDrop(ItemManager.getRandomPotion());
                 break;
             case 1:
-                chest.addItemToDrop(ItemManager.getRandomScroll());
+                chest.addItemToDrop(ItemManager.getRandomPotion());
                 break;
             case 2:
-                chest.addItemToDrop(ItemManager.getRandomPotion(depth));
+                chest.addItemToDrop(ItemManager.getRandomPotion());
                 break;
             case 3:
-                chest.addItemToDrop(ItemManager.getRandomScroll());
+                chest.addItemToDrop(ItemManager.getRandomPotion());
                 break;
             case 4:
-                chest.addItemToDrop(ItemManager.getRandomPotion(depth));
-                break;
-            case 5:
                 chest.addItemToDrop(ItemManager.getRandomScroll());
                 break;
-            case 6:
+            case 5:
                 chest.addItemToDrop(ItemManager.getRandomWeapon(depth));
                 break;
-            case 7:
+            case 6:
                 chest.addItemToDrop(ItemManager.getRandomArmor(depth));
                 break;
         }
