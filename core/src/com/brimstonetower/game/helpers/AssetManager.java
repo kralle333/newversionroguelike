@@ -29,6 +29,7 @@ public class AssetManager
     private static void initializeTextures()
     {
         _assets.put("player", new Texture(Gdx.files.internal("art/player.png")));
+        _assets.put("mainHeroes",new Texture(Gdx.files.internal("art/mainHeroes.png")));
         _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
         _assets.put("tile", new Texture(Gdx.files.internal("art/tileset.png")));
         _assets.put("armor", new Texture(Gdx.files.internal("art/armorTileSet.png")));
@@ -47,6 +48,10 @@ public class AssetManager
     {
         //Player
         tileSetCoordinateMap.put("player",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("playerType1",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("playerType2",new TileSetCoordinate(1,0));
+        tileSetCoordinateMap.put("playerType3",new TileSetCoordinate(0,1));
+        tileSetCoordinateMap.put("playerType4",new TileSetCoordinate(1,1));
 
         //Floor tiles
         tileSetCoordinateMap.put("floor1", new TileSetCoordinate(3, 3));

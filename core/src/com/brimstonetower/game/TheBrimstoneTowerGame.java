@@ -15,7 +15,8 @@ public class TheBrimstoneTowerGame extends Game
 {
 
     private static TheBrimstoneTowerGame _gameInstance;
-
+    public final static String versionState = "alpha";
+    public final static float version = 0.11f;
     public static TheBrimstoneTowerGame getGameInstance()
     {
         if (_gameInstance == null)
@@ -54,6 +55,7 @@ public class TheBrimstoneTowerGame extends Game
     @Override
     public void resize(int width, int height)
     {
+
     }
 
     @Override
