@@ -124,7 +124,7 @@ public class GameStateUpdater
         _playedMap = playedMap;
         _traps = traps;
         _gasClouds.clear();
-        _player.getCurrentTile().setLight(Tile.LightAmount.Shadow, _player.getLanternStrength() + 2, _player.getLanternStrength() + 2);
+        _player.getCurrentTile().setLight(Tile.LightAmount.Shadow, _player.getLanternStrength()*2, _player.getLanternStrength()*2);
         _player.getCurrentTile().setLight(Tile.LightAmount.Light, _player.getLanternStrength(), _player.getLanternStrength());
     }
 

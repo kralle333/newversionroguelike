@@ -21,6 +21,7 @@ public class Monster extends GameCharacter
     private int _experienceGiven;
     private float _pursueDistance = 4;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
+    private boolean _wasSeen = false;
 
     public int retrieveExperienceGiven()
     {
@@ -45,6 +46,10 @@ public class Monster extends GameCharacter
 
     public GameAction setNextAction(Player player)
     {
+        if(!_wasSeen && player.getCurrentTile().distanceTo(currentTile)<=player.getLanternStrength())
+        {
+            _wasSeen=true;
+        }
         if (_isDead)
         {
             return null;
@@ -96,9 +101,13 @@ public class Monster extends GameCharacter
     @Override
     public void draw(SpriteBatch batch)
     {
-        if (!_isDead && currentTile.getLightAmount() == Tile.LightAmount.Light)
+        if (!_isDead)
         {
-            super.draw(batch);
+            if(currentTile.getLightAmount() == Tile.LightAmount.Light ||
+                    (currentTile.getLightAmount() == Tile.LightAmount.Shadow && _wasSeen))
+            {
+                super.draw(batch);
+            }
         }
     }
 

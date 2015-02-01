@@ -69,7 +69,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         float h = Gdx.graphics.getHeight();
 
         mainCamera = new OrthographicCamera(w, h);
-        mainCamera.zoom = 1f;
+        mainCamera.zoom = 0.7f;
         mainCamera.setToOrtho(true, w, h);
         guiCamera = new OrthographicCamera(w, h);
         guiCamera.setToOrtho(true, w, h);
