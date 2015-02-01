@@ -27,12 +27,13 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     private OrthographicCamera guiCamera;
     private BitmapFont _font;
     private final String _gameTitle;
+    private final String _versionString;
     private Vector2 _titlePosition;
 
     public MenuScreen()
     {
-        int w = (int)Gdx.graphics.getWidth();
-        int h = (int)Gdx.graphics.getHeight();
+        int w = Gdx.graphics.getWidth();
+        int h = Gdx.graphics.getHeight();
         int buttonWidth = (int)(w * 0.2f);
         int buttonHeight = (int)(h * 0.12f);
         AssetManager.initialize();
@@ -45,6 +46,7 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         guiCamera = new OrthographicCamera(w, h);
         guiCamera.setToOrtho(true, w, h);
 
+        _versionString=TheBrimstoneTowerGame.version + " " + TheBrimstoneTowerGame.versionState;
         _gameTitle = "The Brimstone Tower";
         _font = AssetManager.getFont("description");
         _titlePosition = new Vector2(Gdx.graphics.getWidth() / 2 - _font.getBounds(_gameTitle).width/2, Gdx.graphics.getHeight() * 0.15f);
@@ -65,7 +67,11 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         exitGameButton.draw(batch, shapeRenderer);
         batch.begin();
         _font.draw(batch, _gameTitle, _titlePosition.x, _titlePosition.y);
-        batch.end();
+        _font.draw(batch,
+                TheBrimstoneTowerGame.version + " " + TheBrimstoneTowerGame.versionState,
+                Gdx.graphics.getWidth() - (_font.getBounds(_versionString).width*1.1f),
+                Gdx.graphics.getHeight()-_font.getBounds(_versionString).height*1.1f);
+                batch.end();
     }
 
     @Override

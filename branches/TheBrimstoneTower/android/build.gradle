@@ -13,6 +13,12 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+        versionCode 1
+        versionName "0.11a"
+    }
 }
 
 // needed to add JNI shared libraries to APK when compiling on CLI

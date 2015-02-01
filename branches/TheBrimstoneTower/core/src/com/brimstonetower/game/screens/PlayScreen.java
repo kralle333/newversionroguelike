@@ -266,7 +266,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         {
             _previousPlayerPosition = _player.getCurrentTile();
             mainCamera.position.x = _player.getPosition().x+(DungeonMap.TileSize/2);
-            mainCamera.position.y = _player.getPosition().y+(DungeonMap.TileSize/2)+GameConsole.getHeight()-_playerInfoWindowFrame.getHeight();
+            mainCamera.position.y = _player.getPosition().y+(DungeonMap.TileSize);
         }
         if (_player.isDead())
         {
@@ -318,6 +318,13 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                     _player.clearQueueAndSetAction(_playerAction);
                     return true;
                 }
+                break;
+            case Input.Keys.PLUS:
+                mainCamera.zoom=Math.max(0.5f, mainCamera.zoom - 0.1f);
+                break;
+            case Input.Keys.MINUS:
+                mainCamera.zoom=Math.min(1.5f,mainCamera.zoom+0.1f);
+                break;
         }
         if(newTile != null && newTile.isWalkable())
         {
@@ -560,7 +567,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     @Override
     public boolean pan(float x, float y, float dx, float dy)
     {
-        mainCamera.translate(-dx/mainCamera.zoom, -dy/mainCamera.zoom);
+        mainCamera.translate(-dx,-dy);
         mainCamera.update();
         return true;
     }

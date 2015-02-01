@@ -22,7 +22,7 @@ public class Tile
     {
         Wall, Floor, Door, StairCase, Empty
     }
-    public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door;}
+    public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door || _type == Types.StairCase;}
     public enum LightAmount
     {
         Non, Shadow, Light
