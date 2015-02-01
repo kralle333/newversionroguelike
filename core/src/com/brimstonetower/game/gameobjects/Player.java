@@ -35,7 +35,7 @@ public class Player extends GameCharacter
 
     public Player(String name)
     {
-        super(name, _startStr, 5, _startHp, AssetManager.getTextureRegion("mainHeroes", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
+        super(name, _startStr, 5, _startHp, AssetManager.getTextureRegion("mainHeroesWithBorder", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
         super.equip(ItemManager.getWeapon(0, 0));//Player starts with sword
         _texture.flip(false, true);
         _equippedWeapon.identify();

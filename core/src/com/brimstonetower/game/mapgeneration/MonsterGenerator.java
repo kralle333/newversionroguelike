@@ -69,17 +69,17 @@ public class MonsterGenerator
             bat.addProbabilityOfAppearing(0.5f, 3);
             bat.addProbabilityOfAppearing(1, 5);
 
-            MonsterPrototype troll = new MonsterPrototype("Troll", 10, 25, 3, 3, 10, Monster.Nature.Aggressive, new TileSetCoordinate(2, 0));
-            troll.attack = new Weapon("Club", "Big club", true, null, 1, 8, 0, 15, false);
-            troll.addProbabilityOfAppearing(0.2f, 2);
-            troll.addProbabilityOfAppearing(0.4f, 4);
-            troll.addProbabilityOfAppearing(0.6f, 6);
-            troll.addProbabilityOfAppearing(0.8f, 8);
-            troll.addProbabilityOfAppearing(1, 10);
+            MonsterPrototype skeleton = new MonsterPrototype("Skeleton", 10, 20, 5, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(2, 0));
+            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 6, 0, 10, false);
+            skeleton.addProbabilityOfAppearing(0.2f, 2);
+            skeleton.addProbabilityOfAppearing(0.4f, 4);
+            skeleton.addProbabilityOfAppearing(0.6f, 6);
+            skeleton.addProbabilityOfAppearing(0.8f, 8);
+            skeleton.addProbabilityOfAppearing(1, 10);
 
             monsterPrototypes.add(beaverRat);
             monsterPrototypes.add(bat);
-            monsterPrototypes.add(troll);
+            monsterPrototypes.add(skeleton);
             numberOfPrototypes = monsterPrototypes.size();
             prototypesInitialized = true;
         }
