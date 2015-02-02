@@ -1,7 +1,8 @@
-package com.brimstonetower.game.mapgeneration;
+package com.brimstonetower.game.map.mapgeneration;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.brimstonetower.game.map.DungeonMap;
 
 import java.util.ArrayList;
 

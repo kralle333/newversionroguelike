@@ -22,7 +22,8 @@ public class Effect
     private int _dodgeRateChange;
 
     //Used for keeping track of the effects
-    private boolean _isEffectsReversed = false;
+    private boolean _areEffectsReversed = false;
+    public boolean areEffectsReversed(){return _areEffectsReversed;}
     private boolean _isActive = false;
     public boolean isActive(){return _isActive;}
     public void activate(){_isActive =true;}
@@ -148,6 +149,6 @@ public class Effect
          _attackSpeedChange=-_attackSpeedChange;
         _dodgeRateChange =-_dodgeRateChange;
 
-        _isEffectsReversed=!_isEffectsReversed;
+        _areEffectsReversed=!_areEffectsReversed;
     }
 }

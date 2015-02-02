@@ -1,14 +1,13 @@
-package com.brimstonetower.game.items;
+package com.brimstonetower.game.managers;
 
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.brimstonetower.game.helpers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
-import com.brimstonetower.game.mapgeneration.RandomGen;
+import com.brimstonetower.game.gameobjects.items.*;
+import com.brimstonetower.game.helpers.RandomGen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,35 +55,26 @@ public class ItemManager
     {
         if (item instanceof Scroll)
         {
-            identifyScroll((Scroll) item);
+            Scroll scroll = (Scroll)item;
+            for (int i = 0; i < _availableScrolls.size(); i++)
+            {
+                if (_availableScrolls.get(i).isIdentical(scroll))
+                {
+                    _availableScrolls.get(i).identify();
+                    return;
+                }
+            }
         }
         else if (item instanceof Potion)
         {
-            identifyPotion((Potion) item);
-        }
-    }
-
-    private static void identifyScroll(Scroll scroll)
-    {
-        for (int i = 0; i < _availableScrolls.size(); i++)
-        {
-            if (_availableScrolls.get(i).getUnidentifiedName() == scroll.getUnidentifiedName())
+            Potion potion = (Potion) item;
+            for (int i = 0; i < _availablePotions.size(); i++)
             {
-                _availableScrolls.get(i).identify();
-                return;
-            }
-        }
-    }
-
-    private static void identifyPotion(Potion potion)
-    {
-        for (int i = 0; i < _availablePotions.size(); i++)
-        {
-            if (_availablePotions.get(i)._textureRegion.getRegionX() == potion._textureRegion.getRegionX() &&
-                    _availablePotions.get(i)._textureRegion.getRegionY() == potion._textureRegion.getRegionY())
-            {
-                _availablePotions.get(i).identify();
-                return;
+                if (_availablePotions.get(i).isIdentical(potion))
+                {
+                    _availablePotions.get(i).identify();
+                    return;
+                }
             }
         }
     }
@@ -145,7 +135,6 @@ public class ItemManager
         return new Scroll(toCopy);
     }
 
-
     public static void initialize()
     {
         initializeArmors();
@@ -156,6 +145,7 @@ public class ItemManager
 
     private static void initializeWeapons()
     {
+        _availableWeapons.clear();
         TextureRegion swordRegion;
         TextureRegion axeRegion;
         TextureRegion daggerRegion;
@@ -196,6 +186,7 @@ public class ItemManager
 
     private static void initializeArmors()
     {
+        _availableArmors.clear();
         TextureRegion leatherArmorRegion = AssetManager.getTextureRegion("armor", 0, 0, itemSize, itemSize);
         TextureRegion hardLeatherArmorRegion = AssetManager.getTextureRegion("armor", 1, 0, itemSize, itemSize);
         TextureRegion chainMailRegion = AssetManager.getTextureRegion("armor", 2, 0, itemSize, itemSize);
@@ -227,6 +218,8 @@ public class ItemManager
         }
         return Color.PINK;
     }
+    //Remember to set it when adding new ones
+    private static int potionId = 1;
     private static Potion createPotion(Effect effect)
     {
         if(_availablePotionTypes.size()>0)
@@ -234,13 +227,15 @@ public class ItemManager
             TileSetCoordinate randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
             TextureRegion potionRegion = AssetManager.getTextureRegion("potion",  randomType.x,  randomType.y, 32, 32);
             potionRegion.flip(false, true);
-            return new Potion(effect,false,potionRegion,convertPotionTypeIndexToColor(randomType));
+            return new Potion(effect,false,potionRegion,convertPotionTypeIndexToColor(randomType),potionId++);
         }
         Gdx.app.log("Item Manager","Cant create potion, no unused type left!");
         return null;
     }
     private static void initializePotions()
     {
+        _availablePotions.clear();
+        potionId=1;
 
         //There are 16 different types of potion types in the potion.png tileset
         for (int x = 0; x < 4; x++)
@@ -255,7 +250,7 @@ public class ItemManager
         _availablePotions.add(createPotion(Effect.createPermanentEffect("Healing", "You feel refreshed", 10, 0, 0, 0, 0, 0, 0, 0, false, null)));
         _availablePotions.add(createPotion(Effect.createPermanentEffect("Death", "Haunting cries rip your soul apart", -5, 0, 0, 0, 0, 0, 0, 0, true, Color.DARK_GRAY)));
         _availablePotions.add(createPotion(Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down","Time feels normal again", 0, 0, 0, 0, 0, 10, 0, 5, false, null)));
-        _availablePotions.add(createPotion(Effect.createTemporaryEffect("Blindness","Brown blobs are felt moving on your eyes, blocking your sight","The brown blobs fall from your eyes",0,0,0,0,0,-5,-5,5,false,null)));
+        _availablePotions.add(createPotion(Effect.createTemporaryEffect("Blindness","Your sight is blocked by gray blobs moving on your eyes","The brown blobs fall from your eyes",0,0,0,0,0,-5,-5,5,false,null)));
 
     }
 
@@ -269,16 +264,20 @@ public class ItemManager
         }
         return randomName;
     }
-
+    //Remember to set it when adding new ones
+    private static int scrollId = 1;
     private static void initializeScrolls()
     {
+        _availableScrolls.clear();
+        scrollId = 1;
+
         TextureRegion scrollRegion = AssetManager.getTextureRegion("scroll", 0, 0, 32, 32);
         scrollRegion.flip(false, true);
         _availableWords = new ArrayList<String>(Arrays.asList(new String[]{"shia", "ach", "vosom", "xam", "xhamet", "lok", "sqace", "thunwen", "wex", "natas", "qientis", "commodo", "porta", "vella", "lorem", "consequat", "fringilla"}));
-        _availableScrolls.add(new Scroll("Scroll of Identify", "Use to identify an item", false, scrollRegion, getRandomScrollName()));
-        _availableScrolls.add(new Scroll("Scroll of Mapping", "Reveals the layout of the dungeon", false, scrollRegion, getRandomScrollName()));
-        _availableScrolls.add(new Scroll("Scroll of Teleport", "Use to teleport you to a random location", false, scrollRegion, getRandomScrollName()));
-        _availableScrolls.add(new Scroll("Scroll of Remove Curse", "Use to remove curses from your bag", false, scrollRegion, getRandomScrollName()));
+        _availableScrolls.add(new Scroll("Scroll of Identify", "Use to identify an item", false, scrollRegion, getRandomScrollName(),scrollId++));
+        _availableScrolls.add(new Scroll("Scroll of Mapping", "Reveals the layout of the dungeon", false, scrollRegion, getRandomScrollName(),scrollId++));
+        _availableScrolls.add(new Scroll("Scroll of Teleport", "Use to teleport you to a random location", false, scrollRegion, getRandomScrollName(),scrollId++));
+        _availableScrolls.add(new Scroll("Scroll of Remove Curse", "Use to remove curses from your bag", false, scrollRegion, getRandomScrollName(),scrollId++));
     }
 
 }

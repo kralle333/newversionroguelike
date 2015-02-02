@@ -1,4 +1,4 @@
-package com.brimstonetower.game.items;
+package com.brimstonetower.game.gameobjects.items;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -49,6 +49,7 @@ public class Item
     {
         return _isCurseKnown;
     }
+    public void curse(){_isCurseKnown=false;_hasCurse = true;}
 
     private boolean _stackable = false;
     public boolean isStackable()
@@ -56,29 +57,32 @@ public class Item
         return _stackable;
     }
 
-    private static int currentId = 0;
-    private int _id;
-
-    public int getId()
+    private int _typeId;
+    public int getTypeId()
     {
-        return _id;
+        return _typeId;
     }
 
-    public Item(String name, String description, boolean isIdentified, TextureRegion textureRegion, boolean stackable, boolean hasCurse)
+    private static int itemIdCounter = 1;
+    private int _uniqueId;
+    public int getUniqueId(){return _uniqueId;}
+
+    public Item(String name, String description, boolean isIdentified, TextureRegion textureRegion, boolean stackable, int typeId)
     {
         _name = name;
         _description = description;
         _isIdentified = isIdentified;
         _textureRegion = textureRegion;
         _stackable = stackable;
-        _hasCurse = hasCurse;
-        _id = currentId++;
+        _typeId = typeId;
+        _uniqueId = itemIdCounter++;
     }
 
 
     public void identify()
     {
         _isIdentified = true;
+        showCurse();
     }
 
     public String getIdentifiedName()
@@ -93,7 +97,7 @@ public class Item
 
     public boolean isIdentical(Item item)
     {
-        if (item.getIdentifiedName() == _name)
+        if (_typeId == item.getTypeId())
         {
             return true;
         }

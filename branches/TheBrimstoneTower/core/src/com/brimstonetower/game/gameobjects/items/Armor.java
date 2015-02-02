@@ -1,11 +1,11 @@
-package com.brimstonetower.game.items;
+package com.brimstonetower.game.gameobjects.items;
 
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.mapgeneration.RandomGen;
+import com.brimstonetower.game.helpers.RandomGen;
 
 public class Armor extends Item
 {
@@ -34,10 +34,11 @@ public class Armor extends Item
     {
         return _stepsTillIdentified;
     }
+    private static int armorId = 1;
 
     public Armor(String name, String description, boolean isIdentified, TextureRegion textureRegion, int defense, int bonusDef)
     {
-        super(name, description, isIdentified, textureRegion, false, RandomGen.getRandomInt(0, 10) > 8);
+        super(name, description, isIdentified, textureRegion, false,armorId++);
         _defense = defense;
         _bonusDef = bonusDef;
         if (!_isIdentified)

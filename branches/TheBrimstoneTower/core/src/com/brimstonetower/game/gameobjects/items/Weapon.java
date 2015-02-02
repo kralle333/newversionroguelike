@@ -1,4 +1,4 @@
-package com.brimstonetower.game.items;
+package com.brimstonetower.game.gameobjects.items;
 
 
 import com.badlogic.gdx.Gdx;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.mapgeneration.RandomGen;
+import com.brimstonetower.game.helpers.RandomGen;
 
 public class Weapon extends Item
 {
@@ -58,11 +58,12 @@ public class Weapon extends Item
     }
 
     private int _stepsTillIdentified;
+    private static int weaponId=1;
 
     public Weapon(String name, String description, boolean isIdentified, TextureRegion textureRegion, int minDamage,
                   int maxDamage, int bonusDamage, int attackSpeed, boolean isRanged)
     {
-        super(name, description, isIdentified, textureRegion, isRanged, RandomGen.getRandomInt(0, 10) > 8);
+        super(name, description, isIdentified, textureRegion, isRanged,weaponId++);
         _minDamage = minDamage;
         _maxDamage = maxDamage;
         _bonusDamage = bonusDamage;

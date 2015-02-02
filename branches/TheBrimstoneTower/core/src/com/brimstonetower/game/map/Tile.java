@@ -1,16 +1,17 @@
-package com.brimstonetower.game.mapgeneration;
+package com.brimstonetower.game.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.PathFinder;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
-import com.brimstonetower.game.items.Item;
+import com.brimstonetower.game.gameobjects.items.Item;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gameobjects.GameCharacter;
+import com.brimstonetower.game.map.mapgeneration.Corridor;
 
 import java.util.ArrayList;
 

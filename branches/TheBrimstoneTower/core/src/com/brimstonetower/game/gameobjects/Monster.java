@@ -4,9 +4,9 @@ package com.brimstonetower.game.gameobjects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.helpers.GameAction;
-import com.brimstonetower.game.items.Armor;
-import com.brimstonetower.game.items.Item;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.gameobjects.items.Armor;
+import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.map.Tile;
 import java.util.ArrayList;
 
 

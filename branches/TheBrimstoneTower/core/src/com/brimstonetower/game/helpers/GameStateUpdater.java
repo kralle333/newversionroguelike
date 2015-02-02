@@ -8,10 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.gui.Inventory;
-import com.brimstonetower.game.items.*;
-import com.brimstonetower.game.mapgeneration.DungeonMap;
-import com.brimstonetower.game.mapgeneration.RandomGen;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.gameobjects.items.*;
+import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.managers.ItemManager;
+import com.brimstonetower.game.map.DungeonMap;
+import com.brimstonetower.game.map.Tile;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -288,10 +289,14 @@ public class GameStateUpdater
                 executeAttack(action);
                 break;
             case Equip:
-                action.getOwner().equip(action.getTargetItem());
+                Item equipment = action.getTargetItem();
+                action.getOwner().equip(equipment);
+                _inventory.equip(equipment);
                 break;
             case Unequip:
-                action.getOwner().unequip(action.getTargetItem());
+                Item unequipment = action.getTargetItem();
+                action.getOwner().unequip(unequipment);
+                _inventory.unequip(unequipment);
                 break;
             case Wait:
                 break;
@@ -301,7 +306,9 @@ public class GameStateUpdater
                 GameConsole.addMessage("Picked up item " + item.getName());
                 break;
             case Drop:
-                _player.getCurrentTile().addItem(action.getTargetItem());
+                Item droppedItem = action.getTargetItem();
+                _inventory.removeItem(droppedItem);
+                _player.getCurrentTile().addItem(droppedItem);
                 break;
             case Throw:
                 _thrownObject = action.getTargetItem();

@@ -1,8 +1,8 @@
 package com.brimstonetower.game.helpers;
 
 import com.brimstonetower.game.gameobjects.GameCharacter;
-import com.brimstonetower.game.items.Item;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.map.Tile;
 
 public class GameAction
 {

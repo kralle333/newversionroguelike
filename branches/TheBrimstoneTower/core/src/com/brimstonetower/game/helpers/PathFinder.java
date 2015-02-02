@@ -1,7 +1,7 @@
 package com.brimstonetower.game.helpers;
 
 import com.badlogic.gdx.Gdx;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.map.Tile;
 
 import java.util.ArrayList;
 import java.util.Collections;

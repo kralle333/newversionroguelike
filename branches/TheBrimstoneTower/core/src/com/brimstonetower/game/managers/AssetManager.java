@@ -1,10 +1,11 @@
-package com.brimstonetower.game.helpers;
+package com.brimstonetower.game.managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.brimstonetower.game.helpers.TileSetCoordinate;
 
 import java.util.HashMap;
 
@@ -33,7 +34,6 @@ public class AssetManager
         _assets.put("mainHeroesWithBorder",new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
         _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
         _assets.put("tile", new Texture(Gdx.files.internal("art/tileset.png")));
-        _assets.put("tileNew", new Texture(Gdx.files.internal("art/tilesetNew.png")));
         _assets.put("armor", new Texture(Gdx.files.internal("art/armorTileSet.png")));
         _assets.put("weapon", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
         _assets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
@@ -120,7 +120,7 @@ public class AssetManager
         BitmapFont font;
         int widthToFit = Gdx.graphics.getWidth()*5/8-(Gdx.graphics.getWidth()/128);
         int heightToFit = Gdx.graphics.getHeight()/20;
-        String testString = "Brown blobs are felt moving on your eyes, blocking your sight";
+        String testString = "Your sight is blocked by gray blobs moving on your eyes";
 
         do
         {
