@@ -6,12 +6,13 @@ import com.brimstonetower.game.gui.GameConsole;
 
 public class Effect
 {
-    public enum Type{Gas,OverMultipleTurns,Instant}
+    public enum Type{Temporary, Permanent}
     private Type _type;
 
-    //Part of all types
+    //Properties
     private String _name;
     private String _effectDescription;
+    private String _dispelDescription;
     private int _hitPointsChange;
     private int _maxHitPointsChange;
     private int _strengthChange;
@@ -19,10 +20,9 @@ public class Effect
     private int _defenseChange;
     private int _attackSpeedChange;
     private int _dodgeRateChange;
-    private boolean _isPermanent;
-    private boolean _isEffectsReversed = false;
 
-    //Temporary effect
+    //Used for keeping track of the effects
+    private boolean _isEffectsReversed = false;
     private boolean _isActive = false;
     public boolean isActive(){return _isActive;}
     public void activate(){_isActive =true;}
@@ -34,10 +34,12 @@ public class Effect
     public boolean isThereTurnsLeft(){return _turnsLeft>0;}
 
     //Gas type
+    private boolean _isGas = false;
     private Color _color;
     public Color getColor(){return _color;}
 
     //Getters
+    public boolean isGas(){return _isGas;}
     public Type getType()
     {
         return _type;
@@ -50,6 +52,7 @@ public class Effect
     {
         return _effectDescription;
     }
+    public String getDispelDescription(){return _dispelDescription;}
     public int getHitPointsChange()
     {
         return _hitPointsChange;
@@ -72,65 +75,65 @@ public class Effect
     {
         return _dodgeRateChange;
     }
-    public boolean isPermanent()
-    {
-        return _isPermanent;
-    }
-
 
     //Builder pattern to create effects as requested
-    private Effect()
+    private Effect(String name, String description,
+                   int hitPointsChange,int maxHitPointsChange,
+                   int strengthChange,int maxStrengthChange,
+                   int defenseChange,int attackSpeedChange,
+                   int dodgeRateChange, int turnsActive)
     {
-
+        _name = name;
+        _effectDescription = description;
+        _hitPointsChange = hitPointsChange;
+        _maxHitPointsChange = maxHitPointsChange;
+        _strengthChange = strengthChange;
+        _maxStrengthChange = maxStrengthChange;
+        _defenseChange = defenseChange;
+        _attackSpeedChange = attackSpeedChange;
+        _dodgeRateChange = dodgeRateChange;
+        _turnsLeft = turnsActive;
     }
 
 
-    public static Effect createGasEffect(String name, String description,
-                                         int hitPointsChange,int strengthChange,
-                                         int defenseChange,int attackSpeedChange,int dodgeRateChange,
-                                         Color color, boolean isPermanent)
-    {
-        Effect gasEffect = new Effect();
-        gasEffect._name=name;
-        gasEffect._effectDescription=description;
-        gasEffect._hitPointsChange=hitPointsChange;
-        gasEffect._strengthChange=strengthChange;
-        gasEffect._defenseChange=defenseChange;
-        gasEffect._attackSpeedChange=attackSpeedChange;
-        gasEffect._dodgeRateChange=dodgeRateChange;
-        gasEffect._color=color;
-        gasEffect._isPermanent=isPermanent;
-        gasEffect._isActive = isPermanent;
-        gasEffect._type = Type.Gas;
 
-        return gasEffect;
+
+    public static Effect createPermanentEffect(String name, String description,
+                                                     int hitPointsChange, int maxHitPointsChange,
+                                                     int strengthChange, int maxStrengthChange,
+                                                     int defenseChange, int attackSpeedChange,
+                                                     int dodgeRateChange, int turnsActive,
+                                                     boolean isGas, Color color)
+    {
+        Effect permanentEffect = new Effect(
+                name,description,hitPointsChange,maxHitPointsChange,
+                strengthChange,maxStrengthChange,defenseChange,
+                attackSpeedChange,dodgeRateChange,turnsActive);
+
+        permanentEffect._isGas = isGas;
+        permanentEffect._type = Type.Permanent;
+        permanentEffect._color = isGas?color:Color.WHITE;
+
+        return permanentEffect;
     }
 
-    public static Effect createInstantEffect(String name, String description,
-                                             int hitPointsChange,int strengthChange,
-                                             int defenseChange,int attackSpeedChange,
-                                             int dodgeRateChange, int turnsActive, boolean isPermanent)
+    public static Effect createTemporaryEffect(String name, String description,String dispelDescription,
+                                               int hitPointsChange, int maxHitPointsChange,
+                                               int strengthChange, int maxStrengthChange,
+                                               int defenseChange, int attackSpeedChange,
+                                               int dodgeRateChange, int turnsActive,
+                                               boolean isGas, Color color)
     {
-        Effect instantEffect = new Effect();
-        instantEffect._name = name;
-        instantEffect._effectDescription = description;
-        instantEffect._hitPointsChange = hitPointsChange;
-        instantEffect._hitPointsChange = hitPointsChange;
-        instantEffect._strengthChange = strengthChange;
-        instantEffect._defenseChange = defenseChange;
-        instantEffect._attackSpeedChange = attackSpeedChange;
-        instantEffect._dodgeRateChange = dodgeRateChange;
-        instantEffect._type = Type.Instant;
-        instantEffect._turnsLeft = turnsActive;
-        instantEffect._isPermanent = isPermanent;
-        instantEffect._isActive = isPermanent;
+        Effect temporaryEffect = new Effect(
+                name,description,hitPointsChange,maxHitPointsChange,
+                strengthChange,maxStrengthChange,defenseChange,
+                attackSpeedChange,dodgeRateChange,turnsActive);
+        temporaryEffect._dispelDescription = dispelDescription;
+        temporaryEffect._isGas = isGas;
+        temporaryEffect._type = Type.Temporary;
+        temporaryEffect._color = isGas?color:Color.WHITE;
 
-        if (turnsActive > 0 && isPermanent)
-        {
-            GameConsole.addMessage("Mix of temporary and permanent stats for effect: " + name);
-        }
-
-        return instantEffect;
+        return temporaryEffect;
     }
 
 

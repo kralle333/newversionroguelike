@@ -16,7 +16,7 @@ public class TheBrimstoneTowerGame extends Game
 
     private static TheBrimstoneTowerGame _gameInstance;
     public final static String versionState = "alpha";
-    public final static float version = 0.12f;
+    public final static float version = 0.13f;
     public static TheBrimstoneTowerGame getGameInstance()
     {
         if (_gameInstance == null)

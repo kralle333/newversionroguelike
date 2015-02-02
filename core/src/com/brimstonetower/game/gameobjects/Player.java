@@ -101,6 +101,13 @@ public class Player extends GameCharacter
     }
 
     @Override
+    protected void removeEffect(Effect effect)
+    {
+        GameConsole.addMessage(effect.getDispelDescription());
+        super.removeEffect(effect);
+    }
+
+    @Override
     public void damage(int damage)
     {
         super.damage(damage);

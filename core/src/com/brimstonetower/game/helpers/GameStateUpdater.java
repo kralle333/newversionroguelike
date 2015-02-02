@@ -490,22 +490,23 @@ public class GameStateUpdater
 
     private void usePotion(Potion potion, GameCharacter target, Tile tile)
     {
-        if (potion.getEffect().getType() == Effect.Type.Gas)
+        String potionColor = ColorHelper.convertColorToString(potion.getColor());
+        if (potion.getEffect().isGas())
         {
-            GameConsole.addMessage("A " + potion.getColor() + " gas spreads from the bottle");
+            GameConsole.addMessage("A " + ColorHelper.convertColorToString(potion.getEffect().getColor()) + " gas spreads from the bottle");
             _gasClouds.add(new Gas(tile, potion.getEffect()));
         }
-        else if (potion.getEffect().getType() == Effect.Type.Instant)
+        else if (target != null)
         {
             if (tile == null)
             {
-                GameConsole.addMessage(target.getName() + " drank the " + potion.getColor() + " potion");
+                GameConsole.addMessage(target.getName() + " drank the " +potionColor+ " potion");
             }
             target.giveEffect(potion.getEffect());
         }
         else
         {
-            GameConsole.addMessage(potion.getStringColor() + " colored liquid runs out of the vial");
+            GameConsole.addMessage(potionColor + " colored liquid runs out of the vial");
         }
 
     }

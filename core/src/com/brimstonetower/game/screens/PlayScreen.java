@@ -314,9 +314,20 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             case Input.Keys.SPACE:
                 if(_player.getCurrentTile().containsItem())
                 {
-                    _playerAction.setAction(_player, GameAction.Type.PickUp,_player.getCurrentTile(),null);
-                    _player.clearQueueAndSetAction(_playerAction);
-                    return true;
+                    if (_inventory.isFull())
+                    {
+                        GameConsole.addMessage("Can not pick up item, inventory is full");
+                    }
+                    else
+                    {
+                        _playerAction.setAction(_player, GameAction.Type.PickUp, _player.getCurrentTile(), null);
+                        _player.clearQueueAndSetAction(_playerAction);
+                    }
+                }
+                else if (_player.getCurrentTile().getType() == Tile.Types.StairCase)
+                {
+                    GameConsole.addMessage(playerName + " went down the stairs");
+                    createNewDungeon();
                 }
                 break;
             case Input.Keys.PLUS:
@@ -334,9 +345,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             }
             else
             {
+                _player.clearNextActions();
                 _playerAction.setAction(_player, GameAction.Type.Move,newTile,null);
-                ArrayList<Tile> pathToTile = PathFinder.getPath(_player.getCurrentTile(),newTile);
-                _player.setMovementActions(pathToTile);
             }
         }
         return true;
@@ -480,7 +490,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                     }
                     else if (touchedTile.getType() == Tile.Types.StairCase)
                     {
-                        GameConsole.addMessage("Player went down the stairs");
+                        GameConsole.addMessage(playerName+" went down the stairs");
                         createNewDungeon();
                     }
                 }
