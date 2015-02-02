@@ -578,7 +578,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         float ratio = (initialDistance / distance);
 
         //Clamp range and set zoom
-        mainCamera.zoom = MathUtils.clamp((MathUtils.clamp(mainCamera.zoom * ratio, 0.2f, 2f)), mainCamera.zoom - 0.01f, mainCamera.zoom + 0.01f);
+        mainCamera.zoom = MathUtils.clamp((MathUtils.clamp(mainCamera.zoom * ratio, 0.2f, 2f)), mainCamera.zoom - 0.005f, mainCamera.zoom + 0.005f);
 
         return true;
     }
