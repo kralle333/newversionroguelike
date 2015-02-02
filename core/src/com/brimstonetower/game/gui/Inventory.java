@@ -1,6 +1,7 @@
 package com.brimstonetower.game.gui;
 
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -8,8 +9,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.Player;
-import com.brimstonetower.game.helpers.AssetManager;
-import com.brimstonetower.game.items.*;
+import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.gameobjects.items.*;
+import com.brimstonetower.game.managers.ItemManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,12 +19,6 @@ import java.util.HashMap;
 public class Inventory extends Window
 {
     private final ArrayList<Item> _items = new ArrayList<Item>();
-
-    public ArrayList<Item> GetItems()
-    {
-        return _items;
-    }
-
     private Item _selectedItem;
 
     public boolean hasItemBeenSelected()
@@ -113,7 +109,7 @@ public class Inventory extends Window
             }
         }
         _items.add(item);
-        String itemId = String.valueOf(item.getId());
+        String itemId = String.valueOf(item.getUniqueId());
         Button itemButton = addButton(itemId, item.getTextureRegion());
         _itemButtonMap.put(itemButton, item);
         arrangeButtons(0, 0, 8, 8, 4);
@@ -123,8 +119,7 @@ public class Inventory extends Window
     public void removeItem(Item item)
     {
         _items.remove(item);
-        //Might make a problem later
-        removeButton(String.valueOf(item.getId()));
+        removeButton(String.valueOf(item.getUniqueId()));
         _itemButtonMap.remove(item);
         arrangeButtons(0, 0, 8, 8, 4);
         if (item == _equippedArmor || item == _equippedWeapon)
@@ -148,17 +143,45 @@ public class Inventory extends Window
 
     public void equip(Item item)
     {
-        Button itemButton = getButton(String.valueOf(item.getId()));
+        Button itemButton = getButton(String.valueOf(item.getUniqueId()));
         Vector2 ePosition = new Vector2(itemButton.getX() + itemButton.getWidth() / 2, itemButton.getY() + itemButton.getHeight() / 2);
         if (item instanceof Armor)
         {
-            _equippedArmor = (Armor) item;
-            _armorPosition = ePosition;
+            if(_equippedArmor == null || (_equippedArmor!=null &&!_equippedArmor.hasCurse()))
+            {
+                _equippedArmor = (Armor) item;
+                _armorPosition = ePosition;
+                if(_equippedArmor.hasCurse())
+                {
+                    GameConsole.addMessage("The armor tightens uncomfortably to your body");
+                    GameConsole.addMessage("The armor is cursed!");
+                    _equippedArmor.showCurse();
+                    itemButton.setColor(Color.PINK);
+                }
+            }
+            else
+            {
+                GameConsole.addMessage("The armor you wear is stuck");
+            }
         }
         else
         {
-            _equippedWeapon = (Weapon) item;
-            _weaponPosition = ePosition;
+            if(_equippedWeapon == null || (_equippedWeapon!=null &&!_equippedWeapon.hasCurse()))
+            {
+                _equippedWeapon = (Weapon) item;
+                _weaponPosition = ePosition;
+                if (_equippedWeapon.hasCurse())
+                {
+                    GameConsole.addMessage("An invisible force makes you unable let go of the weapon");
+                    GameConsole.addMessage("The weapon is cursed!");
+                    _equippedWeapon.showCurse();
+                    itemButton.setColor(Color.PINK);
+                }
+            }
+            else
+            {
+                GameConsole.addMessage("You are unable to let go of your weapon");
+            }
         }
 
     }
@@ -199,7 +222,12 @@ public class Inventory extends Window
     {
         for (Item item : _items)
         {
-            item.removeCurse();
+            if(item.hasCurse())
+            {
+                item.removeCurse();
+                Button itemButton = getButton(String.valueOf(item.getUniqueId()));
+                itemButton.setColor(Color.WHITE);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.brimstonetower.game.mapgeneration;
+package com.brimstonetower.game.helpers;
 
 import java.security.SecureRandom;
 

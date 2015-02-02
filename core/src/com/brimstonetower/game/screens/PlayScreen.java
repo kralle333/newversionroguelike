@@ -12,12 +12,12 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
-import com.brimstonetower.game.gameobjects.GameCharacter;
-import com.brimstonetower.game.items.Item;
-import com.brimstonetower.game.items.ItemManager;
-import com.brimstonetower.game.mapgeneration.DungeonGenerator;
-import com.brimstonetower.game.mapgeneration.DungeonMap;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.managers.ItemManager;
+import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
+import com.brimstonetower.game.map.DungeonMap;
+import com.brimstonetower.game.map.Tile;
 import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.gui.*;
 import com.brimstonetower.game.helpers.*;
@@ -240,7 +240,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private void restartGame()
     {
         _gameOverWindow.hide();
-        ItemManager.initialize();
         _depth = 1;
         _player = null;
         createNewDungeon();
@@ -345,8 +344,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             }
             else
             {
-                _player.clearNextActions();
                 _playerAction.setAction(_player, GameAction.Type.Move,newTile,null);
+                _player.clearQueueAndSetAction(_playerAction);
             }
         }
         return true;
@@ -526,33 +525,10 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             {
                 _itemToThrow = selectedAction.getTargetItem();
                 _currentScreenState = ScreenState.SelectingTarget;
-
                 _selectedItemWindow.hide();
             }
             else
             {
-
-                    if (selectedAction.getType() == GameAction.Type.Equip)
-                    {
-                        _inventory.equip(_selectedItemWindow.retrieveItem());
-                    }
-                    else if (selectedAction.getType() == GameAction.Type.Unequip)
-                    {
-                        _inventory.unequip(_selectedItemWindow.retrieveItem());
-                    }
-                    else if (selectedAction.getType() == GameAction.Type.Drop)
-                    {
-                        if (selectedAction.getTargetItem() == _player.getEquippedArmor() || selectedAction.getTargetItem() == _player.getEquippedWeapon())
-                        {
-                            _inventory.unequip(selectedAction.getTargetItem());
-                        }
-                        _inventory.removeItem(selectedAction.getTargetItem());
-                    }
-                    else
-                    {
-                        _inventory.removeItem(_selectedItemWindow.retrieveItem());
-                    }
-
                 _player.clearQueueAndSetAction(selectedAction);
                 _selectedItemWindow.hide();
                 _currentScreenState = ScreenState.Moving;

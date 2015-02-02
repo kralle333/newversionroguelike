@@ -7,12 +7,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.helpers.GameAction;
-import com.brimstonetower.game.items.Armor;
-import com.brimstonetower.game.items.Item;
-import com.brimstonetower.game.items.Weapon;
-import com.brimstonetower.game.mapgeneration.DungeonMap;
-import com.brimstonetower.game.mapgeneration.RandomGen;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.gameobjects.items.Armor;
+import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.gameobjects.items.Weapon;
+import com.brimstonetower.game.map.DungeonMap;
+import com.brimstonetower.game.helpers.RandomGen;
+import com.brimstonetower.game.map.Tile;
 
 import java.util.ArrayList;
 
@@ -283,9 +283,16 @@ public class GameCharacter
                 applyEffect(effect);
             }
 
-            if(effect.isActive() && !effect.isThereTurnsLeft())
+            if(effect.isActive())
             {
-                effectsToRemove.add(effect);
+                if(!effect.isThereTurnsLeft())
+                {
+                    effectsToRemove.add(effect);
+                }
+                else
+                {
+                    effect.decreaseTurns();
+                }
             }
         }
         for(Effect toRemove : effectsToRemove)

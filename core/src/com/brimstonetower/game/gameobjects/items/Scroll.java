@@ -1,10 +1,8 @@
-package com.brimstonetower.game.items;
+package com.brimstonetower.game.gameobjects.items;
 
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.brimstonetower.game.helpers.AssetManager;
 
 public class Scroll extends Item
 {
@@ -16,7 +14,6 @@ public class Scroll extends Item
         return _unidentifiedName;
     }
 
-    private BitmapFont _font;
     private ScrollType _scrollType;
 
     public ScrollType getType()
@@ -29,19 +26,28 @@ public class Scroll extends Item
         Unidentified, Identify, Mapping, Teleport, RemoveCurse
     }
 
-    public Scroll(String name, String description, boolean isIdentified, TextureRegion textureRegion, String unIdentifiedName)
+    public Scroll(String name, String description, boolean isIdentified, TextureRegion textureRegion, String unIdentifiedName,int id)
     {
-        super(name, description, isIdentified, textureRegion, true, false);
+        super(name, description, isIdentified, textureRegion, true,id);
         _unidentifiedName = unIdentifiedName;
         _scrollType = getScrollType(name);
-        _font = AssetManager.getFont("description");
     }
 
     public Scroll(Scroll toCopy)
     {
-        this(toCopy.getIdentifiedName(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getUnidentifiedName());
+        this(toCopy.getIdentifiedName(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getUnidentifiedName(),toCopy.getTypeId());
     }
-
+    public String getName()
+    {
+        if (_isIdentified)
+        {
+            return super.getName();
+        }
+        else
+        {
+            return _unidentifiedName + " scroll";
+        }
+    }
     private ScrollType getScrollType(String name)
     {
         if (name.equals("Scroll of Identify"))
@@ -65,19 +71,6 @@ public class Scroll extends Item
             throw new IllegalArgumentException(name + " does not name a scroll");
         }
     }
-
-    public String getName()
-    {
-        if (_isIdentified)
-        {
-            return super.getName();
-        }
-        else
-        {
-            return _unidentifiedName + " scroll";
-        }
-    }
-
     public String getDescription()
     {
         if (_isIdentified)

@@ -1,22 +1,17 @@
 package com.brimstonetower.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.screens.MenuScreen;
-import com.brimstonetower.game.screens.PlayScreen;
-import com.brimstonetower.game.screens.StoryScreen;
 
 public class TheBrimstoneTowerGame extends Game
 {
 
     private static TheBrimstoneTowerGame _gameInstance;
     public final static String versionState = "alpha";
-    public final static float version = 0.14f;
+    public final static float version = 0.15f;
+
     public static TheBrimstoneTowerGame getGameInstance()
     {
         if (_gameInstance == null)

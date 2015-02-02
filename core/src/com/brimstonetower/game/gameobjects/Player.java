@@ -2,13 +2,12 @@ package com.brimstonetower.game.gameobjects;
 
 
 import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
-import com.brimstonetower.game.items.Item;
-import com.brimstonetower.game.items.ItemManager;
-import com.brimstonetower.game.items.Potion;
-import com.brimstonetower.game.mapgeneration.DungeonMap;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.managers.ItemManager;
+import com.brimstonetower.game.map.DungeonMap;
+import com.brimstonetower.game.map.Tile;
 
 public class Player extends GameCharacter
 {
@@ -96,7 +95,11 @@ public class Player extends GameCharacter
     @Override
     protected void applyEffect(Effect effect)
     {
-        GameConsole.addMessage(effect.getEffectDescription());
+        if(!effect.areEffectsReversed())
+        {
+            GameConsole.addMessage(effect.getEffectDescription());
+        }
+
         super.applyEffect(effect);
     }
 

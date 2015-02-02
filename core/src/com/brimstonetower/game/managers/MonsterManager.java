@@ -1,19 +1,20 @@
-package com.brimstonetower.game.mapgeneration;
+package com.brimstonetower.game.managers;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.brimstonetower.game.helpers.AssetManager;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
-import com.brimstonetower.game.items.Item;
-import com.brimstonetower.game.items.ItemManager;
-import com.brimstonetower.game.items.Weapon;
+import com.brimstonetower.game.gameobjects.items.Armor;
+import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.gameobjects.items.Weapon;
 import com.brimstonetower.game.gameobjects.Monster;
+import com.brimstonetower.game.map.DungeonMap;
+import com.brimstonetower.game.helpers.RandomGen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MonsterGenerator
+public class MonsterManager
 {
     private static ArrayList<MonsterPrototype> monsterPrototypes = new ArrayList<MonsterPrototype>();
     private static int numberOfPrototypes;
@@ -87,6 +88,8 @@ public class MonsterGenerator
 
     public static Monster generateChest(int depth)
     {
+        final int equipmentCurseRate = 100;
+
         TextureRegion chestRegion = AssetManager.getTextureRegion("tile", "chest", DungeonMap.TileSize, DungeonMap.TileSize);
         chestRegion.flip(false, true);
         Monster chest = new Monster("Chest", 0, 1, 0, 1, 0, Monster.Nature.Passive, chestRegion);
@@ -109,10 +112,26 @@ public class MonsterGenerator
                 chest.addItemToDrop(ItemManager.getRandomScroll());
                 break;
             case 5:
-                chest.addItemToDrop(ItemManager.getRandomWeapon(depth));
+                Weapon weapon =ItemManager.getRandomWeapon(depth);
+                if(!weapon.isRanged() && weapon.getIdentifiedMaxDamage()<weapon.getExpectedMaxDamage())
+                {
+                    if(RandomGen.getRandomInt(1,100)<=equipmentCurseRate)
+                    {
+                        weapon.curse();
+                    }
+                }
+                chest.addItemToDrop(weapon);
                 break;
             case 6:
-                chest.addItemToDrop(ItemManager.getRandomArmor(depth));
+                Armor armor =ItemManager.getRandomArmor(depth);
+                if(armor.getIdentifiedDefense()<armor.getExpectedDefense())
+                {
+                    if(RandomGen.getRandomInt(1,100)<=equipmentCurseRate)
+                    {
+                        armor.curse();
+                    }
+                }
+                chest.addItemToDrop(armor);
                 break;
         }
 

@@ -1,4 +1,4 @@
-package com.brimstonetower.game.items;
+package com.brimstonetower.game.gameobjects.items;
 
 
 import com.badlogic.gdx.graphics.Color;
@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.helpers.ColorHelper;
 import com.brimstonetower.game.helpers.Effect;
-import com.brimstonetower.game.mapgeneration.RandomGen;
 
 
 public class Potion extends Item
@@ -21,14 +20,10 @@ public class Potion extends Item
     {
         return _color;
     }
-    public String getStringColor()
-    {
-        return _stringColor;
-    }
 
-    public Potion(Effect effect,boolean isIdentified,TextureRegion textureRegion,Color color)
+    public Potion(Effect effect,boolean isIdentified,TextureRegion textureRegion,Color color,int typeId)
     {
-        super("Potion of "+effect.getName(), effect.getEffectDescription(), isIdentified, textureRegion, true, false);
+        super("Potion of "+effect.getName(), effect.getEffectDescription(), isIdentified, textureRegion,false,typeId);
         _effect=effect;
         _color=color;
         _stringColor = ColorHelper.convertColorToString(color);
@@ -37,7 +32,7 @@ public class Potion extends Item
 
     public Potion(Potion toCopy)
     {
-        this(toCopy.getEffect(),toCopy.isIdentified(), toCopy.getTextureRegion(),toCopy.getColor());
+        this(toCopy.getEffect(),toCopy.isIdentified(), toCopy.getTextureRegion(),toCopy.getColor(),toCopy.getTypeId());
     }
 
     public String getName()

@@ -1,15 +1,17 @@
-package com.brimstonetower.game.mapgeneration;
+package com.brimstonetower.game.map;
 
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.brimstonetower.game.helpers.AssetManager;
-import com.brimstonetower.game.items.Item;
+import com.brimstonetower.game.helpers.RandomGen;
+import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.gameobjects.items.Item;
 import com.brimstonetower.game.gameobjects.Monster;
 import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.gameobjects.Trap;
-import com.brimstonetower.game.mapgeneration.*;
+import com.brimstonetower.game.map.mapgeneration.BSPMapNode;
+import com.brimstonetower.game.map.mapgeneration.Corridor;
 
 import java.util.ArrayList;
 

@@ -1,15 +1,12 @@
 package com.brimstonetower.game.gameobjects;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.helpers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
-import com.brimstonetower.game.mapgeneration.DungeonMap;
-import com.brimstonetower.game.mapgeneration.Tile;
+import com.brimstonetower.game.map.DungeonMap;
+import com.brimstonetower.game.map.Tile;
 
 public class Trap
 {

@@ -13,7 +13,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gui.Button;
-import com.brimstonetower.game.helpers.AssetManager;
+import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.HighScoreIO;
 
 public class HighScoreScreen implements Screen, GestureDetector.GestureListener
