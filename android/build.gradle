@@ -13,11 +13,34 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+    buildTypes {
+        assembleDebug {
+
+            applicationVariants.all { variant ->
+                appendVersionNameVersionCode(variant, defaultConfig)
+            }
+        }
+
+    }
+
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
         versionCode 1
         versionName "0.13a"
+    }
+}
+
+
+def appendVersionNameVersionCode(variant, defaultConfig) {
+    variant.outputs.each { output ->
+        def driveApkFolder ="C:/Users/Kristian/Google Drev/RoguelikeGame/apk"
+        if (output.zipAlign) {
+            def fileName = "TBT-"+ defaultConfig.versionName + ".apk"
+            output.outputFile = new File(driveApkFolder, fileName)
+        }
+        def fileName = "TBT-"+ defaultConfig.versionName + ".apk"
+        output.outputFile = new File(driveApkFolder, fileName)
     }
 }
 
