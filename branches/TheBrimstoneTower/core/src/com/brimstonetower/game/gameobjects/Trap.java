@@ -64,7 +64,7 @@ public class Trap
                 _hasBeenDiscovered = false;
             }
             GameCharacter affectedCharacter = _occupiedTile.getCharacter();
-            if (_effect.getType()== Effect.Type.Gas)
+            if (_effect.isGas())
             {
                 _createdGas = new Gas(_occupiedTile, _effect);
             }

@@ -232,10 +232,18 @@ public class GameCharacter
     {
         if (isMoving())
         {
-            return movementQueue.remove(0);
+            GameAction newAction = movementQueue.remove(0);
+            if(newAction.getTargetTile().getCharacter() ==null)
+            {
+                return newAction;
+            }
+            else
+            {
+                clearNextActions();
+                return null;
+            }
         }
-
-        if (nextAction.isEmpty())
+        else if (nextAction.isEmpty())
         {
             return null;
         }
@@ -255,7 +263,6 @@ public class GameCharacter
     {
         if (tile.getCharacter() == null)
         {
-
             currentTile.removeCharacter();
             placeOnTile(tile);
         }
@@ -271,8 +278,7 @@ public class GameCharacter
         final ArrayList<Effect> effectsToRemove = new ArrayList<Effect>();
         for(Effect effect : _currentEffects)
         {
-            //Temporary:                                            Instant/Permanent:
-            if((effect.isThereTurnsLeft() && !effect.isActive()) || effect.isPermanent())
+            if(!effect.isActive())
             {
                 applyEffect(effect);
             }
@@ -304,18 +310,19 @@ public class GameCharacter
         defense+=effect.getDefenseChange();
         dodgeRate+=effect.getDodgeRateChange();
 
-        if(effect.isActive() || effect.isPermanent())
-        {
-            effect.decreaseTurns();
-        }
-        else
+        if(!effect.isActive())
         {
             effect.activate();
         }
+        else
+        {
+            effect.decreaseTurns();
+        }
+
     }
-    private void removeEffect(Effect effect)
+    protected void removeEffect(Effect effect)
     {
-        if(!effect.isPermanent())
+        if(effect.getType() == Effect.Type.Temporary)
         {
             effect.reverseEffects();
             applyEffect(effect);
@@ -353,7 +360,7 @@ public class GameCharacter
 
 
         int result = RandomGen.getRandomInt(0, 100);
-        if (result >= 96)
+        if (result >= 98)
         {
             _dealtDamage = getMaxAttackPower() * 2;
             GameConsole.addMessage(_name + " landed a critical hit on " + target.getName() + "!");
@@ -370,12 +377,18 @@ public class GameCharacter
             {
                 _dealtDamage -= _dealtDamage / 2;
             }
-            GameConsole.addMessage(_name + " attacks " + target.getName() + "!");
+            GameConsole.addMessage(_name + " attacked " + target.getName() + ".");
             target.damage(_dealtDamage);
         }
         else
         {
-            GameConsole.addMessage(_name + " tries to attack " + target.getName() + " but misses!");
+            int randomMessage = RandomGen.getRandomInt(1,2);
+            switch (randomMessage)
+            {
+                case 1:GameConsole.addMessage(_name + " tries to attack " + target.getName() + ", but misses!");break;
+                case 2:GameConsole.addMessage(target._name+" manage to dodge "+_name+"'s attack");break;
+            }
+
         }
 
     }

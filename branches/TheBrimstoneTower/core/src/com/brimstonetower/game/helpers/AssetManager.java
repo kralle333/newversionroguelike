@@ -119,7 +119,7 @@ public class AssetManager
         BitmapFont font;
         int widthToFit = Gdx.graphics.getWidth()*5/8-(Gdx.graphics.getWidth()/128);
         int heightToFit = Gdx.graphics.getHeight()/20;
-        String testString = "Playerblab landed a critical hit on the target!";
+        String testString = "Brown blobs are felt moving on your eyes, blocking your sight";
 
         do
         {
@@ -129,7 +129,7 @@ public class AssetManager
             {
                 break;
             }
-            parameters.size+=2;
+            parameters.size++;
         }while(parameters.size<maxSize);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         _fonts.put("description",font);
@@ -140,11 +140,6 @@ public class AssetManager
     public static BitmapFont getFont(String string)
     {
         return _fonts.get(string);
-    }
-
-    public static Texture getTexture(String string)
-    {
-        return _assets.get(string);
     }
 
     public static TextureRegion getTextureRegion(String path, String tileSetPositionKey, int width, int height)

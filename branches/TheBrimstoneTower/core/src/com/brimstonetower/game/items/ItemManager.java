@@ -1,11 +1,13 @@
 package com.brimstonetower.game.items;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
+import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.mapgeneration.RandomGen;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ public class ItemManager
     private static final ArrayList<Scroll> _availableScrolls = new ArrayList<Scroll>();
 
     private static ArrayList<String> _availableWords = new ArrayList<String>();
-    private static ArrayList<Vector2> _availablePotionTypes = new ArrayList<Vector2>();
+    private static ArrayList<TileSetCoordinate> _availablePotionTypes = new ArrayList<TileSetCoordinate>();
 
     public static boolean isIdentified(Item item)
     {
@@ -209,10 +211,10 @@ public class ItemManager
         _availableArmors.add(new Armor("Scale armor", "Considered to be the most protective armor", false, scaleArmor, 7, 0));
     }
 
-    private static Color convertPotionTypeIndexToColor(Vector2 textureRegionPosition)
+    private static Color convertPotionTypeIndexToColor(TileSetCoordinate textureRegionPosition)
     {
         //The x position in the tilemap represents the different colors
-        switch ((int) textureRegionPosition.x)
+        switch (textureRegionPosition.x)
         {
             case 0:
                 return Color.WHITE;
@@ -225,7 +227,18 @@ public class ItemManager
         }
         return Color.PINK;
     }
-
+    private static Potion createPotion(Effect effect)
+    {
+        if(_availablePotionTypes.size()>0)
+        {
+            TileSetCoordinate randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
+            TextureRegion potionRegion = AssetManager.getTextureRegion("potion",  randomType.x,  randomType.y, 32, 32);
+            potionRegion.flip(false, true);
+            return new Potion(effect,false,potionRegion,convertPotionTypeIndexToColor(randomType));
+        }
+        Gdx.app.log("Item Manager","Cant create potion, no unused type left!");
+        return null;
+    }
     private static void initializePotions()
     {
 
@@ -234,23 +247,16 @@ public class ItemManager
         {
             for (int y = 0; y < 4; y++)
             {
-                _availablePotionTypes.add(new Vector2(x, y));
+                _availablePotionTypes.add(new TileSetCoordinate(x, y));
             }
         }
 
-        //1. Figure out the type of the potion
-        //2. Get the corresponding texture region of that type
-        //3. Flip the texture so its not upside down
-        //4. Add the potion to the list of available potions
-        Vector2 randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        TextureRegion potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
-        potionRegion.flip(false, true);
-        _availablePotions.add(new Potion(Effect.createInstantEffect("Healing","heals you",10,0,0,0,0,0,true),false,potionRegion,convertPotionTypeIndexToColor(randomType)));
 
-        randomType = _availablePotionTypes.remove(RandomGen.getRandomInt(0, _availablePotionTypes.size() - 1));
-        potionRegion = AssetManager.getTextureRegion("potion", (int) randomType.x, (int) randomType.y, 32, 32);
-        potionRegion.flip(false, true);
-        _availablePotions.add(new Potion(Effect.createGasEffect("Death","haunting cries rip your soul apart",-5,0,0,0,0,Color.DARK_GRAY,true), false, potionRegion,convertPotionTypeIndexToColor(randomType)));
+        _availablePotions.add(createPotion(Effect.createPermanentEffect("Healing", "You feel refreshed", 10, 0, 0, 0, 0, 0, 0, 0, false, null)));
+        _availablePotions.add(createPotion(Effect.createPermanentEffect("Death", "Haunting cries rip your soul apart", -5, 0, 0, 0, 0, 0, 0, 0, true, Color.DARK_GRAY)));
+        _availablePotions.add(createPotion(Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down","Time feels normal again", 0, 0, 0, 0, 0, 10, 0, 5, false, null)));
+        _availablePotions.add(createPotion(Effect.createTemporaryEffect("Blindness","Brown blobs are felt moving on your eyes, blocking your sight","The brown blobs fall from your eyes",0,0,0,0,0,-5,-5,5,false,null)));
+
     }
 
     private static String getRandomScrollName()
@@ -268,7 +274,7 @@ public class ItemManager
     {
         TextureRegion scrollRegion = AssetManager.getTextureRegion("scroll", 0, 0, 32, 32);
         scrollRegion.flip(false, true);
-        _availableWords = new ArrayList<String>(Arrays.asList(new String[]{"donec", "ach", "nisi", "sit", "amet", "sem", "dapibus", "semper", "praesent", "tincidunt", "ultricies", "commodo", "porta", "velit", "lorem", "consequat", "fringilla"}));
+        _availableWords = new ArrayList<String>(Arrays.asList(new String[]{"shia", "ach", "vosom", "xam", "xhamet", "lok", "sqace", "thunwen", "wex", "natas", "qientis", "commodo", "porta", "vella", "lorem", "consequat", "fringilla"}));
         _availableScrolls.add(new Scroll("Scroll of Identify", "Use to identify an item", false, scrollRegion, getRandomScrollName()));
         _availableScrolls.add(new Scroll("Scroll of Mapping", "Reveals the layout of the dungeon", false, scrollRegion, getRandomScrollName()));
         _availableScrolls.add(new Scroll("Scroll of Teleport", "Use to teleport you to a random location", false, scrollRegion, getRandomScrollName()));
