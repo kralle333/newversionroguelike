@@ -33,6 +33,7 @@ public class AssetManager
         _assets.put("mainHeroesWithBorder",new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
         _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
         _assets.put("tile", new Texture(Gdx.files.internal("art/tileset.png")));
+        _assets.put("tileNew", new Texture(Gdx.files.internal("art/tilesetNew.png")));
         _assets.put("armor", new Texture(Gdx.files.internal("art/armorTileSet.png")));
         _assets.put("weapon", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
         _assets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
