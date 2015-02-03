@@ -106,8 +106,11 @@ public class Player extends GameCharacter
     @Override
     protected void removeEffect(Effect effect)
     {
-        GameConsole.addMessage(effect.getDispelDescription());
-        super.removeEffect(effect);
+        if(effect.getType() == Effect.Type.Temporary)
+        {
+            GameConsole.addMessage(effect.getDispelDescription());
+            super.removeEffect(effect);
+        }
     }
 
     @Override

@@ -86,57 +86,6 @@ public class MonsterManager
         }
     }
 
-    public static Monster generateChest(int depth)
-    {
-        final int equipmentCurseRate = 100;
-
-        TextureRegion chestRegion = AssetManager.getTextureRegion("tile", "chest", DungeonMap.TileSize, DungeonMap.TileSize);
-        chestRegion.flip(false, true);
-        Monster chest = new Monster("Chest", 0, 1, 0, 1, 0, Monster.Nature.Passive, chestRegion);
-        int itemType = RandomGen.getRandomInt(0, 6);//Chests more likely to spawn scrolls and potions
-        switch (itemType)
-        {
-            case 0:
-                chest.addItemToDrop(ItemManager.getRandomPotion());
-                break;
-            case 1:
-                chest.addItemToDrop(ItemManager.getRandomPotion());
-                break;
-            case 2:
-                chest.addItemToDrop(ItemManager.getRandomPotion());
-                break;
-            case 3:
-                chest.addItemToDrop(ItemManager.getRandomPotion());
-                break;
-            case 4:
-                chest.addItemToDrop(ItemManager.getRandomScroll());
-                break;
-            case 5:
-                Weapon weapon =ItemManager.getRandomWeapon(depth);
-                if(!weapon.isRanged() && weapon.getIdentifiedMaxDamage()<weapon.getExpectedMaxDamage())
-                {
-                    if(RandomGen.getRandomInt(1,100)<=equipmentCurseRate)
-                    {
-                        weapon.curse();
-                    }
-                }
-                chest.addItemToDrop(weapon);
-                break;
-            case 6:
-                Armor armor =ItemManager.getRandomArmor(depth);
-                if(armor.getIdentifiedDefense()<armor.getExpectedDefense())
-                {
-                    if(RandomGen.getRandomInt(1,100)<=equipmentCurseRate)
-                    {
-                        armor.curse();
-                    }
-                }
-                chest.addItemToDrop(armor);
-                break;
-        }
-
-        return chest;
-    }
 
     public static ArrayList<Monster> generateMonsters(int depth)
     {

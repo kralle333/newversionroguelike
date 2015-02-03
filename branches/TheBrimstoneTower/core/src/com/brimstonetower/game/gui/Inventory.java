@@ -129,6 +129,22 @@ public class Inventory extends Window
         repositionESigns();
     }
 
+    public void removeThrownItem(Item item)
+    {
+
+        if (item instanceof Weapon && ((Weapon) item).isRanged())
+        {
+            ((Weapon) item).decreaseRangedAmmo();
+            if (((Weapon) item).getAmmoCount() == 0)
+            {
+                removeItem(item);
+            }
+        }
+        else
+        {
+            removeItem(item);
+        }
+    }
     public void repositionESigns()
     {
         if (_equippedWeapon != null)

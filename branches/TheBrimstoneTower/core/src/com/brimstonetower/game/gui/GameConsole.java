@@ -53,6 +53,7 @@ public class GameConsole
     public static void addMessage(String message)
     {
         messages[messagesAdded] = message;
+        Gdx.app.log("Console",message);
         messagesAdded++;
         drawIndex++;
     }

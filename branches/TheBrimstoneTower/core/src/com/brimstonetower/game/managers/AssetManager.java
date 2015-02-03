@@ -32,6 +32,7 @@ public class AssetManager
         _assets.put("player", new Texture(Gdx.files.internal("art/player.png")));
         _assets.put("mainHeroes",new Texture(Gdx.files.internal("art/mainHeroes.png")));
         _assets.put("mainHeroesWithBorder",new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
+        _assets.put("searchEye",new Texture(Gdx.files.internal("art/searchEye.png")));
         _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
         _assets.put("tile", new Texture(Gdx.files.internal("art/tileset.png")));
         _assets.put("armor", new Texture(Gdx.files.internal("art/armorTileSet.png")));
@@ -91,6 +92,7 @@ public class AssetManager
         //Misc
         tileSetCoordinateMap.put("stairs", new TileSetCoordinate(2, 3));
         tileSetCoordinateMap.put("chest", new TileSetCoordinate(2, 4));
+        tileSetCoordinateMap.put("searchEye",new TileSetCoordinate(0,0));
 
         //Gas levels
         tileSetCoordinateMap.put("type1.1Gas", new TileSetCoordinate(0, 0));

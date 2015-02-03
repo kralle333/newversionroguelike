@@ -1,15 +1,11 @@
 package com.brimstonetower.game.helpers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.gui.Inventory;
 import com.brimstonetower.game.gameobjects.items.*;
-import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -22,52 +18,19 @@ import java.util.PriorityQueue;
 public class GameStateUpdater
 {
 
-    private class DamageIndicator
-    {
-        public float fallSpeedX;
-        public float fallSpeedY;
-        public Vector2 position;
-        public String textToShow;
-        public Color color;
-        public float secondsActive;
-        public float timeLeft;
-        public boolean isVisible(){return timeLeft>0;}
 
-        public DamageIndicator(float fallSpeedX, float fallSpeedY,Vector2 position, String textToShow, Color color, float secondsActive)
-        {
-            this.textToShow = textToShow;
-            this.fallSpeedX = fallSpeedX;
-            this.fallSpeedY = fallSpeedY;
-            this.position =position;
-            this.color = color;
-            this.secondsActive = secondsActive;
-            this.timeLeft = secondsActive;
-        }
-
-        public void update()
-        {
-            position.x+=fallSpeedX;
-            position.y+=fallSpeedY;
-            timeLeft-=Gdx.app.getGraphics().getDeltaTime();
-        }
-        public void draw(BitmapFont font, SpriteBatch batch)
-        {
-            font.setColor(color.r, color.g, color.b, timeLeft / secondsActive);
-            font.draw(batch, textToShow, (int) position.x, (int) position.y);
-            font.setColor(Color.WHITE);
-        }
-    }
 
     private Player _player;
     private ArrayList<Monster> _monsters;
     private ArrayList<Gas> _gasClouds = new ArrayList<Gas>();
-    private ArrayList<DamageIndicator> _damageIndicators = new ArrayList<DamageIndicator>();
+    private ArrayList<Chest> _chests = new ArrayList<Chest>();
     private ArrayList<Trap> _traps = new ArrayList<Trap>();
     private Inventory _inventory;
     private DungeonMap _playedMap;
 
-    private HashMap<GameCharacter, Integer> _characterTime = new HashMap<GameCharacter, Integer>();
-    private PriorityQueue<GameCharacter> _characterTurn;
+    //Turn handling
+    private HashMap<Monster, Integer> _monsterTime = new HashMap<Monster, Integer>();
+    private PriorityQueue<Monster> _monsterTurns;
 
     public class CharacterSpeedComparator implements Comparator<GameCharacter>
     {
@@ -77,28 +40,14 @@ public class GameStateUpdater
             return lhs.getCostOfNextAction() - rhs.getCostOfNextAction();
         }
     }
-
     private static int _turn = 0;
 
-    public static int getTurn()
-    {
-        return _turn;
-    }
-
+    //Animation
+    private GameCharacterAnimation _currentAnimation = new GameCharacterAnimation();
+    public GameCharacterAnimation getCurrentAnimation(){return _currentAnimation;}
     private boolean _showingThrowingAnimation = false;
+    private final float timePerAnimation = 0.25f;
 
-    public boolean isShowingAnimation()
-    {
-        return _showingThrowingAnimation;
-    }
-
-    //Thrown item variables
-    private final float _throwAnimationSpeed = 16;
-    private float _thrownObjectX;
-    private float _thrownObjectY;
-    private Item _thrownObject;
-    private Tile _targetTile;
-    private float _angleToTarget;
 
     //Select item dialog
     private boolean _selectItemDialog = false;
@@ -107,26 +56,27 @@ public class GameStateUpdater
         return _selectItemDialog;
     }
 
-    public void setGameState(ArrayList<Monster> monsters, Player player, Inventory inventory, DungeonMap playedMap, ArrayList<Trap> traps)
+    public void setGameState(Player player, Inventory inventory, DungeonMap playedMap)
     {
         _turn = 1;
         _player = player;
-        _monsters = monsters;
-
-        _characterTime.clear();
-        _characterTime.put(_player, 0);
-        for (Monster monster : _monsters)
-        {
-            _characterTime.put(monster, 0);
-        }
-        _characterTurn = new PriorityQueue<GameCharacter>(_monsters.size() + 1, new CharacterSpeedComparator());
+        _monsters = playedMap.getMonsters();
 
         _inventory = inventory;
         _playedMap = playedMap;
-        _traps = traps;
+        _chests = playedMap.getChests();
+        _traps = playedMap.getTraps();
         _gasClouds.clear();
         _player.getCurrentTile().setLight(Tile.LightAmount.Shadow, _player.getLanternStrength()*2, _player.getLanternStrength()*2);
         _player.getCurrentTile().setLight(Tile.LightAmount.Light, _player.getLanternStrength(), _player.getLanternStrength());
+        _monsterTime.clear();
+        for (Monster monster : _monsters)
+        {
+            _monsterTime.put(monster, 0);
+            monster.lookForPlayer(player);
+        }
+        _monsterTurns = new PriorityQueue<Monster>(_monsters.size() + 1, new CharacterSpeedComparator());
+
     }
 
     public void resumeGameStateUpdating()
@@ -144,60 +94,20 @@ public class GameStateUpdater
     //Update:
     public void updateGameState()
     {
-        if (!_selectItemDialog && !_showingThrowingAnimation)
+        if(!_currentAnimation.isPlaying())
         {
-            handleExecutionOfActions();
-        }
-        else if (_showingThrowingAnimation)
-        {
-            //Move the object closer to the target
-            _thrownObjectX += (float) Math.cos(_angleToTarget) * _throwAnimationSpeed;
-            _thrownObjectY += (float) Math.sin(_angleToTarget) * _throwAnimationSpeed;
-
-            //If the object is close enough-> do effects
-            if (Math.abs(_thrownObjectX - (_targetTile.getX() * 32)) <= _throwAnimationSpeed &&
-                    Math.abs(_thrownObjectY - (_targetTile.getY() * 32)) <= _throwAnimationSpeed)
+            if(_currentAnimation.getType() != GameAction.Type.Empty)
             {
-
-                if (_thrownObject instanceof Potion)//Use the potion on the tile
-                {
-                    usePotion((Potion) _thrownObject, _targetTile.getCharacter(), _targetTile);
-                }
-                else if (_targetTile.getCharacter() != null && _thrownObject instanceof Weapon)
-                {
-                    Weapon thrownWeapon = (Weapon) _thrownObject;
-                    int damage = 0;
-                    if (thrownWeapon.isRanged() && RandomGen.getRandomInt(1, 100) > 20 + _targetTile.getCharacter().getDodgeRate())//Get ranged damage
-                    {
-                        damage = thrownWeapon.getRandomDamage();
-                    }
-                    else if (RandomGen.getRandomInt(1, 100) > 50 + _targetTile.getCharacter().getDodgeRate())//Get damage from a sword etc being thrown
-                    {
-                        damage = thrownWeapon.getRandomDamage() / 2;
-                    }
-
-                    if (damage > 0)
-                    {
-                        GameConsole.addMessage(_targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getName());
-                        _targetTile.getCharacter().damage(damage);
-
-                    }
-                    else
-                    {
-                        _targetTile.addItem(thrownWeapon);
-                        GameConsole.addMessage(thrownWeapon.getName() + " landed on the floor");
-                    }
-                }
-                else //Otherwise the item lands on the tile
-                {
-                    _targetTile.addItem(_thrownObject);
-                    GameConsole.addMessage(_thrownObject.getName() + " landed on the floor");
-                }
-                _showingThrowingAnimation = false;
-                _targetTile = null;
-                _thrownObject = null;
-                _thrownObjectX = 0;
-                _thrownObjectY = 0;
+                executeAction(_currentAnimation.getPlayedAction());
+                _currentAnimation.emptyGameAction();
+            }
+            else if(isTurnOver())
+            {
+                startTurn();
+            }
+            else
+            {
+                updateTurn();
             }
         }
     }
@@ -205,48 +115,64 @@ public class GameStateUpdater
     //
     // ACTION EXECUTION
     //
-    private float timeToNextTurn = 0.0f;
-    private final float turnDurationInSeconds = 0.08f;
 
-    private void handleExecutionOfActions()
+    public boolean isTurnOver(){return _monsterTurns.isEmpty();}
+    private void startTurn()
     {
         GameAction playerAction;
-        if (timeToNextTurn <= 0 && (playerAction = _player.getNextAction()) != null)
+        if ((playerAction = _player.getNextAction()) != null)
         {
-            timeToNextTurn = turnDurationInSeconds;
+
             //Record the time of the next action of characters
             int playerActionCost = playerAction.getCost();
-            executeAction(playerAction);
             for (Monster monster : _monsters)
             {
                 monster.setNextAction(_player);
                 //Let the time a monster has to act be the time the player's action take
-                _characterTime.put(monster, _characterTime.get(monster) + playerActionCost);
-                _characterTurn.add(monster);
+                _monsterTime.put(monster, _monsterTime.get(monster) + playerActionCost);
+                _monsterTurns.add(monster);
             }
-
-            //Execute actions, starting with the quickest ones, but only if the character has enough time
-            while (!_characterTurn.isEmpty())
+            if(GameCharacterAnimation.typeIsAnimated(playerAction.getType()))
             {
-                GameCharacter character = _characterTurn.peek();
-                if (_characterTime.get(character) > 0 && !character.isDead())
-                {
+                _currentAnimation.playGameAction(playerAction,timePerAnimation);
+                return;
+            }
+            else
+            {
+                executeAction(playerAction);
+            }
+        }
+    }
 
-                    _characterTime.put(character, _characterTime.get(character) - character.getCostOfNextAction());
-                    executeAction(character.getNextAction());
-                    //Can only be a monster if there is time left,
-                    // because the cost of the player's action = the time given to characters
-                    if (_characterTime.get(character) > 0)
-                    {
-                        ((Monster) character).setNextAction(_player);
-                    }
+    private void updateTurn()
+    {
+        //Execute actions, starting with the quickest ones, but only if the character has enough time
+        if(!_monsterTurns.isEmpty())
+        {
+            Monster monster = _monsterTurns.peek();
+            if (_monsterTime.get(monster) > 0 && !monster.isDead())
+            {
+                monster.setNextAction(_player);
+                _monsterTime.put(monster, _monsterTime.get(monster) - monster.getCostOfNextAction());
+                GameAction nextAction = monster.getNextAction();
+                if(GameCharacterAnimation.typeIsAnimated(nextAction.getType()))
+                {
+                    _currentAnimation.playGameAction(nextAction,timePerAnimation);
+                    return;
                 }
-
-                if (_characterTime.get(character) <= 0 || character.isDead())
+                else
                 {
-                    _characterTurn.poll();
+                    executeAction(nextAction);
                 }
             }
+
+            if (_monsterTime.get(monster) <= 0 || monster.isDead())
+            {
+                _monsterTurns.poll();
+            }
+        }
+        if(_monsterTurns.isEmpty())
+        {
             _turn++;
 
             //Update clouds and remove ones that are not yet active
@@ -263,19 +189,19 @@ public class GameStateUpdater
             {
                 _gasClouds.remove(gas);
             }
+            for(Chest chest : _chests)
+            {
+                chest.update(_player);
+            }
 
             //Apply effects
             _player.updateEffects();
             for (Monster monster : _monsters)
             {
                 monster.updateEffects();
+                monster.lookForPlayer(_player);
             }
         }
-        else if (timeToNextTurn > 0)
-        {
-            timeToNextTurn -= Gdx.graphics.getDeltaTime();
-        }
-
     }
 
     private void executeAction(GameAction action)
@@ -308,31 +234,10 @@ public class GameStateUpdater
             case Drop:
                 Item droppedItem = action.getTargetItem();
                 _inventory.removeItem(droppedItem);
-                _player.getCurrentTile().addItem(droppedItem);
                 break;
             case Throw:
-                _thrownObject = action.getTargetItem();
-                _targetTile = action.getTargetTile();
-                _showingThrowingAnimation = true;
-                _thrownObjectX = action.getOwner().getCurrentTile().getX() * DungeonMap.TileSize;
-                _thrownObjectY = action.getOwner().getCurrentTile().getY() * DungeonMap.TileSize;
-                _angleToTarget = (float) Math.atan2(action.getTargetTile().getY() * DungeonMap.TileSize - _thrownObjectY, action.getTargetTile().getX() * 32 - _thrownObjectX);
-                if (_angleToTarget < 0)
-                {
-                    _angleToTarget += 2 * Math.PI;
-                }
-                if (_thrownObject instanceof Weapon && ((Weapon) _thrownObject).isRanged())
-                {
-                    ((Weapon) _thrownObject).decreaseRangedAmmo();
-                    if (((Weapon) _thrownObject).getAmmoCount() == 0)
-                    {
-                        _inventory.removeItem(_thrownObject);
-                    }
-                }
-                else
-                {
-                    _inventory.removeItem(_thrownObject);
-                }
+                //The animation for throwing has just ended, resolve the result of the throw:
+                executeThrowResults(action);
                 break;
             case Use:
                 executeUseAction(action);
@@ -350,6 +255,7 @@ public class GameStateUpdater
                 }
                 break;
         }
+
         //Remove the action as being the next action
         action.getOwner().clearCurrentAction();
     }
@@ -358,27 +264,25 @@ public class GameStateUpdater
     {
         GameCharacter defender = action.getTargetCharacter();
         GameCharacter attacker = action.getOwner();
+
+        //Animation can leave the attacker a bit outside of the tile
+        attacker.setPosition(attacker.getCurrentTile().getWorldPosition());
         attacker.attack(defender);
-        Color indicatorColor = Color.MAGENTA;
 
         if (defender instanceof Monster)
         {
-            indicatorColor = Color.GREEN;
             if (defender.isDead())
             {
                 _player.retrieveExperience((Monster) (defender));
-                _monsters.remove(defender);
             }
         }
         else if (defender instanceof Player)
         {
-            indicatorColor = Color.RED;
             if (defender.isDead())
             {
                 _player.setKilledBy(attacker.getName());
             }
         }
-        _damageIndicators.add(new DamageIndicator(0,0.8f,new Vector2(defender.getPosition().x+(DungeonMap.TileSize/2),defender.getPosition().y),String.valueOf(attacker.getDealtDamage()), indicatorColor, 0.5f));
 
     }
 
@@ -462,6 +366,48 @@ public class GameStateUpdater
             usePotion((Potion) action.getTargetItem(), action.getOwner(), action.getTargetTile());
         }
     }
+    private void executeThrowResults(GameAction throwAction)
+    {
+
+        Item thrownObject = throwAction.getTargetItem();
+        Tile targetTile = throwAction.getTargetTile();
+
+        if (thrownObject instanceof Potion)//Use the potion on the tile
+        {
+            usePotion((Potion) thrownObject, targetTile.getCharacter(), targetTile);
+        }
+        else if (targetTile.getCharacter() != null && thrownObject instanceof Weapon)
+        {
+            Weapon thrownWeapon = (Weapon) thrownObject;
+            int damage = 0;
+            if (thrownWeapon.isRanged() && RandomGen.getRandomInt(1, 100) > 20 + targetTile.getCharacter().getDodgeRate())//Get ranged damage
+            {
+                damage = thrownWeapon.getRandomDamage();
+            }
+            else if (RandomGen.getRandomInt(1, 100) > 50 + targetTile.getCharacter().getDodgeRate())//Get damage from a sword etc being thrown
+            {
+                damage = thrownWeapon.getRandomDamage() / 2;
+            }
+
+            if (damage > 0)
+            {
+                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getName());
+                targetTile.getCharacter().damage(damage);
+                _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN,timePerAnimation);
+
+            }
+            else
+            {
+                targetTile.addItem(thrownWeapon);
+                GameConsole.addMessage(thrownWeapon.getName() + " landed on the floor");
+            }
+        }
+        else //Otherwise the item lands on the tile
+        {
+            targetTile.addItem(thrownObject);
+            GameConsole.addMessage(thrownObject.getName() + " landed on the floor");
+        }
+    }
 
     //
     // Scroll and potion activation
@@ -530,7 +476,10 @@ public class GameStateUpdater
         {
             trap.draw(batch);
         }
-
+        for(Chest chest : _chests)
+        {
+            chest.draw(batch);
+        }
         for (Gas gas : _gasClouds)
         {
             gas.draw(batch);
@@ -540,27 +489,9 @@ public class GameStateUpdater
         {
             monster.draw(batch);
         }
-        if (_showingThrowingAnimation)
+        if(_currentAnimation.isPlaying())
         {
-            _thrownObject.draw(batch, _thrownObjectX, _thrownObjectY);
-        }
-        final ArrayList<DamageIndicator> damageIndicatorsToRemove = new ArrayList<DamageIndicator>();
-        damageIndicatorsToRemove.clear();
-        for (DamageIndicator damageIndicator : _damageIndicators)
-        {
-            damageIndicator.update();
-            if(damageIndicator.isVisible())
-            {
-                damageIndicator.draw(AssetManager.getFont("description"),batch);
-            }
-            else
-            {
-                damageIndicatorsToRemove.add(damageIndicator);
-            }
-        }
-        for(DamageIndicator toRemove : damageIndicatorsToRemove)
-        {
-            _damageIndicators.remove(toRemove);
+            _currentAnimation.draw(batch);
         }
 
     }

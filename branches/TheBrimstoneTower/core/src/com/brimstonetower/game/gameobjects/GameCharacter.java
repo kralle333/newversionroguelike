@@ -101,11 +101,13 @@ public class GameCharacter
         return _equippedWeapon != null ? _equippedWeapon.getIdentifiedMaxDamage() + getCurrentStr() : getCurrentStr();
     }
 
-    protected Vector2 _position;
-    public Vector2 getPosition()
+    protected Vector2 _worldPosition;
+    public Vector2 getWorldPosition()
     {
-        return _position;
+        return _worldPosition;
     }
+    public void setPosition(Vector2 newPosition){
+        _worldPosition =newPosition;}
 
     protected Tile currentTile;
     public Tile getCurrentTile()
@@ -256,7 +258,7 @@ public class GameCharacter
     {
         currentTile = tile;
         currentTile.setCharacter(this);
-        _position = new Vector2(currentTile.getX() * DungeonMap.TileSize, currentTile.getY() * DungeonMap.TileSize);
+        _worldPosition = new Vector2(currentTile.getX() * DungeonMap.TileSize, currentTile.getY() * DungeonMap.TileSize);
     }
 
     public void moveTo(Tile tile)
@@ -410,7 +412,7 @@ public class GameCharacter
     //Drawing
     public void draw(SpriteBatch batch)
     {
-        batch.draw(_texture, _position.x, _position.y);
+        batch.draw(_texture, _worldPosition.x, _worldPosition.y);
     }
 
 
