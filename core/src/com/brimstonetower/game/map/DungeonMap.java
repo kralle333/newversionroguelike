@@ -4,12 +4,10 @@ package com.brimstonetower.game.map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.gameobjects.items.Item;
-import com.brimstonetower.game.gameobjects.Monster;
-import com.brimstonetower.game.gameobjects.Player;
-import com.brimstonetower.game.gameobjects.Trap;
 import com.brimstonetower.game.map.mapgeneration.BSPMapNode;
 import com.brimstonetower.game.map.mapgeneration.Corridor;
 
@@ -35,18 +33,13 @@ public class DungeonMap extends BSPMapNode
     }
 
     private ArrayList<Trap> _traps = new ArrayList<Trap>();
-
     public ArrayList<Trap> getTraps()
     {
         return _traps;
     }
 
-    private ArrayList<Item> _items = new ArrayList<Item>();
-
-    public ArrayList<Item> getItems()
-    {
-        return _items;
-    }
+    private ArrayList<Chest> _chests =new ArrayList<Chest>();
+    public ArrayList<Chest> getChests(){return _chests;}
 
     public DungeonMap(int width, int height, String texturePath)
     {
@@ -138,23 +131,24 @@ public class DungeonMap extends BSPMapNode
         }
     }
 
-    public void addItems(ArrayList<Item> items)
-    {
-        for (Item item : items)
-        {
-            Tile emptyTile = getRandomEmptyTile();
-            if (emptyTile == null)
-            {
-                Gdx.app.log("Item", "No empty tile could be found - Aborting");
-            }
-            else
-            {
-                emptyTile.addItem(item);
-            }
-            _items.add(item);
-        }
-    }
 
+    public void addChests(ArrayList<Chest> chests)
+    {
+
+            for (Chest chest : chests)
+            {
+                Tile emptyTile = getRandomEmptyTile();
+                if (emptyTile == null)
+                {
+                    Gdx.app.log("Item", "No empty tile could be found - Aborting");
+                }
+                else
+                {
+                    chest.placeOnTile(emptyTile);
+                }
+                _chests.add(chest);
+            }
+    }
     public void addMonsters(ArrayList<Monster> monsters)
     {
         for (Monster monster : monsters)
@@ -224,7 +218,8 @@ public class DungeonMap extends BSPMapNode
             int randY = RandomGen.getRandomInt(parent.getRoom().getY() + 1, parent.getRoom().getBottomSide() - 1);
             Tile randomTile = parent.getRoom().getTile(randX, randY);
             //Might become a problem - Might not be any empty tiles here
-            while (randomTile.getCharacter() != null || randomTile.containsItem() || randomTile.getTrap() != null)
+            while (randomTile.getCharacter() != null || randomTile.containsItem() || randomTile.getTrap() != null ||
+                    randomTile.getType() == Tile.Types.StairCase)
             {
                 randX = RandomGen.getRandomInt(parent.getRoom().getX() + 1, parent.getRoom().getRightSide() - 1);
                 randY = RandomGen.getRandomInt(parent.getRoom().getY() + 1, parent.getRoom().getBottomSide() - 1);
@@ -240,15 +235,5 @@ public class DungeonMap extends BSPMapNode
         {
             return getRandomEmptyTile(parent.getRightNode());
         }
-    }
-
-    @Override
-    public void draw(SpriteBatch batch)
-    {
-        super.draw(batch);
-        /*if(_stairTile.getLightAmount()!= Tile.LightAmount.Non)
-        {
-            batch.draw(_stairTextureRegion,_stairTile.getX()*TileSize,_stairTile.getY()*TileSize);
-        }*/
     }
 }

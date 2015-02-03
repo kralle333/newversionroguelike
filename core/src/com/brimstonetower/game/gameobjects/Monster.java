@@ -3,6 +3,7 @@ package com.brimstonetower.game.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.GameAction;
 import com.brimstonetower.game.gameobjects.items.Armor;
 import com.brimstonetower.game.gameobjects.items.Item;
@@ -44,12 +45,18 @@ public class Monster extends GameCharacter
         _droppedItems.add(item);
     }
 
-    public GameAction setNextAction(Player player)
+    public void lookForPlayer(Player player)
     {
-        if(!_wasSeen && player.getCurrentTile().distanceTo(currentTile)<=player.getLanternStrength())
+        if(!_wasSeen && getCurrentTile().getLightAmount() == Tile.LightAmount.Light)
         {
+            GameConsole.addMessage("A "+getName()+" was spotted!");
+            player.clearNextActions();
             _wasSeen=true;
         }
+    }
+
+    public GameAction setNextAction(Player player)
+    {
         if (_isDead)
         {
             return null;
@@ -69,7 +76,12 @@ public class Monster extends GameCharacter
         float currentDistance;
         for (Tile tile : currentTile.getWalkableNeighbours())
         {
-            if (tile.getTrap() == null)
+            if (tile.getCharacter() == player)
+            {
+                nextAction.setAction(this, player, GameAction.Type.Attack, nextTile, null);
+                return nextAction;
+            }
+            else if (tile.getTrap() == null && tile.getCharacter() ==null)
             {
                 currentDistance = tile.distanceTo(player.getCurrentTile());
                 if (currentDistance < smallestDistance)
@@ -81,14 +93,7 @@ public class Monster extends GameCharacter
         }
         if (nextTile != currentTile)
         {
-            if (nextTile.getCharacter() == player)
-            {
-                nextAction.setAction(this, player, GameAction.Type.Attack, nextTile, null);
-            }
-            else
-            {
-                nextAction.setAction(this, GameAction.Type.Move, nextTile, null);
-            }
+            nextAction.setAction(this, GameAction.Type.Move, nextTile, null);
         }
         else
         {

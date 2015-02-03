@@ -35,7 +35,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private static int _depth = 1;
     private DungeonMap _currentDungeonMap;
     private Player _player;
-    private Tile _previousPlayerPosition;
+    private Vector2 _previousPlayerPosition;
     private String playerName;
     private GameAction _playerAction;
     private final GameStateUpdater _gameStateUpdater = new GameStateUpdater();
@@ -89,7 +89,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         im.addProcessor(gd);
         im.addProcessor(this);
         Gdx.input.setInputProcessor(im);
-
         createNewDungeon();
     }
     private void setupGuiElements()
@@ -234,7 +233,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         }
         _currentDungeonMap = DungeonGenerator.GenerateCompleteDungeon(_depth);
         _currentDungeonMap.addPlayer(_player);
-        _gameStateUpdater.setGameState(_currentDungeonMap.getMonsters(), _player, _inventory, _currentDungeonMap, _currentDungeonMap.getTraps());
+        _gameStateUpdater.setGameState( _player, _inventory, _currentDungeonMap);
     }
 
     private void restartGame()
@@ -253,19 +252,12 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         {
             _gameStateUpdater.updateGameState();
         }
-        else if (_currentScreenState == ScreenState.ShowingAnimation)
+
+        if(_previousPlayerPosition!=_player.getWorldPosition() && _gameStateUpdater.getCurrentAnimation().getType() != GameAction.Type.Attack)
         {
-            _gameStateUpdater.updateGameState();
-            if (!_gameStateUpdater.isShowingAnimation())
-            {
-                _currentScreenState = ScreenState.Moving;
-            }
-        }
-        if(_previousPlayerPosition!=_player.getCurrentTile())
-        {
-            _previousPlayerPosition = _player.getCurrentTile();
-            mainCamera.position.x = _player.getPosition().x+(DungeonMap.TileSize/2);
-            mainCamera.position.y = _player.getPosition().y+(DungeonMap.TileSize);
+            _previousPlayerPosition = _player.getWorldPosition();
+            mainCamera.position.x=_player.getWorldPosition().x+(DungeonMap.TileSize/2);
+            mainCamera.position.y=_player.getWorldPosition().y+(DungeonMap.TileSize/2);
         }
         if (_player.isDead())
         {
@@ -472,6 +464,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                 if (_itemToThrow != null)
                 {
                     _player.setThrowAction(_itemToThrow, touchedTile);
+                    _inventory.removeThrownItem(_itemToThrow);
                 }
                 else if (touchedTile == _player.getCurrentTile())
                 {
@@ -494,7 +487,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                     }
                 }
                 else if (touchedTile.getCharacter() != null && touchedTile.isAdjacent(_player.getCurrentTile()))
-                   {
+                {
                     _player.setAttackAction(touchedTile.getCharacter());
                 }
                 else
@@ -544,8 +537,9 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         if (touchedTile != null && touchedTile.getLightAmount() == Tile.LightAmount.Light)
         {
             _player.setThrowAction(_itemToThrow, touchedTile);
+
             _itemToThrow = null;
-            _currentScreenState = ScreenState.ShowingAnimation;
+            _currentScreenState = ScreenState.Moving;
         }
     }
 

@@ -64,6 +64,16 @@ public class Tile
         return _tilePosition;
     }
 
+    private Vector2 _worldPosition;
+    public Vector2 getWorldPosition()
+    {
+        if(_worldPosition == null)
+        {
+            _worldPosition= new Vector2(_tilePosition.x*DungeonMap.TileSize,_tilePosition.y*DungeonMap.TileSize);
+        }
+        return _worldPosition;
+    }
+
     private LightAmount _lightAmount = LightAmount.Light;
 
     public LightAmount getLightAmount()
@@ -82,23 +92,19 @@ public class Tile
 
     //Items
     private ArrayList<Item> _items = new ArrayList<Item>();
-
     public ArrayList<Item> getItems()
     {
         return _items;
     }
-
     public boolean containsItem()
     {
         return _items.size() > 0;
     }
-
     public Item pickupItem()
     {
         Item itemToReturn = _items.remove(_items.size() - 1);
         return itemToReturn;
     }
-
     public void addItem(Item item)
     {
         _items.add(item);

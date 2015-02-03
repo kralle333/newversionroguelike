@@ -87,6 +87,7 @@ public class GameAction
     {
         _owner = gameAction._owner;
         _type = gameAction._type;
+        _targetCharacter = gameAction._targetCharacter;
         _targetTile = gameAction._targetTile;
         _targetItem = gameAction._targetItem;
     }

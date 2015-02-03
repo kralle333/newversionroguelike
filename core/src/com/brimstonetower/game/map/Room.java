@@ -342,26 +342,60 @@ public class Room
         int doorY = (int) doorTile.getY() - _y;
 
         //Find the tile that is adjacent to the door
-        Tile adjacentToDoor = null;
+        ArrayList<Tile> adjacentToDoor = new ArrayList<Tile>();
         if (doorX == 0)//Left side
         {
-            adjacentToDoor = _tiles[doorX + 1][doorY];
+            adjacentToDoor.add(_tiles[doorX + 1][doorY]);
+            for(int y = -1;y<=1;y++)
+            {
+                //The tile in front of the door is added first because otherwise paths look weird
+                // and y!=0 is used to not add it two times
+                if(y != 0 && _tiles[doorX+1][doorY+y].isWalkable())
+                {
+                    adjacentToDoor.add(_tiles[doorX+1][doorY+y]);
+                }
+            }
         }
         else if (doorY == 0)//Top side
         {
-            adjacentToDoor = _tiles[doorX][doorY + 1];
+            adjacentToDoor.add(_tiles[doorX][doorY + 1]);
+            for(int x = -1;x<=1;x++)
+            {
+                if(x != 0 && _tiles[doorX+x][doorY+1].isWalkable())
+                {
+                    adjacentToDoor.add(_tiles[doorX+x][doorY+1]);
+                }
+            }
         }
-        else if (doorX == _width - 1)
+        else if (doorX == _width - 1)//Right side
         {
-            adjacentToDoor = _tiles[doorX - 1][doorY];
+            adjacentToDoor.add( _tiles[doorX - 1][doorY]);
+            for(int y = -1;y<=1;y++)
+            {
+                if(y!= 0 && _tiles[doorX-1][doorY+y].isWalkable())
+                {
+                    adjacentToDoor.add(_tiles[doorX-1][doorY+y]);
+                }
+            }
         }
-        else if (doorY == _height - 1)
+        else if (doorY == _height - 1)//Left side
         {
-            adjacentToDoor = _tiles[doorX][doorY - 1];
+            adjacentToDoor.add( _tiles[doorX][doorY - 1]);
+            for(int x = -1;x<=1;x++)
+            {
+                if(x!= 0 && _tiles[doorX+x][doorY-1].isWalkable())
+                {
+                    adjacentToDoor.add(_tiles[doorX+x][doorY-1]);
+                }
+            }
         }
         //Add neighbours
-        adjacentToDoor.addWalkableNeighbour(doorTile);
-        doorTile.addWalkableNeighbour(adjacentToDoor);
+        for(Tile tile : adjacentToDoor)
+        {
+            tile.addWalkableNeighbour(doorTile);
+            doorTile.addWalkableNeighbour(tile);
+        }
+
         doorTile.addWalkableNeighbour(corridorTile);
         corridorTile.addWalkableNeighbour(doorTile);
         doorTile.setType(Tile.Types.Door);

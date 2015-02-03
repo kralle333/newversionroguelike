@@ -28,12 +28,6 @@ public class SelectedItemWindow extends Window
 
     private Item _selectedItem;
 
-    public Item retrieveItem()
-    {
-        Item toReturn = _selectedItem;
-        _selectedItem = null;
-        return toReturn;
-    }
 
     private boolean _isInitialized = false;
     private Player _player;
