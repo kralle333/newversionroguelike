@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
+import com.brimstonetower.game.map.Tile;
 
 import java.util.HashMap;
 
@@ -35,8 +36,8 @@ public class AssetManager
         _assets.put("searchEye",new Texture(Gdx.files.internal("art/searchEye.png")));
         _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
         _assets.put("tile", new Texture(Gdx.files.internal("art/tileset.png")));
-        _assets.put("armor", new Texture(Gdx.files.internal("art/armorTileSet.png")));
-        _assets.put("weapon", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
+        _assets.put("armors", new Texture(Gdx.files.internal("art/armorTileSet.png")));
+        _assets.put("weapons", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
         _assets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
         _assets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
         _assets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
@@ -94,6 +95,33 @@ public class AssetManager
         tileSetCoordinateMap.put("chest", new TileSetCoordinate(2, 4));
         tileSetCoordinateMap.put("searchEye",new TileSetCoordinate(0,0));
 
+        //Weapons
+        tileSetCoordinateMap.put("steelSword",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("steelAxe",new TileSetCoordinate(1,0));
+        tileSetCoordinateMap.put("steelDagger",new TileSetCoordinate(2,0));
+        tileSetCoordinateMap.put("steelThrow",new TileSetCoordinate(3,0));
+        tileSetCoordinateMap.put("crystalSword",new TileSetCoordinate(0,1));
+        tileSetCoordinateMap.put("crystalAxe",new TileSetCoordinate(1,1));
+        tileSetCoordinateMap.put("crystalDagger",new TileSetCoordinate(2,1));
+        tileSetCoordinateMap.put("crystalThrow",new TileSetCoordinate(3,1));
+        tileSetCoordinateMap.put("unholySword",new TileSetCoordinate(0,2));
+        tileSetCoordinateMap.put("unholyCudgel",new TileSetCoordinate(1,2));
+        tileSetCoordinateMap.put("unholyDagger",new TileSetCoordinate(2,2));
+        tileSetCoordinateMap.put("unholyThrow",new TileSetCoordinate(3,2));
+        tileSetCoordinateMap.put("demonicSword",new TileSetCoordinate(0,3));
+        tileSetCoordinateMap.put("demonicMace",new TileSetCoordinate(1,3));
+        tileSetCoordinateMap.put("demonicDagger",new TileSetCoordinate(2,3));
+        tileSetCoordinateMap.put("demonicThrow",new TileSetCoordinate(3,3));
+
+        //Armors
+        tileSetCoordinateMap.put("rags",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("nobleClothes",new TileSetCoordinate(1,0));
+        tileSetCoordinateMap.put("furArmor",new TileSetCoordinate(2,0));
+        tileSetCoordinateMap.put("leatherArmor",new TileSetCoordinate(3,0));
+        tileSetCoordinateMap.put("sturdyLeather",new TileSetCoordinate(0,1));
+        tileSetCoordinateMap.put("chainMail",new TileSetCoordinate(1,1));
+        tileSetCoordinateMap.put("breastPlate",new TileSetCoordinate(2,1));
+        tileSetCoordinateMap.put("scaleMail",new TileSetCoordinate(3,1));
         //Gas levels
         tileSetCoordinateMap.put("type1.1Gas", new TileSetCoordinate(0, 0));
         tileSetCoordinateMap.put("type1.2Gas", new TileSetCoordinate(1, 0));

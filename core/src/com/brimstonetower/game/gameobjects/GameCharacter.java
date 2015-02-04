@@ -386,8 +386,23 @@ public class GameCharacter
             {
                 _dealtDamage -= _dealtDamage / 2;
             }
-            GameConsole.addMessage(_name + " attacked " + target.getName() + ".");
-            target.damage(_dealtDamage);
+            if(_dealtDamage>0)
+            {
+                GameConsole.addMessage(_name + " attacked " + target.getName() + ".");
+                target.damage(_dealtDamage);
+            }
+            else
+            {
+                if(target.getEquippedArmor()!= null && RandomGen.getRandomInt(0,4)==4)
+                {
+                    GameConsole.addMessage(target.getName()+"s "+target.getEquippedArmor().getFullName()+" blocked "+_name + "'s attack");
+                }
+                else
+                {
+                    GameConsole.addMessage(target.getName()+" blocked "+_name + "'s attack");
+                }
+
+            }
         }
         else
         {

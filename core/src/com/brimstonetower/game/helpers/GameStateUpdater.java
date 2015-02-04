@@ -391,7 +391,7 @@ public class GameStateUpdater
 
             if (damage > 0)
             {
-                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getName());
+                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getFullName());
                 targetTile.getCharacter().damage(damage);
                 _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN,timePerAnimation);
 
@@ -399,7 +399,7 @@ public class GameStateUpdater
             else
             {
                 targetTile.addItem(thrownWeapon);
-                GameConsole.addMessage(thrownWeapon.getName() + " landed on the floor");
+                GameConsole.addMessage(thrownWeapon.getFullName() + " landed on the floor");
             }
         }
         else //Otherwise the item lands on the tile

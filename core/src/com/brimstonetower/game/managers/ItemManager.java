@@ -4,22 +4,30 @@ package com.brimstonetower.game.managers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.gameobjects.items.*;
 import com.brimstonetower.game.helpers.RandomGen;
+import com.brimstonetower.game.map.DungeonMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ItemManager
 {
     private final static int itemSize = 32;
 
-    private static final ArrayList<Weapon> _availableWeapons = new ArrayList<Weapon>();
-    private static final ArrayList<Armor> _availableArmors = new ArrayList<Armor>();
-    private static final ArrayList<Potion> _availablePotions = new ArrayList<Potion>();
-    private static final ArrayList<Scroll> _availableScrolls = new ArrayList<Scroll>();
+
+    private static final ArrayList<Weapon> _weaponPrototypes = new ArrayList<Weapon>();
+    private static final HashMap<Weapon,ArrayList<Vector2>> _weaponSpawnProbabilities = new HashMap<Weapon,ArrayList<Vector2>>();
+
+    private static final ArrayList<Armor> _armorPrototypes = new ArrayList<Armor>();
+    private static final HashMap<Armor,ArrayList<Vector2>> _armorSpawnProbabilities = new HashMap<Armor,ArrayList<Vector2>>();
+
+    private static final ArrayList<Potion> _potionPrototypes = new ArrayList<Potion>();
+    private static final ArrayList<Scroll> _scrollPrototypes = new ArrayList<Scroll>();
 
     private static ArrayList<String> _availableWords = new ArrayList<String>();
     private static ArrayList<TileSetCoordinate> _availablePotionTypes = new ArrayList<TileSetCoordinate>();
@@ -28,10 +36,10 @@ public class ItemManager
     {
         if (item instanceof Scroll)
         {
-            for (int i = 0; i < _availableScrolls.size(); i++)
+            for (int i = 0; i < _scrollPrototypes.size(); i++)
             {
-                if (_availableScrolls.get(i).isIdentified() &&
-                        _availableScrolls.get(i).getIdentifiedName() == item.getIdentifiedName())
+                if (_scrollPrototypes.get(i).isIdentified() &&
+                        _scrollPrototypes.get(i).getIdentifiedName() == item.getIdentifiedName())
                 {
                     return true;
                 }
@@ -39,10 +47,10 @@ public class ItemManager
         }
         else if (item instanceof Potion)
         {
-            for (int i = 0; i < _availablePotions.size(); i++)
+            for (int i = 0; i < _potionPrototypes.size(); i++)
             {
-                if (_availablePotions.get(i).isIdentified() &&
-                        _availablePotions.get(i).getIdentifiedName() == item.getIdentifiedName())
+                if (_potionPrototypes.get(i).isIdentified() &&
+                        _potionPrototypes.get(i).getIdentifiedName() == item.getIdentifiedName())
                 {
                     return true;
                 }
@@ -56,11 +64,11 @@ public class ItemManager
         if (item instanceof Scroll)
         {
             Scroll scroll = (Scroll)item;
-            for (int i = 0; i < _availableScrolls.size(); i++)
+            for (int i = 0; i < _scrollPrototypes.size(); i++)
             {
-                if (_availableScrolls.get(i).isIdentical(scroll))
+                if (_scrollPrototypes.get(i).isIdentical(scroll))
                 {
-                    _availableScrolls.get(i).identify();
+                    _scrollPrototypes.get(i).identify();
                     return;
                 }
             }
@@ -68,70 +76,104 @@ public class ItemManager
         else if (item instanceof Potion)
         {
             Potion potion = (Potion) item;
-            for (int i = 0; i < _availablePotions.size(); i++)
+            for (int i = 0; i < _potionPrototypes.size(); i++)
             {
-                if (_availablePotions.get(i).isIdentical(potion))
+                if (_potionPrototypes.get(i).isIdentical(potion))
                 {
-                    _availablePotions.get(i).identify();
+                    _potionPrototypes.get(i).identify();
                     return;
                 }
             }
         }
     }
 
-    public static Weapon getWeapon(int type, int power)
+    public static Weapon getWeapon(String name)
     {
-        return new Weapon(_availableWeapons.get(power * 4 + type),0);
+        for(Weapon weapon : _weaponPrototypes)
+        {
+            if(weapon.getName() == name)
+            {
+                return new Weapon(weapon,0);
+            }
+        }
+        return null;
     }
-
     public static Weapon getRandomWeapon(int depth)
     {
-        //Ma
-        int weaponType = depth / 5;
-        Weapon toCopy = _availableWeapons.get(RandomGen.getRandomInt(0, 3) + weaponType);
+        Weapon toReturn = null;
+        int numberOfPrototypes = _weaponPrototypes.size();
+        while(toReturn==null)
+        {
+            Weapon prototype = _weaponPrototypes.get(RandomGen.getRandomInt(0,numberOfPrototypes-1));
+            ArrayList<Vector2> probabilities = _weaponSpawnProbabilities.get(prototype);
+            float probabilityOfPicking = 0;
+            for(int i=probabilities.size()-1;i>=0;i--)
+            {
+                if (depth >= probabilities.get(i).x)
+                {
+                    probabilityOfPicking=probabilities.get(i).y;
+                    break;
+                }
+            }
+            float probabilityToBeat = RandomGen.getRandomFloat(0, 1);
+            if (probabilityOfPicking > probabilityToBeat)
+            {
+                int bonusDamage = RandomGen.getRandomInt(-2, 2);
+                toReturn= new Weapon(prototype, bonusDamage);
+            }
+        }
 
-        int bonusDamage = RandomGen.getRandomInt(-2, 2);
-        return new Weapon(toCopy, bonusDamage);
+        return toReturn;
     }
 
-    public static Armor getRandomArmor(int armorDef)
+    public static Armor getArmor(String name)
     {
-        Armor toCopy = null;
-        for (Armor armor : _availableArmors)
+        for(Armor armor : _armorPrototypes)
         {
-            if (armor.getDefense() <= armorDef)
+            if(armor.getName() == name)
             {
-                toCopy = armor;
+                return new Armor(armor,0);
             }
-            else
+        }
+        return null;
+    }
+    public static Armor getRandomArmor(int depth)
+    {
+        Armor toReturn = null;
+        int numberOfPrototypes = _armorPrototypes.size();
+        while(toReturn==null)
+        {
+            Armor prototype = _armorPrototypes.get(RandomGen.getRandomInt(0,numberOfPrototypes-1));
+            ArrayList<Vector2> probabilities = _armorSpawnProbabilities.get(prototype);
+            float probabilityOfPicking = 0;
+            for(int i=probabilities.size()-1;i>=0;i--)
             {
-                //Random chance of spawning a strong armor
-                if (RandomGen.getRandomInt(0, 4) == 0)
+                if (depth >= probabilities.get(i).x)
                 {
-                    toCopy = armor;
+                    probabilityOfPicking=probabilities.get(i).y;
+                    break;
                 }
-                break;
+            }
+            float probabilityToBeat = RandomGen.getRandomFloat(0, 1);
+            if (probabilityOfPicking > probabilityToBeat)
+            {
+                int bonusDefense = RandomGen.getRandomInt(-2, 2);
+                toReturn= new Armor(prototype, bonusDefense);
             }
         }
-        if (toCopy == null)
-        {
-            toCopy = _availableArmors.get(_availableArmors.size() - 1);
-        }
 
-        int bonusArmor = armorDef - toCopy.getDefense();
-
-        return new Armor(toCopy, bonusArmor);
+        return toReturn;
     }
 
     public static Potion getRandomPotion()
     {
-        Potion toCopy = _availablePotions.get(RandomGen.getRandomInt(0, _availablePotions.size() - 1));
+        Potion toCopy = _potionPrototypes.get(RandomGen.getRandomInt(0, _potionPrototypes.size() - 1));
         return new Potion(toCopy);
     }
 
     public static Scroll getRandomScroll()
     {
-        Scroll toCopy = _availableScrolls.get(RandomGen.getRandomInt(0, _availableScrolls.size() - 1));
+        Scroll toCopy = _scrollPrototypes.get(RandomGen.getRandomInt(0, _scrollPrototypes.size() - 1));
         return new Scroll(toCopy);
     }
 
@@ -145,61 +187,232 @@ public class ItemManager
 
     private static void initializeWeapons()
     {
-        _availableWeapons.clear();
-        TextureRegion swordRegion;
-        TextureRegion axeRegion;
-        TextureRegion daggerRegion;
-        TextureRegion throwingAxeRegion;
-        String prefix = "";
-        for (int i = 0; i < 4; i++)
-        {
-            swordRegion = AssetManager.getTextureRegion("weapon", 0, i, itemSize, itemSize);
-            axeRegion = AssetManager.getTextureRegion("weapon", 1, i, itemSize, itemSize);
-            daggerRegion = AssetManager.getTextureRegion("weapon", 2, i, itemSize, itemSize);
-            throwingAxeRegion = AssetManager.getTextureRegion("weapon", 3, i, itemSize, itemSize);
-            swordRegion.flip(false, true);
-            axeRegion.flip(false, true);
-            daggerRegion.flip(false, true);
-            throwingAxeRegion.flip(false, true);
+        _weaponPrototypes.clear();
+        //Steel
+        TextureRegion region=AssetManager.getTextureRegion("weapons","steelSword", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        Weapon newWeapon = new Weapon("Steel Short Sword", "A standard short sword found in most armies and militias",
+                false,region , 1, 6, 0, 10, false);
 
-            switch (i)
-            {
-                case 0:
-                    prefix = "Iron";
-                    break;
-                case 1:
-                    prefix = "Mythril";
-                    break;
-                case 2:
-                    prefix = "Adamantite";
-                    break;
-                case 3:
-                    prefix = "Ruby";
-                    break;
-            }
-            _availableWeapons.add(new Weapon(prefix + " Sword", "A" + prefix + " sword. Attacks are average speed.", false, swordRegion, i + 1, 6 + (i * 2), 0, 10, false));
-            _availableWeapons.add(new Weapon(prefix + " Axe", "A 2-handed " + prefix + " axe. Attacks are slow.", false, axeRegion, 1, 8 + (i * 2), 0, 15, false));
-            _availableWeapons.add(new Weapon(prefix + " Dagger", "A " + prefix + " dagger. Its attacks are quick.", false, daggerRegion, 2, 4 + (i * 2), 0, 5, false));
-            _availableWeapons.add(new Weapon(prefix + " Throwing axe", "Ranged throwing axe made of " + prefix, false, throwingAxeRegion, 1, 1 + (i * 2), 0, 10, true));
-        }
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.3f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0));
+
+        region=AssetManager.getTextureRegion("weapons","steelAxe", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Steel Great Axe", "A 2-handed great axe made of steel, slow to use but powerful",
+                false, region, 1, 8, 0, 15, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.3f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0));
+
+        region=AssetManager.getTextureRegion("weapons","steelDagger", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Steel Dagger", "A steel dagger, its small size makes it possible getting multiple hits on foes.",
+                false,region , 2, 4, 0, 5, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.3f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0));
+
+        region=AssetManager.getTextureRegion("weapons","steelThrow", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon= new Weapon("Steel Throwing axe", "Flimsy throwing axes made of steel",
+                false, region, 1, 2, 0, 10, true);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.3f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0));
+
+        //Crystal
+        region=AssetManager.getTextureRegion("weapons","crystalSword", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Crystal Sword", "A sword so clear you can see your own reflection in it",
+                false, region, 2, 8, 0, 10, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0.7f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0));
+
+        region=AssetManager.getTextureRegion("weapons","crystalAxe", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Crystal Great Axe", "A massive great axe made in clear blue crystal",
+                false, AssetManager.getTextureRegion("weapons","crystalAxe", DungeonMap.TileSize,DungeonMap.TileSize), 1, 10, 0, 15, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0.7f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0));
+
+        region=AssetManager.getTextureRegion("weapons","crystalDagger", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Crystal Dagger", "A small dagger made of pure crystal, it is as sharp as sharpened broken glass",
+                false, region, 2, 6, 0, 5, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0.7f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0));
+
+        region=AssetManager.getTextureRegion("weapons","crystalThrow", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Crystal throwing scythe", "A scythe meant for throwing at your foes, has a crystal blue color",
+                false, region, 1, 3, 0, 10, true);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(5,0.7f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0));
+
+        //Unholy
+        region=AssetManager.getTextureRegion("weapons","unholySword", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Unholy Sword", "Holding the sword in the right angle you can see you yourself as if you were dead in the reflection of the sword.",
+                false, region, 3, 10, 0, 10, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0.6f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(18,0));
+
+        region=AssetManager.getTextureRegion("weapons","unholyCudgel", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Unholy Cudgel", "A gigantic cudgel with a razor sharp green spikes",
+                false, region, 1, 12, 0, 15, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0.6f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(18,0));
+
+        region=AssetManager.getTextureRegion("weapons","unholyDagger", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Unholy Ceremonial dagger", "A menacing dagger, that looks like its used for ceremonial sacrifices",
+                false, region, 2, 8, 0, 5, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0.6f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(18,0));
+
+        region= AssetManager.getTextureRegion("weapons","unholyThrow", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Unholy throwing axe", "A throwing axe embedded with a large emerald. In it haunted souls can be seen crying for peace",
+                false,region, 1, 5, 0, 10, true);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0.6f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(18,0));
+        //Demonic
+        region=AssetManager.getTextureRegion("weapons","demonicSword", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Demonic Sword", "Holding this sword fills your head with noise and your hands with pure energy",
+                false,region , 4, 12, 0, 10, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(15,0.3f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(20,0.6f));
+
+        region= AssetManager.getTextureRegion("weapons","demonicMace", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Demonic Mace", "A mace with red sparks flying out of it",
+                false,region, 1, 14, 0, 15, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(15,0.5f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(20,0.3f));
+
+        region=AssetManager.getTextureRegion("weapons","demonicDagger", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Demonic dagger", "A large dagger inscribed with demonic lettering",
+                false, region, 2, 10, 0, 5, false);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(15,0.2f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(20,0.7f));
+
+        region=AssetManager.getTextureRegion("weapons","demonicThrow", DungeonMap.TileSize,DungeonMap.TileSize);
+        region.flip(false,true);
+        newWeapon=new Weapon("Brimstone throwing axe", "A throwing axe made of brimstone. Overwhelming heat comes out of it",
+                false,region , 1, 7, 0, 10, true);
+        _weaponPrototypes.add(newWeapon);
+        _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0.1f));
+        _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(20,0.7f));
     }
 
     private static void initializeArmors()
     {
-        _availableArmors.clear();
-        TextureRegion leatherArmorRegion = AssetManager.getTextureRegion("armor", 0, 0, itemSize, itemSize);
-        TextureRegion hardLeatherArmorRegion = AssetManager.getTextureRegion("armor", 1, 0, itemSize, itemSize);
-        TextureRegion chainMailRegion = AssetManager.getTextureRegion("armor", 2, 0, itemSize, itemSize);
-        TextureRegion scaleArmor = AssetManager.getTextureRegion("armor", 3, 0, itemSize, itemSize);
-        leatherArmorRegion.flip(false, true);
-        hardLeatherArmorRegion.flip(false, true);
-        chainMailRegion.flip(false, true);
-        scaleArmor.flip(false, true);
+        _armorPrototypes.clear();
 
-        _availableArmors.add(new Armor("Leather Armor", "An armor made of leather", false, leatherArmorRegion, 1, 0));
-        _availableArmors.add(new Armor("Hardened Leather Armor", "An armor that protects better than normal leather armor", false, hardLeatherArmorRegion, 3, 0));
-        _availableArmors.add(new Armor("Chain Mail", "A very protective iron chain mail", false, chainMailRegion, 5, 0));
-        _availableArmors.add(new Armor("Scale armor", "Considered to be the most protective armor", false, scaleArmor, 7, 0));
+        TextureRegion armorRegion = AssetManager.getTextureRegion("armors","rags",DungeonMap.TileSize,DungeonMap.TileSize);
+        Armor newArmor = new Armor("Rags", "Barely clothes. Definitely not protective", false, armorRegion, 0, 0);
+        armorRegion.flip(false,true);
+        _armorPrototypes.add(newArmor);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+
+        armorRegion = AssetManager.getTextureRegion("armors","nobleClothes",DungeonMap.TileSize,DungeonMap.TileSize);
+        newArmor = new Armor("Noble Clothes","Finely crafted clothes, although it gives no protection", false, armorRegion, 0, 0);
+        armorRegion.flip(false,true);
+        _armorPrototypes.add(newArmor);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+
+        armorRegion = AssetManager.getTextureRegion("armors","furArmor",DungeonMap.TileSize,DungeonMap.TileSize);
+        newArmor = new Armor("Fur Armor","The wool covered armor give the wearer both warmth and a bit of protection", false, armorRegion, 1, 0);
+        armorRegion.flip(false,true);
+        _armorPrototypes.add(newArmor);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(1,1));
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(2,0.5f));
+
+        armorRegion = AssetManager.getTextureRegion("armors","leatherArmor",DungeonMap.TileSize,DungeonMap.TileSize);
+        newArmor = new Armor("Leather Armor","The layers of leather gives the bearer increased mobility and some protection.", false, armorRegion, 2, 0);
+        armorRegion.flip(false,true);
+        _armorPrototypes.add(newArmor);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(2, 1));
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(4,0));
+
+
+        armorRegion = AssetManager.getTextureRegion("armors","sturdyLeather",DungeonMap.TileSize,DungeonMap.TileSize);
+        newArmor = new Armor("Sturdy Leather Armor","The boiling of the armor have left it very hard, thereby protecting the user better than normal leather armors", false, armorRegion, 4, 0);
+        armorRegion.flip(false,true);
+        _armorPrototypes.add(newArmor);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(3,0.3f));
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(5,0.6f));
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(8,0f));
+
+        armorRegion = AssetManager.getTextureRegion("armors","chainMail",DungeonMap.TileSize,DungeonMap.TileSize);
+        newArmor = new Armor("Chainmail","A heavy armor made of hundreds of chains. For those frequently against perilous foes.", false, armorRegion, 6, 0);
+        armorRegion.flip(false,true);
+        _armorPrototypes.add(newArmor);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(6,0.2f));
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(10,0));
+
+        armorRegion = AssetManager.getTextureRegion("armors","breastPlate",DungeonMap.TileSize,DungeonMap.TileSize);
+        newArmor = new Armor("Breastplate","The shape of the plate of the armor protects the wearer from most direct hits.", false, armorRegion, 8, 0);
+        armorRegion.flip(false,true);
+        _armorPrototypes.add(newArmor);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(8,0.3f));
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(13,0));
+
+        armorRegion = AssetManager.getTextureRegion("armors","scaleMail",DungeonMap.TileSize,DungeonMap.TileSize);
+        newArmor = new Armor("Scalemail","A master-worked piece of armor that only an expert armorsmith could have produced.", false, armorRegion, 12, 0);
+        armorRegion.flip(false,true);
+        _armorSpawnProbabilities.put(newArmor,new ArrayList<Vector2>());
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(15,0.1f));
+        _armorSpawnProbabilities.get(newArmor).add(new Vector2(20,1));
     }
 
     private static Color convertPotionTypeIndexToColor(TileSetCoordinate textureRegionPosition)
@@ -234,7 +447,7 @@ public class ItemManager
     }
     private static void initializePotions()
     {
-        _availablePotions.clear();
+        _potionPrototypes.clear();
         potionId=1;
 
         //There are 16 different types of potion types in the potion.png tileset
@@ -247,10 +460,10 @@ public class ItemManager
         }
 
 
-        _availablePotions.add(createPotion(Effect.createPermanentEffect("Healing", "You feel refreshed", 10, 0, 0, 0, 0, 0, 0, 0, false, null)));
-        _availablePotions.add(createPotion(Effect.createPermanentEffect("Death", "Haunting cries rip your soul apart", -5, 0, 0, 0, 0, 0, 0, 0, true, Color.DARK_GRAY)));
-        _availablePotions.add(createPotion(Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down","Time feels normal again", 0, 0, 0, 0, 0, 10, 0, 5, false, null)));
-        _availablePotions.add(createPotion(Effect.createTemporaryEffect("Blindness","Your sight is blocked by gray blobs moving on your eyes","The brown blobs fall from your eyes",0,0,0,0,0,-5,-5,5,false,null)));
+        _potionPrototypes.add(createPotion(Effect.createPermanentEffect("Healing", "You feel refreshed", 10, 0, 0, 0, 0, 0, 0, 0, false, null)));
+        _potionPrototypes.add(createPotion(Effect.createPermanentEffect("Death", "Haunting cries rip your soul apart", -5, 0, 0, 0, 0, 0, 0, 0, true, Color.DARK_GRAY)));
+        _potionPrototypes.add(createPotion(Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down", "Time feels normal again", 0, 0, 0, 0, 0,10, 0, 5, false, null)));
+        _potionPrototypes.add(createPotion(Effect.createTemporaryEffect("Blindness", "Your sight is blocked by gray blobs moving on your eyes", "The gray blobs fall from your eyes", 0, 0, 0, 0, 0, -5, -5, 5, false, null)));
 
     }
 
@@ -268,16 +481,16 @@ public class ItemManager
     private static int scrollId = 1;
     private static void initializeScrolls()
     {
-        _availableScrolls.clear();
+        _scrollPrototypes.clear();
         scrollId = 1;
 
         TextureRegion scrollRegion = AssetManager.getTextureRegion("scroll", 0, 0, 32, 32);
         scrollRegion.flip(false, true);
         _availableWords = new ArrayList<String>(Arrays.asList(new String[]{"shia", "ach", "vosom", "xam", "xhamet", "lok", "sqace", "thunwen", "wex", "natas", "qientis", "commodo", "porta", "vella", "lorem", "consequat", "fringilla"}));
-        _availableScrolls.add(new Scroll("Scroll of Identify", "Use to identify an item", false, scrollRegion, getRandomScrollName(),scrollId++));
-        _availableScrolls.add(new Scroll("Scroll of Mapping", "Reveals the layout of the dungeon", false, scrollRegion, getRandomScrollName(),scrollId++));
-        _availableScrolls.add(new Scroll("Scroll of Teleport", "Use to teleport you to a random location", false, scrollRegion, getRandomScrollName(),scrollId++));
-        _availableScrolls.add(new Scroll("Scroll of Remove Curse", "Use to remove curses from your bag", false, scrollRegion, getRandomScrollName(),scrollId++));
+        _scrollPrototypes.add(new Scroll("Scroll of Identify", "Use to identify an item", false, scrollRegion, getRandomScrollName(), scrollId++));
+        _scrollPrototypes.add(new Scroll("Scroll of Mapping", "Reveals the layout of the dungeon", false, scrollRegion, getRandomScrollName(), scrollId++));
+        _scrollPrototypes.add(new Scroll("Scroll of Teleport", "Use to teleport you to a random location", false, scrollRegion, getRandomScrollName(), scrollId++));
+        _scrollPrototypes.add(new Scroll("Scroll of Remove Curse", "Use to remove curses from your bag", false, scrollRegion, getRandomScrollName(), scrollId++));
     }
 
 }

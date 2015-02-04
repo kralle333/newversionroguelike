@@ -103,13 +103,13 @@ public class Weapon extends Item
             _stepsTillIdentified--;
             if (_stepsTillIdentified <= 0)
             {
-                GameConsole.addMessage(super.getName() + " [?] was identified to be " + super.getName() + " [" + _bonusDamage + "]");
+                GameConsole.addMessage(getName() + " [?] was identified to be " + getName() + " [" + _bonusDamage + "]");
                 identify();
             }
         }
     }
 
-    public String getName()
+    public String getFullName()
     {
         if (_isIdentified)
         {
