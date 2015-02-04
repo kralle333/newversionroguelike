@@ -72,7 +72,6 @@ public class MonsterManager
 
             MonsterPrototype skeleton = new MonsterPrototype("Skeleton", 10, 20, 5, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(2, 0));
             skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 6, 0, 10, false);
-            skeleton.addProbabilityOfAppearing(0.2f, 2);
             skeleton.addProbabilityOfAppearing(0.4f, 4);
             skeleton.addProbabilityOfAppearing(0.6f, 6);
             skeleton.addProbabilityOfAppearing(0.8f, 8);
