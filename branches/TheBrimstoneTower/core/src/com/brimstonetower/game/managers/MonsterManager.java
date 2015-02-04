@@ -50,7 +50,7 @@ public class MonsterManager
 
         public void addProbabilityOfAppearing(float probability, int depth)
         {
-            probabilityOfAppearance.add(new Vector2(probability, depth));
+            probabilityOfAppearance.add(new Vector2(depth,probability));
         }
     }
 
@@ -99,9 +99,9 @@ public class MonsterManager
             float probabilityOfAdding = 0;
             for (int i = randomMonsterType.probabilityOfAppearance.size() - 1; i >= 0; i--)
             {
-                if (depth >= randomMonsterType.probabilityOfAppearance.get(i).y)
+                if (depth >= randomMonsterType.probabilityOfAppearance.get(i).x)
                 {
-                    probabilityOfAdding = randomMonsterType.probabilityOfAppearance.get(i).x;
+                    probabilityOfAdding = randomMonsterType.probabilityOfAppearance.get(i).y;
                     break;
                 }
             }

@@ -1,7 +1,6 @@
 package com.brimstonetower.game.gui;
 
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -99,7 +98,7 @@ public class Inventory extends Window
                 if (i instanceof Weapon)
                 {
                     Weapon castWeapon = (Weapon) i;
-                    if (castWeapon.isRanged() && castWeapon.getName().contains(item.getName().subSequence(0, 5)))
+                    if (castWeapon.isRanged() && castWeapon.getFullName().contains(item.getName().subSequence(0, 5)))
                     {
                         castWeapon.addAmmo(((Weapon) item).getAmmoCount());
                         return;

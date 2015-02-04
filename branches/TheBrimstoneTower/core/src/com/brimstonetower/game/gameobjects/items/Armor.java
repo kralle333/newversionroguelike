@@ -63,13 +63,13 @@ public class Armor extends Item
             _stepsTillIdentified--;
             if (_stepsTillIdentified <= 0)
             {
-                GameConsole.addMessage(super.getName() + " [?] was identified to be " + super.getName() + " [" + _bonusDef + "]");
+                GameConsole.addMessage(getName() + " [?] was identified to be " + getName() + " [" + _bonusDef + "]");
                 identify();
             }
         }
     }
 
-    public String getName()
+    public String getFullName()
     {
         if (_isIdentified)
         {
