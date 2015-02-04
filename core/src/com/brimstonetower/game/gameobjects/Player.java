@@ -48,7 +48,10 @@ public class Player extends GameCharacter
     public void equip(Item item)
     {
         super.equip(item);
-        GameConsole.addMessage(getName() + " equipped " + item.getName());
+        if(_equippedArmor == item || _equippedWeapon == item)
+        {
+            GameConsole.addMessage(getName() + " equipped " + item.getName());
+        }
     }
 
     public void retrieveExperience(Monster monster)

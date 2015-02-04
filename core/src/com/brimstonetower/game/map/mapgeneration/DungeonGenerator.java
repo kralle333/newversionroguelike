@@ -41,30 +41,25 @@ public class DungeonGenerator
 
     private static Chest generateChest(int depth)
     {
-        final int equipmentCurseRate = 100;
+        final int equipmentCurseRate = 50;
 
         TextureRegion chestRegion = AssetManager.getTextureRegion("tile", "chest", DungeonMap.TileSize, DungeonMap.TileSize);
         chestRegion.flip(false, true);
         Chest chest = new Chest(0);
-        int itemType = RandomGen.getRandomInt(0, 6);//Chests more likely to spawn scrolls and potions
+        int itemType = RandomGen.getRandomInt(0, 7);//Chests more likely to spawn scrolls and potions
         switch (itemType)
         {
             case 0:
-                chest.addItemToDrop(ItemManager.getRandomPotion());
-                break;
             case 1:
-                chest.addItemToDrop(ItemManager.getRandomPotion());
-                break;
             case 2:
                 chest.addItemToDrop(ItemManager.getRandomPotion());
                 break;
             case 3:
-                chest.addItemToDrop(ItemManager.getRandomPotion());
-                break;
             case 4:
+            case 5:
                 chest.addItemToDrop(ItemManager.getRandomScroll());
                 break;
-            case 5:
+            case 6:
                 Weapon weapon =ItemManager.getRandomWeapon(depth);
                 if(!weapon.isRanged() && weapon.getIdentifiedMaxDamage()<weapon.getExpectedMaxDamage())
                 {
@@ -75,7 +70,7 @@ public class DungeonGenerator
                 }
                 chest.addItemToDrop(weapon);
                 break;
-            case 6:
+            case 7:
                 Armor armor =ItemManager.getRandomArmor(depth);
                 if(armor.getIdentifiedDefense()<armor.getExpectedDefense())
                 {
