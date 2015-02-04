@@ -388,7 +388,7 @@ public class GameCharacter
             }
             if(_dealtDamage>0)
             {
-                GameConsole.addMessage(_name + " attacked " + target.getName() + ".");
+                GameConsole.addMessage(_name + " attacked " + target.getName() + "-Dealt "+_dealtDamage+" damage.");
                 target.damage(_dealtDamage);
             }
             else

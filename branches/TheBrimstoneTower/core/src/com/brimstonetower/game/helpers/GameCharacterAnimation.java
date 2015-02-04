@@ -112,6 +112,9 @@ public class GameCharacterAnimation
             retractTime = _playTime*2/3;
             defender = _gameActionToPlay.getTargetCharacter();
             attacker = _gameActionToPlay.getOwner();
+            //Done here such that we can retrieve the damage total
+            attacker.attack(defender);
+
             Color color = attacker instanceof Player?Color.GREEN:Color.RED;
             Vector2 indicatorPosition = new Vector2(defender.getWorldPosition().x+(DungeonMap.TileSize/2),defender.getWorldPosition().y);
 

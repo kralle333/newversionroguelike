@@ -46,7 +46,7 @@ public class GameStateUpdater
     private GameCharacterAnimation _currentAnimation = new GameCharacterAnimation();
     public GameCharacterAnimation getCurrentAnimation(){return _currentAnimation;}
     private boolean _showingThrowingAnimation = false;
-    private final float timePerAnimation = 0.25f;
+    private final float timePerAnimation = 0.20f;
 
 
     //Select item dialog
@@ -267,7 +267,6 @@ public class GameStateUpdater
 
         //Animation can leave the attacker a bit outside of the tile
         attacker.setPosition(attacker.getCurrentTile().getWorldPosition());
-        attacker.attack(defender);
 
         if (defender instanceof Monster)
         {

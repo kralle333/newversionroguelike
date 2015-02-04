@@ -60,7 +60,7 @@ public class MonsterManager
     {
         if (!prototypesInitialized)
         {
-            MonsterPrototype beaverRat = new MonsterPrototype("BeaverRat", 5, 15, 1, 5, 2, Monster.Nature.Aggressive, new TileSetCoordinate(0, 0));
+            MonsterPrototype beaverRat = new MonsterPrototype("Rat", 5, 15, 1, 5, 2, Monster.Nature.Aggressive, new TileSetCoordinate(0, 0));
             beaverRat.addProbabilityOfAppearing(1, 1);
             beaverRat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 2, 0, 10, false);
 
