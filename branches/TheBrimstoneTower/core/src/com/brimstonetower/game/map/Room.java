@@ -233,7 +233,7 @@ public class Room
                 else
                 {
                     //Random floor
-                    _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, this, new TileSetCoordinate(3 + RandomGen.getRandomInt(0, 2), 3));
+                    _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, this, AssetManager.getTileSetPosition("floor-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
                 }
             }
         }
@@ -330,7 +330,8 @@ public class Room
                 doorTile.setTextureRegion(AssetManager.getTileSetPosition("eDoor"));
                 break;
             case North:
-                doorTile.setTextureRegion(AssetManager.getTileSetPosition("nDoor"));
+                doorTile.setTextureRegion(RandomGen.getRandomInt(0,1)==1?
+                        AssetManager.getTileSetPosition("nDoor-1"):AssetManager.getTileSetPosition("nDoor-2"));
                 break;
             case South:
                 doorTile.setTextureRegion(AssetManager.getTileSetPosition("sDoor"));

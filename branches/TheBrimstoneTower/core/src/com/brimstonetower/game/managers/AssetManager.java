@@ -35,7 +35,7 @@ public class AssetManager
         _assets.put("mainHeroesWithBorder",new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
         _assets.put("searchEye",new Texture(Gdx.files.internal("art/searchEye.png")));
         _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
-        _assets.put("tile", new Texture(Gdx.files.internal("art/tileset.png")));
+        _assets.put("tile", new Texture(Gdx.files.internal("art/tilesetNew.png")));
         _assets.put("armors", new Texture(Gdx.files.internal("art/armorTileSet.png")));
         _assets.put("weapons", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
         _assets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
@@ -58,9 +58,8 @@ public class AssetManager
         tileSetCoordinateMap.put("playerType4",new TileSetCoordinate(1,1));
 
         //Floor tiles
-        tileSetCoordinateMap.put("floor1", new TileSetCoordinate(3, 3));
-        tileSetCoordinateMap.put("floor2", new TileSetCoordinate(4, 3));
-        tileSetCoordinateMap.put("floor3", new TileSetCoordinate(5, 3));
+        tileSetCoordinateMap.put("floor-1", new TileSetCoordinate(3, 3));
+        tileSetCoordinateMap.put("floor-2", new TileSetCoordinate(4, 3));
 
         //Corridors - n=north,w=west,s=south,e=east
         tileSetCoordinateMap.put("nwCorridor", new TileSetCoordinate(0, 0));
@@ -85,10 +84,11 @@ public class AssetManager
         tileSetCoordinateMap.put("seWall", new TileSetCoordinate(7, 2));
 
         //Doors - n=north,w=west,s=south,e=east
-        tileSetCoordinateMap.put("nDoor", new TileSetCoordinate(0, 3));
-        tileSetCoordinateMap.put("eDoor", new TileSetCoordinate(1, 3));
-        tileSetCoordinateMap.put("sDoor", new TileSetCoordinate(0, 4));
-        tileSetCoordinateMap.put("wDoor", new TileSetCoordinate(1, 4));
+        tileSetCoordinateMap.put("nDoor-1", new TileSetCoordinate(0, 3));
+        tileSetCoordinateMap.put("nDoor-2", new TileSetCoordinate(1, 3));
+        tileSetCoordinateMap.put("eDoor", new TileSetCoordinate(1, 4));
+        tileSetCoordinateMap.put("sDoor", new TileSetCoordinate(0, 5));
+        tileSetCoordinateMap.put("wDoor", new TileSetCoordinate(1, 5));
 
         //Misc
         tileSetCoordinateMap.put("stairs", new TileSetCoordinate(2, 3));
