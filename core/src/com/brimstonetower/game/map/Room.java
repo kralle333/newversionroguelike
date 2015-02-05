@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.gameobjects.Monster;
 import com.brimstonetower.game.map.mapgeneration.Corridor;
 import com.brimstonetower.game.helpers.RandomGen;
@@ -164,7 +163,7 @@ public class Room
         {
             for (int y = 0; y < _height; y++)
             {
-                _tiles[x][y].setLight(_lighting);
+                _tiles[x][y].changeLight(_lighting);
             }
         }
     }

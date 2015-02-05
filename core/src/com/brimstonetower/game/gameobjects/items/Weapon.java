@@ -109,6 +109,16 @@ public class Weapon extends Item
         }
     }
 
+    @Override
+    public String getIdentifiedName()
+    {
+        if (_isRanged)
+        {
+            return super.getName() + "(" + _ammoCount + ")";
+        }
+        return super.getName() + " [" + _bonusDamage + "]";
+    }
+
     public String getFullName()
     {
         if (_isIdentified)

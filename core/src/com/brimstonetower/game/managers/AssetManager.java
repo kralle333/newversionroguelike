@@ -92,7 +92,9 @@ public class AssetManager
 
         //Misc
         tileSetCoordinateMap.put("stairs", new TileSetCoordinate(2, 3));
-        tileSetCoordinateMap.put("chest", new TileSetCoordinate(2, 4));
+        tileSetCoordinateMap.put("chest-1", new TileSetCoordinate(2, 5));
+        tileSetCoordinateMap.put("chest-2", new TileSetCoordinate(3, 5));
+        tileSetCoordinateMap.put("chest-3", new TileSetCoordinate(4, 5));
         tileSetCoordinateMap.put("searchEye",new TileSetCoordinate(0,0));
 
         //Weapons
@@ -122,6 +124,7 @@ public class AssetManager
         tileSetCoordinateMap.put("chainMail",new TileSetCoordinate(1,1));
         tileSetCoordinateMap.put("breastPlate",new TileSetCoordinate(2,1));
         tileSetCoordinateMap.put("scaleMail",new TileSetCoordinate(3,1));
+
         //Gas levels
         tileSetCoordinateMap.put("type1.1Gas", new TileSetCoordinate(0, 0));
         tileSetCoordinateMap.put("type1.2Gas", new TileSetCoordinate(1, 0));

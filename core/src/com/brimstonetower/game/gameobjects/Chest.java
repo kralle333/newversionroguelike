@@ -3,6 +3,7 @@ package com.brimstonetower.game.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -16,8 +17,8 @@ public class Chest extends GameCharacter
 
     public Chest(int type)
     {
-        super("Chest",0,5,1, AssetManager.getTextureRegion("tile","chest", DungeonMap.TileSize,DungeonMap.TileSize));
-        _texture.flip(false,true);
+        super("Chest",0,5,1, AssetManager.getTextureRegion("tile","chest-"+String.valueOf(RandomGen.getRandomInt(1,3)), DungeonMap.TileSize,DungeonMap.TileSize));
+        _texture.flip(false, true);
     }
     public void addItemToDrop(Item item)
     {

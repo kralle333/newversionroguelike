@@ -259,19 +259,19 @@ public class Corridor
         _playerTile = tile;
         if (tile.isAdjacent(_door1))
         {
-            _door1.setLight(Tile.LightAmount.Light);
+            _door1.changeLight(Tile.LightAmount.Light);
         }
         else if (_door1.getLightAmount() == Tile.LightAmount.Light)
         {
-            _door1.setLight(Tile.LightAmount.Shadow);
+            _door1.changeLight(Tile.LightAmount.Shadow);
         }
         if (tile.isAdjacent(_door2))
         {
-            _door2.setLight(Tile.LightAmount.Light);
+            _door2.changeLight(Tile.LightAmount.Light);
         }
         else if (_door2.getLightAmount() == Tile.LightAmount.Light)
         {
-            _door2.setLight(Tile.LightAmount.Shadow);
+            _door2.changeLight(Tile.LightAmount.Shadow);
         }
 
 
@@ -279,11 +279,11 @@ public class Corridor
         {
             if (t.isAdjacent(tile) || t == tile)
             {
-                t.setLight(Tile.LightAmount.Light);
+                t.changeLight(Tile.LightAmount.Light);
             }
             else if (t.getLightAmount() == Tile.LightAmount.Light)
             {
-                t.setLight(Tile.LightAmount.Shadow);
+                t.changeLight(Tile.LightAmount.Shadow);
             }
         }
     }
@@ -294,7 +294,7 @@ public class Corridor
         {
             if (tile.getLightAmount() == Tile.LightAmount.Non)
             {
-                tile.setLight(Tile.LightAmount.Shadow);
+                tile.changeLight(Tile.LightAmount.Shadow);
             }
         }
     }
@@ -303,10 +303,10 @@ public class Corridor
     {
         if (_playerTile != null && !(_playerTile.getCharacter() instanceof Player))
         {
-            _playerTile.setLight(Tile.LightAmount.Shadow);
+            _playerTile.changeLight(Tile.LightAmount.Shadow);
             for (Tile neighbour : _playerTile.getWalkableNeighbours())
             {
-                neighbour.setLight(Tile.LightAmount.Shadow);
+                neighbour.changeLight(Tile.LightAmount.Shadow);
             }
             _playerTile = null;
         }
