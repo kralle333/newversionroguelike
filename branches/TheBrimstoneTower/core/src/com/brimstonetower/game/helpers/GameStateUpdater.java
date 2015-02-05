@@ -73,7 +73,6 @@ public class GameStateUpdater
         for (Monster monster : _monsters)
         {
             _monsterTime.put(monster, 0);
-            monster.lookForPlayer(player);
         }
         _monsterTurns = new PriorityQueue<Monster>(_monsters.size() + 1, new CharacterSpeedComparator());
 
@@ -127,10 +126,13 @@ public class GameStateUpdater
             int playerActionCost = playerAction.getCost();
             for (Monster monster : _monsters)
             {
-                monster.setNextAction(_player);
-                //Let the time a monster has to act be the time the player's action take
-                _monsterTime.put(monster, _monsterTime.get(monster) + playerActionCost);
-                _monsterTurns.add(monster);
+                monster.lookForPlayer(_player);
+                if(monster.wasSeen())
+                {
+                    //Let the time a monster has to act be the time the player's action take
+                    _monsterTime.put(monster, _monsterTime.get(monster) + playerActionCost);
+                    _monsterTurns.add(monster);
+                }
             }
             if(GameCharacterAnimation.typeIsAnimated(playerAction.getType()))
             {

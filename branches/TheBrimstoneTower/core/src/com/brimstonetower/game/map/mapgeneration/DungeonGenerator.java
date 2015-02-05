@@ -43,8 +43,6 @@ public class DungeonGenerator
     {
         final int equipmentCurseRate = 50;
 
-        TextureRegion chestRegion = AssetManager.getTextureRegion("tile", "chest", DungeonMap.TileSize, DungeonMap.TileSize);
-        chestRegion.flip(false, true);
         Chest chest = new Chest(0);
         int itemType = RandomGen.getRandomInt(0, 7);//Chests more likely to spawn scrolls and potions
         switch (itemType)

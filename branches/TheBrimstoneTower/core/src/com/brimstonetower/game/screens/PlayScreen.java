@@ -439,8 +439,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                 {
                     String oldName = item.getName();
                     item.identify();
-                    String newName = item.getName();
-                    GameConsole.addMessage(oldName + " was identified to be " + newName);
+                    GameConsole.addMessage(oldName + " was identified to be " + item.getIdentifiedName());
                     _inventory.identifyItems(item);
                     ItemManager.identifyItem(item);
                     _gameStateUpdater.resumeGameStateUpdating();

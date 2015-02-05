@@ -22,7 +22,10 @@ public class Monster extends GameCharacter
     private int _experienceGiven;
     private float _pursueDistance = 4;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
+    private final int turnsToBeHidden = 4;
+    private int _turnsNotSeen = 0;
     private boolean _wasSeen = false;
+    public boolean wasSeen(){return _wasSeen;}
 
     public int retrieveExperienceGiven()
     {
@@ -53,6 +56,15 @@ public class Monster extends GameCharacter
             player.clearNextActions();
             _wasSeen=true;
         }
+        else if(_wasSeen && getCurrentTile().getLightAmount() != Tile.LightAmount.Light)
+        {
+            if(_turnsNotSeen>=turnsToBeHidden)
+            {
+                _turnsNotSeen=0;
+                _wasSeen = false;
+            }
+        }
+
     }
 
     public GameAction setNextAction(Player player)
