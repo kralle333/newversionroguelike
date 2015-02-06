@@ -53,7 +53,7 @@ public class Armor extends Item
 
     public Armor(Armor toCopy, int bonusDef)
     {
-        this(toCopy.getIdentifiedName(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getDefense(), bonusDef);
+        this(toCopy.getNameWithoutBonus(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getDefense(), bonusDef);
     }
 
     public void step()
@@ -68,7 +68,10 @@ public class Armor extends Item
             }
         }
     }
-
+    public String getNameWithoutBonus()
+    {
+        return super.getName();
+    }
     public String getFullName()
     {
         if (_isIdentified)

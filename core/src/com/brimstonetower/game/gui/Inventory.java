@@ -53,9 +53,9 @@ public class Inventory extends Window
 
     private HashMap<Button, Item> _itemButtonMap = new HashMap<Button, Item>();
     private Armor _equippedArmor;
-    private Vector2 _armorPosition;
+    private Vector2 _armorPosition = new Vector2();
     private Weapon _equippedWeapon;
-    private Vector2 _weaponPosition;
+    private Vector2 _weaponPosition = new Vector2();
 
     public Inventory(int x, int y, int width, int height, Color color, int frameSize, Color frameColor)
     {
@@ -95,16 +95,11 @@ public class Inventory extends Window
         {
             for (Item i : _items)
             {
-                if (i instanceof Weapon)
+                if (i.isIdentical(item))
                 {
-                    Weapon castWeapon = (Weapon) i;
-                    if (castWeapon.isRanged() && castWeapon.getFullName().contains(item.getName().subSequence(0, 5)))
-                    {
-                        castWeapon.addAmmo(((Weapon) item).getAmmoCount());
-                        return;
-                    }
+                    ((Weapon)i).addAmmo(((Weapon) item).getAmmoCount());
+                    return;
                 }
-
             }
         }
         _items.add(item);
@@ -144,34 +139,36 @@ public class Inventory extends Window
             removeItem(item);
         }
     }
+
     public void repositionESigns()
     {
         if (_equippedWeapon != null)
         {
-            equip(_equippedWeapon);
+            Button itemButton = getButton(String.valueOf(_equippedWeapon.getUniqueId()));
+            _weaponPosition.x=itemButton.getX();
+            _weaponPosition.y=itemButton.getY()+itemButton.getHeight()-_descriptionFont.getBounds("E").height;
         }
         if (_equippedArmor != null)
         {
-            equip(_equippedArmor);
+            Button itemButton = getButton(String.valueOf(_equippedArmor.getUniqueId()));
+            _armorPosition.x=itemButton.getX();
+            _armorPosition.y = itemButton.getY()+itemButton.getHeight()-_descriptionFont.getBounds("E").height;
         }
     }
 
     public void equip(Item item)
     {
-        Button itemButton = getButton(String.valueOf(item.getUniqueId()));
-        Vector2 ePosition = new Vector2(itemButton.getX() + itemButton.getWidth() / 2, itemButton.getY() + itemButton.getHeight() / 2);
         if (item instanceof Armor)
         {
             if(_equippedArmor == null || (_equippedArmor!=null &&!_equippedArmor.hasCurse()))
             {
                 _equippedArmor = (Armor) item;
-                _armorPosition = ePosition;
                 if(_equippedArmor.hasCurse())
                 {
                     GameConsole.addMessage("The armor tightens uncomfortably to your body");
                     GameConsole.addMessage("The armor is cursed!");
                     _equippedArmor.showCurse();
-                    itemButton.setColor(Color.PINK);
+                    getButton(String.valueOf(item.getUniqueId())).setColor(Color.PINK);
                 }
             }
             else
@@ -184,13 +181,12 @@ public class Inventory extends Window
             if(_equippedWeapon == null || (_equippedWeapon!=null &&!_equippedWeapon.hasCurse()))
             {
                 _equippedWeapon = (Weapon) item;
-                _weaponPosition = ePosition;
                 if (_equippedWeapon.hasCurse())
                 {
                     GameConsole.addMessage("An invisible force makes you unable let go of the weapon");
                     GameConsole.addMessage("The weapon is cursed!");
                     _equippedWeapon.showCurse();
-                    itemButton.setColor(Color.PINK);
+                    getButton(String.valueOf(item.getUniqueId())).setColor(Color.PINK);
                 }
             }
             else
@@ -198,7 +194,7 @@ public class Inventory extends Window
                 GameConsole.addMessage("You are unable to let go of your weapon");
             }
         }
-
+        repositionESigns();
     }
 
     public void unequip(Item item)
@@ -281,9 +277,10 @@ public class Inventory extends Window
     public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer)
     {
         super.draw(batch, shapeRenderer);
+        batch.begin();
         if (_isOpen)
         {
-            batch.begin();
+            batch.setColor(Color.GREEN);
             if (_equippedWeapon != null)
             {
                 _descriptionFont.draw(batch, "E", _weaponPosition.x, _weaponPosition.y);
@@ -292,11 +289,10 @@ public class Inventory extends Window
             {
                 _descriptionFont.draw(batch, "E", _armorPosition.x, _armorPosition.y);
             }
-            batch.end();
+            batch.setColor(Color.WHITE);
         }
         if(_showEquippedItems)
         {
-            batch.begin();
             float width = Gdx.graphics.getWidth();
             float height = Gdx.graphics.getHeight();
             if (_equippedWeapon != null)
@@ -307,7 +303,7 @@ public class Inventory extends Window
             {
                 _equippedArmor.draw(batch, width - (height / 8) - 4, 4, height / 400);
             }
-            batch.end();
         }
+        batch.end();
     }
 }

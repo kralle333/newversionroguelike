@@ -42,6 +42,7 @@ public class AssetManager
         _assets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
         _assets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
         _assets.put("trap", new Texture(Gdx.files.internal("art/trap.png")));
+        _assets.put("wayPoint",new Texture(Gdx.files.internal("art/waypoint.png")));
         for (Texture t : _assets.values())
         {
             t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -96,6 +97,7 @@ public class AssetManager
         tileSetCoordinateMap.put("chest-2", new TileSetCoordinate(3, 5));
         tileSetCoordinateMap.put("chest-3", new TileSetCoordinate(4, 5));
         tileSetCoordinateMap.put("searchEye",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("wayPoint",new TileSetCoordinate(0,0));
 
         //Weapons
         tileSetCoordinateMap.put("steelSword",new TileSetCoordinate(0,0));

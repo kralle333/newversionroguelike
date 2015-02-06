@@ -1,6 +1,7 @@
 package com.brimstonetower.game.gameobjects;
 
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
@@ -131,5 +132,16 @@ public class Player extends GameCharacter
     public void kill()
     {
         super.kill();
+    }
+
+    @Override
+    public void draw(SpriteBatch batch)
+    {
+        super.draw(batch);
+        if(isMoving())
+        {
+            Tile lastTile = movementQueue.get(movementQueue.size()-1).getTargetTile();
+            batch.draw(AssetManager.getTextureRegion("wayPoint","wayPoint",DungeonMap.TileSize,DungeonMap.TileSize),lastTile.getX(),lastTile.getY(),DungeonMap.TileSize,DungeonMap.TileSize);
+        }
     }
 }

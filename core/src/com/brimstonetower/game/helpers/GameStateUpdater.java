@@ -73,6 +73,7 @@ public class GameStateUpdater
         for (Monster monster : _monsters)
         {
             _monsterTime.put(monster, 0);
+            monster.lookForPlayer(_player);
         }
         _monsterTurns = new PriorityQueue<Monster>(_monsters.size() + 1, new CharacterSpeedComparator());
 
@@ -90,7 +91,11 @@ public class GameStateUpdater
         }
     }
 
+
+
     //Update:
+    private int turnState = 0;
+
     public void updateGameState()
     {
         if(!_currentAnimation.isPlaying())
@@ -100,13 +105,14 @@ public class GameStateUpdater
                 executeAction(_currentAnimation.getPlayedAction());
                 _currentAnimation.emptyGameAction();
             }
-            else if(isTurnOver())
-            {
-                startTurn();
-            }
             else
             {
-                updateTurn();
+                switch (turnState)
+                {
+                    case 0:startTurn();break;
+                    case 1:updateMonsterActions();break;
+                    case 2:updateTurn();break;
+                }
             }
         }
     }
@@ -115,13 +121,11 @@ public class GameStateUpdater
     // ACTION EXECUTION
     //
 
-    public boolean isTurnOver(){return _monsterTurns.isEmpty();}
     private void startTurn()
     {
         GameAction playerAction;
         if ((playerAction = _player.getNextAction()) != null)
         {
-
             //Record the time of the next action of characters
             int playerActionCost = playerAction.getCost();
             for (Monster monster : _monsters)
@@ -134,22 +138,23 @@ public class GameStateUpdater
                     _monsterTurns.add(monster);
                 }
             }
+
             if(GameCharacterAnimation.typeIsAnimated(playerAction.getType()))
             {
                 _currentAnimation.playGameAction(playerAction,timePerAnimation);
-                return;
             }
             else
             {
                 executeAction(playerAction);
             }
+            turnState =1;
         }
     }
 
-    private void updateTurn()
+    private void updateMonsterActions()
     {
         //Execute actions, starting with the quickest ones, but only if the character has enough time
-        if(!_monsterTurns.isEmpty())
+        if(_monsterTurns.size()!=0)
         {
             Monster monster = _monsterTurns.peek();
             if (_monsterTime.get(monster) > 0 && !monster.isDead())
@@ -173,8 +178,13 @@ public class GameStateUpdater
                 _monsterTurns.poll();
             }
         }
-        if(_monsterTurns.isEmpty())
+        if(_monsterTurns.size()==0)
         {
+            turnState = 2;
+        }
+    }
+    private void updateTurn()
+    {
             _turn++;
 
             //Update clouds and remove ones that are not yet active
@@ -201,9 +211,8 @@ public class GameStateUpdater
             for (Monster monster : _monsters)
             {
                 monster.updateEffects();
-                monster.lookForPlayer(_player);
             }
-        }
+        turnState =0;
     }
 
     private void executeAction(GameAction action)
@@ -393,7 +402,7 @@ public class GameStateUpdater
 
             if (damage > 0)
             {
-                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getFullName());
+                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getName());
                 targetTile.getCharacter().damage(damage);
                 _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN,timePerAnimation);
 
@@ -401,7 +410,7 @@ public class GameStateUpdater
             else
             {
                 targetTile.addItem(thrownWeapon);
-                GameConsole.addMessage(thrownWeapon.getFullName() + " landed on the floor");
+                GameConsole.addMessage(thrownWeapon.getName() + " landed on the floor");
             }
         }
         else //Otherwise the item lands on the tile

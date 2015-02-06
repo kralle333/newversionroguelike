@@ -11,6 +11,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gameobjects.items.Item;
 import com.brimstonetower.game.managers.AssetManager;
@@ -42,6 +43,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private Item _itemToThrow;
 
     //Gui elements
+
     private Inventory _inventory;
     private Button _waitActionButton;
     private Button _openInventoryButton;
@@ -74,15 +76,12 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         guiCamera = new OrthographicCamera(w, h);
         guiCamera.setToOrtho(true, w, h);
 
-        AssetManager.initialize();
-        ItemManager.initialize();
-        HighScoreIO.initialize();
-
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         _font = AssetManager.getFont("description");
         setupGuiElements();
         repositionGuiElements((int) w, (int) h);
+
 
         InputMultiplexer im = new InputMultiplexer();
         GestureDetector gd = new GestureDetector(this);
@@ -117,6 +116,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         //Info about the player
         _playerInfoWindowFrame = new PlayerInfoWindowFrame(0,0,10,10, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
         _playerInfoWindowFrame.show();
+
+
     }
 
     private void repositionGuiElements(int width, int height)
@@ -167,8 +168,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         renderWorld(batch);
         guiCamera.update();
         renderGUI(batch);
-
-        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private void renderWorld(SpriteBatch batch)
@@ -189,7 +188,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _inventory.draw(batch, shapeRenderer);
         _selectedItemWindow.draw(batch, shapeRenderer);
         _goToMainMenuPrompt.draw(batch, shapeRenderer);
-
+        _playerInfoWindowFrame.drawProgressBars(shapeRenderer,_player);
         GameConsole.render(batch, shapeRenderer);
         if (_currentScreenState == ScreenState.GameOver)
         {
@@ -198,10 +197,12 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
 
         batch.begin();
-        _playerInfoWindowFrame.draw(batch,shapeRenderer,_player,_depth);
+        _playerInfoWindowFrame.draw(batch,_player,_depth);
         if (_currentScreenState == ScreenState.GameOver)
         {
-            _font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2 - 40, Gdx.graphics.getHeight() / 4 + 10);
+            _font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2 - _font.getBounds("Game Over").width/2, Gdx.graphics.getHeight() / 4 + 10);
+            _font.draw(batch, "Score: "+((int) _player.calculateScore() * _depth), Gdx.graphics.getWidth() / 2 - 40, Gdx.graphics.getHeight() / 2);
+
         }
         else if (_currentScreenState == ScreenState.GameWon)
         {
@@ -439,7 +440,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                 {
                     String oldName = item.getName();
                     item.identify();
-                    GameConsole.addMessage(oldName + " was identified to be " + item.getIdentifiedName());
+                    GameConsole.addMessage(oldName + " was identified to be " + item.getName());
                     _inventory.identifyItems(item);
                     ItemManager.identifyItem(item);
                     _gameStateUpdater.resumeGameStateUpdating();

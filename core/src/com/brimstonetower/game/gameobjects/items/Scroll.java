@@ -35,7 +35,7 @@ public class Scroll extends Item
 
     public Scroll(Scroll toCopy)
     {
-        this(toCopy.getIdentifiedName(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getUnidentifiedName(),toCopy.getTypeId());
+        this(toCopy._name, toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getUnidentifiedName(),toCopy.getTypeId());
     }
     public String getName()
     {

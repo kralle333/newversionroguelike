@@ -145,8 +145,8 @@ public class SelectedItemWindow extends Window
             super.draw(batch, shapeRenderer);
             batch.begin();
             _descriptionFont.draw(batch, _selectedItem.getName(), _windowRectangle.x + 5, _windowRectangle.y + 5);
-            _selectedItem.draw(batch, _windowRectangle.x + (_windowRectangle.width / 2) - 32, _windowRectangle.y + (_windowRectangle.height / 2) - 128, 2);
-            _descriptionFont.drawWrapped(batch, _selectedItem.getDescription(), _windowRectangle.x + 5, _windowRectangle.y + (2 * _windowRectangle.height / 3) - 64, _windowRectangle.width - 10);
+            _selectedItem.draw(batch, _windowRectangle.x + (_windowRectangle.width / 2) - 32, _windowRectangle.y + _descriptionFont.getBounds("Height").height*2f,2);
+            _descriptionFont.drawWrapped(batch, _selectedItem.getDescription(), _windowRectangle.x + 5,  _windowRectangle.y + _descriptionFont.getBounds("Height").height*10f, _windowRectangle.width - 10);
             batch.end();
         }
     }
