@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gui.Button;
 import com.brimstonetower.game.managers.AssetManager;
@@ -36,7 +37,6 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         int h = Gdx.graphics.getHeight();
         int buttonWidth = (int)(w * 0.2f);
         int buttonHeight = (int)(h * 0.12f);
-        AssetManager.initialize();
 
         startButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.55f - buttonHeight), buttonWidth, buttonHeight, "Start Game", _buttonColor);
         highScoreButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.7f - buttonHeight), buttonWidth, buttonHeight, "High scores", _buttonColor);
@@ -62,6 +62,7 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
 
         batch.setProjectionMatrix(guiCamera.combined);
         shapeRenderer.setProjectionMatrix(guiCamera.combined);
+
         startButton.draw(batch, shapeRenderer);
         highScoreButton.draw(batch, shapeRenderer);
         exitGameButton.draw(batch, shapeRenderer);
@@ -71,7 +72,7 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
                 TheBrimstoneTowerGame.version + " " + TheBrimstoneTowerGame.versionState,
                 Gdx.graphics.getWidth() - (_font.getBounds(_versionString).width*1.1f),
                 Gdx.graphics.getHeight()-_font.getBounds(_versionString).height*1.1f);
-                batch.end();
+        batch.end();
     }
 
     @Override

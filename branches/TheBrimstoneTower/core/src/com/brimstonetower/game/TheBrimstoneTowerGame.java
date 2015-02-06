@@ -2,7 +2,9 @@ package com.brimstonetower.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.brimstonetower.game.helpers.HighScoreIO;
 import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.screens.MenuScreen;
 
 public class TheBrimstoneTowerGame extends Game
@@ -10,7 +12,7 @@ public class TheBrimstoneTowerGame extends Game
 
     private static TheBrimstoneTowerGame _gameInstance;
     public final static String versionState = "alpha";
-    public final static float version = 0.23f;
+    public final static float version = 0.24f;
 
     public static TheBrimstoneTowerGame getGameInstance()
     {
@@ -31,7 +33,11 @@ public class TheBrimstoneTowerGame extends Game
     public void create()
     {
         Gdx.input.setCatchBackKey(true);
+
         AssetManager.initialize();
+        ItemManager.initialize();
+        HighScoreIO.initialize();
+
         setScreen(new MenuScreen());
     }
 

@@ -36,12 +36,11 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
 
     public HighScoreScreen()
     {
-        HighScoreIO.initialize();
         _font = AssetManager.getFont("description");
         batch = new SpriteBatch();
         int bW = Gdx.graphics.getWidth() / 4;
         int bH = Gdx.graphics.getHeight() / 8;
-        mainMenuButton = new Button((int)(Gdx.graphics.getWidth() / 2 - (bW / 2)), (int)(Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Main Menu", Color.BLUE);
+        mainMenuButton = new Button((int)(Gdx.graphics.getWidth() / 2 - (bW / 2)), (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Main Menu", Color.BLUE);
         renderer = new ShapeRenderer();
         guiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         guiCamera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -57,19 +56,19 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         guiCamera.update();
         batch.setProjectionMatrix(guiCamera.combined);
-        Vector2 pos = new Vector2(w / 5, h * 0.3f);
+        Vector2 pos = new Vector2(w *0.1f, h * 0.3f);
         batch.begin();
 
         _font.draw(batch, "High Scores:", (w / 2) - (_font.getBounds("High Scores:").width / 2), h * 0.1f);
         _font.draw(batch, "Rank:", pos.x, pos.y);
         _font.draw(batch, "Name:", pos.x + w * 0.1f, pos.y);
-        _font.draw(batch, "Score:", pos.x + w * 0.5f, pos.y);
+        _font.draw(batch, "Score:", pos.x + w * 0.7f, pos.y);
         for (int i = 0; i < 10; i++)
         {
-            float offSet = (i + 1) * (_font.getBounds("2").height + (h / 100));
-            _font.draw(batch, (i + 1) + "", pos.x, pos.y + offSet);
-            _font.draw(batch, HighScoreIO.getScoreText(i), pos.x + w * 0.1f, pos.y + offSet);
-            _font.draw(batch, HighScoreIO.getScoreValue(i) + "", pos.x + w * 0.5f, pos.y + offSet);
+            float offSetY = (i + 1) * (_font.getBounds("2").height + (h / 100));
+            _font.draw(batch, (i + 1) + "", pos.x, pos.y + offSetY);
+            _font.draw(batch, HighScoreIO.getScoreText(i), pos.x + w * 0.1f, pos.y + offSetY);
+            _font.draw(batch, HighScoreIO.getScoreValue(i) + "", pos.x + w * 0.7f, pos.y + offSetY);
         }
         batch.end();
         renderer.setProjectionMatrix(guiCamera.combined);

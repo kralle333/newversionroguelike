@@ -90,7 +90,7 @@ public class ItemManager
     {
         for(Weapon weapon : _weaponPrototypes)
         {
-            if(weapon.getName() == name)
+            if(weapon.getNameWithoutBonus() == name)
             {
                 return new Weapon(weapon,0);
             }
@@ -129,7 +129,7 @@ public class ItemManager
     {
         for(Armor armor : _armorPrototypes)
         {
-            if(armor.getName() == name)
+            if(armor.getNameWithoutBonus() == name)
             {
                 return new Armor(armor,0);
             }

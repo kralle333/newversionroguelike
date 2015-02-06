@@ -87,7 +87,7 @@ public class Weapon extends Item
 
     public Weapon(Weapon toCopy, int bonusAttack)
     {
-        this(toCopy.getIdentifiedName(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getMinDamage(),
+        this(toCopy.getNameWithoutBonus(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getMinDamage(),
                 toCopy.getMaxDamage(), bonusAttack, toCopy.getAttackSpeed(), toCopy.isRanged());
     }
 
@@ -103,35 +103,32 @@ public class Weapon extends Item
             _stepsTillIdentified--;
             if (_stepsTillIdentified <= 0)
             {
-                GameConsole.addMessage(getName() + " [?] was identified to be " + getName() + " [" + _bonusDamage + "]");
+                GameConsole.addMessage(super.getName() + " [?] was identified to be " + super.getName() + " [" + _bonusDamage + "]");
                 identify();
             }
         }
     }
 
-    @Override
-    public String getIdentifiedName()
+    public String getNameWithoutBonus()
     {
-        if (_isRanged)
-        {
-            return super.getName() + "(" + _ammoCount + ")";
-        }
-        return super.getName() + " [" + _bonusDamage + "]";
+        return _name;
     }
 
-    public String getFullName()
+
+    @Override
+    public String getName()
     {
         if (_isIdentified)
         {
             if (_isRanged)
             {
-                return super.getName() + "(" + _ammoCount + ")";
+                return _name + "(" + _ammoCount + ")";
             }
-            return super.getName() + " [" + _bonusDamage + "]";
+            return _name + " [" + _bonusDamage + "]";
         }
         else
         {
-            return super.getName() + " [?]";
+            return _name + " [?]";
         }
     }
 
@@ -147,7 +144,7 @@ public class Weapon extends Item
         }
         else
         {
-            return super.getDescription() + " - Its effects are not known, but normally this type of weapon gives " + _maxDamage + " attack - Its secrets will be revealed in " + _stepsTillIdentified + " steps";
+            return super.getDescription() + " - Its effects are not known, but normally this type of weapon deal "+_minDamage+"-" + _maxDamage + " damage - Its secrets will be revealed in " + _stepsTillIdentified + " steps";
         }
     }
 

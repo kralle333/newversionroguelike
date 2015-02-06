@@ -81,10 +81,6 @@ public class Item
         showCurse();
     }
 
-    public String getIdentifiedName()
-    {
-        return _name;
-    }
 
     public String getIdentifiedDescription()
     {
