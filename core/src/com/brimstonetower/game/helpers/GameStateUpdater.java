@@ -275,6 +275,7 @@ public class GameStateUpdater
             if (defender.isDead())
             {
                 _player.retrieveExperience((Monster) (defender));
+                _monsters.remove(defender);
             }
         }
         else if (defender instanceof Player)
@@ -427,7 +428,7 @@ public class GameStateUpdater
                 break;
             case RemoveCurse:
                 _inventory.removeCurses();
-                GameConsole.addMessage("A magical light cleanses your backpack");
+                GameConsole.addMessage("A magical light cleanse the items in your backpack");
                 break;
             case Mapping:
                 _playedMap.revealAll();

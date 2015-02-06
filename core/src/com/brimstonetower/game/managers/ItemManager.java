@@ -38,8 +38,7 @@ public class ItemManager
         {
             for (int i = 0; i < _scrollPrototypes.size(); i++)
             {
-                if (_scrollPrototypes.get(i).isIdentified() &&
-                        _scrollPrototypes.get(i).getIdentifiedName() == item.getIdentifiedName())
+                if (_scrollPrototypes.get(i).isIdentified() && _scrollPrototypes.get(i).isIdentical(item))
                 {
                     return true;
                 }
@@ -50,7 +49,7 @@ public class ItemManager
             for (int i = 0; i < _potionPrototypes.size(); i++)
             {
                 if (_potionPrototypes.get(i).isIdentified() &&
-                        _potionPrototypes.get(i).getIdentifiedName() == item.getIdentifiedName())
+                        _potionPrototypes.get(i).isIdentical(item))
                 {
                     return true;
                 }
@@ -483,13 +482,32 @@ public class ItemManager
     {
         _scrollPrototypes.clear();
         scrollId = 1;
-
-        TextureRegion scrollRegion = AssetManager.getTextureRegion("scroll", 0, 0, 32, 32);
-        scrollRegion.flip(false, true);
         _availableWords = new ArrayList<String>(Arrays.asList(new String[]{"shia", "ach", "vosom", "xam", "xhamet", "lok", "sqace", "thunwen", "wex", "natas", "qientis", "commodo", "porta", "vella", "lorem", "consequat", "fringilla"}));
+        final ArrayList<TileSetCoordinate> availableScrollTypes = new ArrayList<TileSetCoordinate>();
+        availableScrollTypes.clear();
+        for(int i = 0;i<4;i++)
+        {
+            availableScrollTypes.add(new TileSetCoordinate(i,0));
+        }
+
+        TileSetCoordinate randomType = availableScrollTypes.remove(RandomGen.getRandomInt(0, availableScrollTypes.size() - 1));
+        TextureRegion scrollRegion = AssetManager.getTextureRegion("scroll",  randomType.x,  randomType.y, 32, 32);
+        scrollRegion.flip(false, true);
         _scrollPrototypes.add(new Scroll("Scroll of Identify", "Use to identify an item", false, scrollRegion, getRandomScrollName(), scrollId++));
+
+        randomType = availableScrollTypes.remove(RandomGen.getRandomInt(0, availableScrollTypes.size() - 1));
+        scrollRegion = AssetManager.getTextureRegion("scroll",  randomType.x,  randomType.y, 32, 32);
+        scrollRegion.flip(false, true);
         _scrollPrototypes.add(new Scroll("Scroll of Mapping", "Reveals the layout of the dungeon", false, scrollRegion, getRandomScrollName(), scrollId++));
+
+        randomType = availableScrollTypes.remove(RandomGen.getRandomInt(0, availableScrollTypes.size() - 1));
+        scrollRegion = AssetManager.getTextureRegion("scroll",  randomType.x,  randomType.y, 32, 32);
+        scrollRegion.flip(false, true);
         _scrollPrototypes.add(new Scroll("Scroll of Teleport", "Use to teleport you to a random location", false, scrollRegion, getRandomScrollName(), scrollId++));
+
+        randomType = availableScrollTypes.remove(RandomGen.getRandomInt(0, availableScrollTypes.size() - 1));
+        scrollRegion = AssetManager.getTextureRegion("scroll",  randomType.x,  randomType.y, 32, 32);
+        scrollRegion.flip(false, true);
         _scrollPrototypes.add(new Scroll("Scroll of Remove Curse", "Use to remove curses from your bag", false, scrollRegion, getRandomScrollName(), scrollId++));
     }
 

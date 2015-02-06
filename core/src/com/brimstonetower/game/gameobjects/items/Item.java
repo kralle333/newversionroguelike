@@ -45,10 +45,6 @@ public class Item
     {
         _isCurseKnown = true;
     }
-    public boolean isCurseKnown()
-    {
-        return _isCurseKnown;
-    }
     public void curse(){_isCurseKnown=false;_hasCurse = true;}
 
     private boolean _stackable = false;
