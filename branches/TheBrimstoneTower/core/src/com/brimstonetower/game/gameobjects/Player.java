@@ -2,6 +2,7 @@ package com.brimstonetower.game.gameobjects;
 
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
@@ -15,23 +16,22 @@ public class Player extends GameCharacter
     private static int _startHp = 30;
     private static int _startStr = 2;
     private int _lanternStrength = 3;
-
     public int getLanternStrength()
     {
         return _lanternStrength;
     }
 
     private String _killedBy = null;
-
     public String getKilledBy()
     {
         return _killedBy;
     }
-
     public void setKilledBy(String killedBy)
     {
         _killedBy = killedBy;
     }
+
+    private TextureRegion _waypointRegion;
 
     public Player(String name)
     {
@@ -43,6 +43,8 @@ public class Player extends GameCharacter
 
         _texture.flip(false, true);
         _equippedWeapon.identify();
+        _waypointRegion = AssetManager.getTextureRegion("misc","wayPoint",DungeonMap.TileSize,DungeonMap.TileSize);
+        _waypointRegion.flip(false,true);
     }
 
     @Override
@@ -141,7 +143,7 @@ public class Player extends GameCharacter
         if(isMoving())
         {
             Tile lastTile = movementQueue.get(movementQueue.size()-1).getTargetTile();
-            batch.draw(AssetManager.getTextureRegion("wayPoint","wayPoint",DungeonMap.TileSize,DungeonMap.TileSize),lastTile.getX(),lastTile.getY(),DungeonMap.TileSize,DungeonMap.TileSize);
+            batch.draw(_waypointRegion,lastTile.getWorldPosition().x,lastTile.getWorldPosition().y,DungeonMap.TileSize,DungeonMap.TileSize);
         }
     }
 }

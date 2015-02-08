@@ -49,7 +49,7 @@ public class Gas
         {
             if(gasTile.getCharacter()!=null)
             {
-                gasTile.getCharacter().giveEffect(_effect);
+                gasTile.getCharacter().giveEffect(new Effect(_effect));
             }
             for (Tile neighbour : gasTile.getWalkableNeighbours())
             {

@@ -7,6 +7,8 @@ import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.GameAction;
 import com.brimstonetower.game.gameobjects.items.Armor;
 import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
 import java.util.ArrayList;
 
@@ -22,10 +24,12 @@ public class Monster extends GameCharacter
     private int _experienceGiven;
     private float _pursueDistance = 4;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
-    private final int turnsToBeHidden = 4;
+    private final int turnsToBeHidden = 2;
     private int _turnsNotSeen = 0;
     private boolean _wasSeen = false;
     public boolean wasSeen(){return _wasSeen;}
+    private TextureRegion _wasSeenRegion;
+    private boolean _wasJustSeen = false;
 
     public int retrieveExperienceGiven()
     {
@@ -41,6 +45,8 @@ public class Monster extends GameCharacter
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
         _experienceGiven = experienceGiven;
         _nature = nature;
+        _wasSeenRegion = AssetManager.getTextureRegion("misc","wasSeen", DungeonMap.TileSize,DungeonMap.TileSize);
+        _wasSeenRegion.flip(false,true);
     }
 
     public void addItemToDrop(Item item)
@@ -50,18 +56,25 @@ public class Monster extends GameCharacter
 
     public void lookForPlayer(Player player)
     {
-        if(!_wasSeen && getCurrentTile().getLightAmount() == Tile.LightAmount.Light)
+        if(!_wasSeen && (getCurrentTile().getLightAmount() == Tile.LightAmount.Light ||
+                        getCurrentTile().getLightAmountChangingTo() == Tile.LightAmount.Light))
         {
             GameConsole.addMessage("A "+getName()+" was spotted!");
             player.clearNextActions();
+            _wasJustSeen=true;
             _wasSeen=true;
         }
-        else if(_wasSeen && getCurrentTile().getLightAmount() != Tile.LightAmount.Light)
+        else if(_wasSeen)
         {
-            if(_turnsNotSeen>=turnsToBeHidden)
+            if(getCurrentTile().getLightAmount() != Tile.LightAmount.Light &&_turnsNotSeen>=turnsToBeHidden)
             {
                 _turnsNotSeen=0;
                 _wasSeen = false;
+            }
+            else
+            {
+                _turnsNotSeen++;
+                _wasJustSeen=false;
             }
         }
 
@@ -124,6 +137,10 @@ public class Monster extends GameCharacter
                     (currentTile.getLightAmount() == Tile.LightAmount.Shadow && _wasSeen))
             {
                 super.draw(batch);
+                if(_wasJustSeen)
+                {
+                    batch.draw(_wasSeenRegion,getWorldPosition().x,getWorldPosition().y,DungeonMap.TileSize,DungeonMap.TileSize);
+                }
             }
         }
     }

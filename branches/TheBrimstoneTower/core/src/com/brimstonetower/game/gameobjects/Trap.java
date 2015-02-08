@@ -4,7 +4,9 @@ package com.brimstonetower.game.gameobjects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.helpers.Effect;
+import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
 
@@ -12,6 +14,8 @@ public class Trap
 {
     private Tile _occupiedTile;
     private Effect _effect;
+    private Color _color;
+    private TextureRegion _textureRegion;
 
     private boolean _hasBeenDiscovered = false;
     private boolean _hasBeenActivated = false;
@@ -20,9 +24,6 @@ public class Trap
     {
         return _hasBeenActivated;
     }
-
-    private Texture _texture;
-    private Color _color;
     private Gas _createdGas;
 
     public boolean hasCreatedGas()
@@ -40,6 +41,9 @@ public class Trap
     public Trap(Effect effect)
     {
         _effect = effect;
+        _textureRegion = AssetManager.getTextureRegion("misc","trap",DungeonMap.TileSize,DungeonMap.TileSize);
+        _textureRegion.flip(false,true);
+        _color= _effect.isGas()?_effect.getColor():Color.GRAY;
     }
 
 
@@ -85,13 +89,13 @@ public class Trap
         if (_hasBeenDiscovered)
         {
             batch.setColor(_color);
-            batch.draw(_texture, _occupiedTile.getX() * DungeonMap.TileSize, _occupiedTile.getY() * DungeonMap.TileSize);
+            batch.draw(_textureRegion, _occupiedTile.getX() * DungeonMap.TileSize, _occupiedTile.getY() * DungeonMap.TileSize);
             batch.setColor(Color.WHITE);
         }
         else if (hasBeenActivated())
         {
             batch.setColor(Color.BLACK);
-            batch.draw(_texture, _occupiedTile.getX() * DungeonMap.TileSize, _occupiedTile.getY() * DungeonMap.TileSize);
+            batch.draw(_textureRegion, _occupiedTile.getX() * DungeonMap.TileSize, _occupiedTile.getY() * DungeonMap.TileSize);
             batch.setColor(Color.WHITE);
         }
     }
