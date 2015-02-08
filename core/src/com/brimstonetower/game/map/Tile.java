@@ -13,6 +13,7 @@ import com.brimstonetower.game.gameobjects.items.Item;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gameobjects.GameCharacter;
 import com.brimstonetower.game.map.mapgeneration.Corridor;
+import javafx.scene.effect.Light;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,10 @@ public class Tile
     public LightAmount getLightAmount()
     {
         return _lightAmount;
+    }
+    public LightAmount getLightAmountChangingTo()
+    {
+        return _lightToChangeTo;
     }
 
 

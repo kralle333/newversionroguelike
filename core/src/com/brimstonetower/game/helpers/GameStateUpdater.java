@@ -43,6 +43,7 @@ public class GameStateUpdater
     private static int _turn = 0;
 
     //Animation
+    private ArrayList<GameCharacterAnimation> _currentAnimations = new ArrayList<GameCharacterAnimation>();
     private GameCharacterAnimation _currentAnimation = new GameCharacterAnimation();
     public GameCharacterAnimation getCurrentAnimation(){return _currentAnimation;}
     private boolean _showingThrowingAnimation = false;
@@ -111,7 +112,7 @@ public class GameStateUpdater
                 {
                     case 0:startTurn();break;
                     case 1:updateMonsterActions();break;
-                    case 2:updateTurn();break;
+                    case 2:updateEndOfTurn();break;
                 }
             }
         }
@@ -126,11 +127,12 @@ public class GameStateUpdater
         GameAction playerAction;
         if ((playerAction = _player.getNextAction()) != null)
         {
+            _turn++;
+
             //Record the time of the next action of characters
             int playerActionCost = playerAction.getCost();
             for (Monster monster : _monsters)
             {
-                monster.lookForPlayer(_player);
                 if(monster.wasSeen())
                 {
                     //Let the time a monster has to act be the time the player's action take
@@ -141,13 +143,13 @@ public class GameStateUpdater
 
             if(GameCharacterAnimation.typeIsAnimated(playerAction.getType()))
             {
-                _currentAnimation.playGameAction(playerAction,timePerAnimation);
+                _currentAnimation.playGameAction(playerAction, timePerAnimation);
             }
             else
             {
                 executeAction(playerAction);
             }
-            turnState =1;
+            turnState = _monsterTurns.isEmpty()?2:1;
         }
     }
 
@@ -164,7 +166,7 @@ public class GameStateUpdater
                 GameAction nextAction = monster.getNextAction();
                 if(GameCharacterAnimation.typeIsAnimated(nextAction.getType()))
                 {
-                    _currentAnimation.playGameAction(nextAction,timePerAnimation);
+                    _currentAnimation.playGameAction(nextAction, timePerAnimation);
                     return;
                 }
                 else
@@ -180,39 +182,38 @@ public class GameStateUpdater
         }
         if(_monsterTurns.size()==0)
         {
-            turnState = 2;
+            turnState=2;
         }
     }
-    private void updateTurn()
+    private void updateEndOfTurn()
     {
-            _turn++;
 
-            //Update clouds and remove ones that are not yet active
-            final ArrayList<Gas> _gassesToRemove = new ArrayList<Gas>();
-            for (Gas gas : _gasClouds)
+        //Update clouds and remove ones that are not yet active
+        final ArrayList<Gas> _gassesToRemove = new ArrayList<Gas>();
+        for (Gas gas : _gasClouds)
+        {
+            gas.update();
+            if (gas.hasDisappeared())
             {
-                gas.update();
-                if (gas.hasDisappeared())
-                {
-                    _gassesToRemove.add(gas);
-                }
+                _gassesToRemove.add(gas);
             }
-            for (Gas gas : _gassesToRemove)
+        }
+        for (Gas gas : _gassesToRemove)
+        {
+            _gasClouds.remove(gas);
+        }
+
+            _player.updateEffects();
+            for(Monster monster :_monsters)
             {
-                _gasClouds.remove(gas);
+                monster.lookForPlayer(_player);
+                monster.updateEffects();
             }
             for(Chest chest : _chests)
             {
                 chest.update(_player);
             }
-
-            //Apply effects
-            _player.updateEffects();
-            for (Monster monster : _monsters)
-            {
-                monster.updateEffects();
-            }
-        turnState =0;
+        turnState=0;
     }
 
     private void executeAction(GameAction action)
@@ -307,7 +308,7 @@ public class GameStateUpdater
             if (trapOnTile != null && !trapOnTile.hasBeenActivated())
             {
                 int chanceToBeat = RandomGen.getRandomInt(1, 100);
-                if (chanceToBeat >= 5)
+                if (5>=chanceToBeat)
                 {
                     GameConsole.addMessage(_player.getName() + " spotted a trap");
                     _player.clearNextActions();
@@ -446,6 +447,7 @@ public class GameStateUpdater
                     trap.reveal();
                 }
                 GameConsole.addMessage("Map has been revealed");
+                _player.getCurrentTile().setLight(Tile.LightAmount.Light, _player.getLanternStrength(), _player.getLanternStrength());
                 break;
             default:
                 throw new IllegalArgumentException("Invalid scroll type: " + scroll.getName());

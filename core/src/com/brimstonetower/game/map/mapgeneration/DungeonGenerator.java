@@ -4,6 +4,7 @@ package com.brimstonetower.game.map.mapgeneration;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gameobjects.Chest;
 import com.brimstonetower.game.gameobjects.Monster;
+import com.brimstonetower.game.gameobjects.Trap;
 import com.brimstonetower.game.gameobjects.items.Armor;
 import com.brimstonetower.game.gameobjects.items.Weapon;
 import com.brimstonetower.game.helpers.RandomGen;
@@ -35,6 +36,15 @@ public class DungeonGenerator
 
         //Add monsters
         newDungeon.addMonsters(MonsterManager.generateMonsters(depth));
+
+        //Traps
+        int trapCount = RandomGen.getRandomInt((int)width/20,(int)width/10);
+        ArrayList<Trap> traps = new ArrayList<Trap>();
+        for(int i = 0;i<trapCount;i++)
+        {
+            traps.add(TrapGenerator.generateTrap(depth));
+        }
+        newDungeon.addTraps(traps);
 
         return newDungeon;
     }

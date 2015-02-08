@@ -273,6 +273,7 @@ public class GameCharacter
     //Effects
     public void giveEffect(Effect effect)
     {
+
         _currentEffects.add(effect);
     }
     public void updateEffects()
@@ -412,7 +413,7 @@ public class GameCharacter
                 case 1:GameConsole.addMessage(_name + " tries to attack " + target.getName() + ", but misses!");break;
                 case 2:GameConsole.addMessage(target._name+" manage to dodge "+_name+"'s attack");break;
             }
-
+            _dealtDamage=0;
         }
 
     }

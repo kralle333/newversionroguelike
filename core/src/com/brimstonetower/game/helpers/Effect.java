@@ -96,7 +96,17 @@ public class Effect
         _turnsLeft = turnsActive;
     }
 
-
+    public Effect(Effect toCopy)
+    {
+        this(toCopy._name,toCopy._effectDescription,
+                toCopy._hitPointsChange,toCopy._maxHitPointsChange,
+                toCopy._strengthChange,toCopy._maxStrengthChange,
+                toCopy._defenseChange,toCopy._attackSpeedChange,
+                toCopy._dodgeRateChange,toCopy._turnsLeft);
+        _isGas = toCopy._isGas;
+        _dispelDescription = toCopy._dispelDescription;
+        _color = toCopy._color;
+    }
 
 
     public static Effect createPermanentEffect(String name, String description,

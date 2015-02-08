@@ -33,7 +33,7 @@ public class AssetManager
         _assets.put("player", new Texture(Gdx.files.internal("art/player.png")));
         _assets.put("mainHeroes",new Texture(Gdx.files.internal("art/mainHeroes.png")));
         _assets.put("mainHeroesWithBorder",new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
-        _assets.put("searchEye",new Texture(Gdx.files.internal("art/searchEye.png")));
+        _assets.put("misc",new Texture(Gdx.files.internal("art/misc.png")));
         _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
         _assets.put("tile", new Texture(Gdx.files.internal("art/tilesetNew.png")));
         _assets.put("armors", new Texture(Gdx.files.internal("art/armorTileSet.png")));
@@ -41,8 +41,6 @@ public class AssetManager
         _assets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
         _assets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
         _assets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
-        _assets.put("trap", new Texture(Gdx.files.internal("art/trap.png")));
-        _assets.put("wayPoint",new Texture(Gdx.files.internal("art/waypoint.png")));
         for (Texture t : _assets.values())
         {
             t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -96,8 +94,12 @@ public class AssetManager
         tileSetCoordinateMap.put("chest-1", new TileSetCoordinate(2, 5));
         tileSetCoordinateMap.put("chest-2", new TileSetCoordinate(3, 5));
         tileSetCoordinateMap.put("chest-3", new TileSetCoordinate(4, 5));
-        tileSetCoordinateMap.put("searchEye",new TileSetCoordinate(0,0));
+
+        //Misc file
+        tileSetCoordinateMap.put("searchEye",new TileSetCoordinate(1,0));
         tileSetCoordinateMap.put("wayPoint",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("wasSeen",new TileSetCoordinate(0,1));
+        tileSetCoordinateMap.put("trap",new TileSetCoordinate(1,1));
 
         //Weapons
         tileSetCoordinateMap.put("steelSword",new TileSetCoordinate(0,0));

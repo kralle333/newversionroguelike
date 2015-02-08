@@ -95,6 +95,12 @@ public class GameCharacterAnimation
         _gameActionToPlay = new GameAction();
         _gameActionToPlay.setAsEmpty();
     }
+    public GameCharacterAnimation(GameAction gameAction,float playTime)
+    {
+        _gameActionToPlay = new GameAction();
+        _gameActionToPlay.setAsEmpty();
+        playGameAction(gameAction, playTime);
+    }
     public void emptyGameAction()
     {
         _gameActionToPlay.setAsEmpty();
@@ -118,7 +124,8 @@ public class GameCharacterAnimation
             Color color = attacker instanceof Player?Color.GREEN:Color.RED;
             Vector2 indicatorPosition = new Vector2(defender.getWorldPosition().x+(DungeonMap.TileSize/2),defender.getWorldPosition().y);
 
-            _damageIndicators.add(new DamageIndicator(0,0.8f,indicatorPosition,String.valueOf(attacker.getDealtDamage()), color, 0.5f));
+            String damageToShow = attacker.getDealtDamage()==0?"Miss":String.valueOf(attacker.getDealtDamage());
+            _damageIndicators.add(new DamageIndicator(0,0.8f,indicatorPosition,damageToShow, color, 0.5f));
         }
         else if(gameAction.getType() == GameAction.Type.Throw)
         {
@@ -134,7 +141,7 @@ public class GameCharacterAnimation
             {
                 scaleOfSearchIcons.put(tile,RandomGen.getRandomFloat(0.45f,0.5f));
             }
-            _searchIconRegion =AssetManager.getTextureRegion("searchEye","searchEye",DungeonMap.TileSize,DungeonMap.TileSize);
+            _searchIconRegion =AssetManager.getTextureRegion("misc","searchEye",DungeonMap.TileSize,DungeonMap.TileSize);
         }
     }
     public void playDamageIndication(int damage, Vector2 position, Color color,float playTime)
