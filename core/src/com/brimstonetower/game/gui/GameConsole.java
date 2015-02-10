@@ -20,6 +20,7 @@ public class GameConsole
     private static int drawIndex;
     private static int messagesAdded = 0;
     private static BitmapFont _font;
+    private static float _fontHeight;
     private static Window _frame;
     private static Vector2 _textOffset;
 
@@ -30,8 +31,10 @@ public class GameConsole
         _frame = new Window(x, y, width,height, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
         _frame.show();
         _textOffset=new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
-        _linesToShow = (int)((height)/((_textOffset.y*2f)+_font.getBounds("Test console message").height));
+        _fontHeight=_font.getBounds("Test console message").height;
+        _linesToShow = (int)((height)/(_textOffset.y+(_fontHeight*1.5f)));
         drawIndex = -_linesToShow;
+
     }
     public static void reposition(int x, int y, int width, int height)
     {
@@ -66,7 +69,7 @@ public class GameConsole
         int startIndex = Math.max(drawIndex, 0);
         for (int i = startIndex; i < drawIndex + _linesToShow; i++)
         {
-            _font.draw(batch, messages[i], _position.x + _textOffset.x, _position.y + _textOffset.y + ((_textOffset.y*3.5f) * (i - startIndex)));
+            _font.draw(batch, messages[i], _position.x + _textOffset.x, _position.y + _textOffset.y + (_fontHeight*1.5f* (i - startIndex)));
         }
         batch.end();
     }

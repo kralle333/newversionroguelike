@@ -183,7 +183,7 @@ public class AssetManager
     public static TextureRegion getTextureRegion(String path, String tileSetPositionKey, int width, int height)
     {
         TileSetCoordinate tile = getTileSetPosition(tileSetPositionKey);
-        return new TextureRegion(_assets.get(path), tile.x * width, tile.y * height, width, height);
+        return getTextureRegion(path, tile.x , tile.y , width, height);
     }
 
     public static TextureRegion getTextureRegion(String path, TileSetCoordinate tileSetCoordinate, int width, int height)
@@ -193,7 +193,9 @@ public class AssetManager
 
     public static TextureRegion getTextureRegion(String path, int xIndex, int yIndex, int width, int height)
     {
-        return new TextureRegion(_assets.get(path), xIndex * width, yIndex * height, width, height);
+        TextureRegion newRegion = new TextureRegion(_assets.get(path), xIndex * width, yIndex * height, width, height);
+        newRegion.flip(false,true);
+        return newRegion;
     }
 
     public static TileSetCoordinate getTileSetPosition(String key)

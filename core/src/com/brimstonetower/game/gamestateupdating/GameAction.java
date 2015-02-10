@@ -1,7 +1,6 @@
-package com.brimstonetower.game.helpers;
+package com.brimstonetower.game.gamestateupdating;
 
-import com.brimstonetower.game.gameobjects.GameCharacter;
-import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.map.Tile;
 
 public class GameAction

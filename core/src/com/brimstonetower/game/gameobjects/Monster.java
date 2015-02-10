@@ -3,10 +3,10 @@ package com.brimstonetower.game.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.helpers.GameAction;
-import com.brimstonetower.game.gameobjects.items.Armor;
-import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.gamestateupdating.GameAction;
+import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -46,12 +46,16 @@ public class Monster extends GameCharacter
         _experienceGiven = experienceGiven;
         _nature = nature;
         _wasSeenRegion = AssetManager.getTextureRegion("misc","wasSeen", DungeonMap.TileSize,DungeonMap.TileSize);
-        _wasSeenRegion.flip(false,true);
     }
 
     public void addItemToDrop(Item item)
     {
         _droppedItems.add(item);
+    }
+
+    public void reveal()
+    {
+        _wasSeen = true;
     }
 
     public void lookForPlayer(Player player)

@@ -9,11 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.PathFinder;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
-import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.*;
-import com.brimstonetower.game.gameobjects.GameCharacter;
+import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.map.mapgeneration.Corridor;
-import javafx.scene.effect.Light;
 
 import java.util.ArrayList;
 
@@ -57,7 +56,6 @@ public class Tile
     public void setTextureRegion(TileSetCoordinate tileCoordinates)
     {
         _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileCoordinates.x, tileCoordinates.y, DungeonMap.TileSize, DungeonMap.TileSize);
-        _textureRegion.flip(false, true);
     }
 
     private float _x;
@@ -197,7 +195,6 @@ public class Tile
         _type = type;
         _corridorOwner = owner;
         _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
-        _textureRegion.flip(false, true);
     }
 
     public Tile(Types type, int x, int y, Room owner, TileSetCoordinate tileTexture)
@@ -210,7 +207,6 @@ public class Tile
         _type = type;
         _roomOwner = owner;
         _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
-        _textureRegion.flip(false, true);
     }
 
     public void setType(Types type)

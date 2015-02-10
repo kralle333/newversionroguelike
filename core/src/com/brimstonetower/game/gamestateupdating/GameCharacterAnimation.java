@@ -1,4 +1,4 @@
-package com.brimstonetower.game.helpers;
+package com.brimstonetower.game.gamestateupdating;
 
 
 import com.badlogic.gdx.Gdx;
@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.brimstonetower.game.gameobjects.GameCharacter;
 import com.brimstonetower.game.gameobjects.Player;
-import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -139,7 +139,7 @@ public class GameCharacterAnimation
             scaleOfSearchIcons.clear();
             for(Tile tile : gameAction.getTargetTile().getWalkableNeighbours())
             {
-                scaleOfSearchIcons.put(tile,RandomGen.getRandomFloat(0.45f,0.5f));
+                scaleOfSearchIcons.put(tile, RandomGen.getRandomFloat(0.45f, 0.5f));
             }
             _searchIconRegion =AssetManager.getTextureRegion("misc","searchEye",DungeonMap.TileSize,DungeonMap.TileSize);
         }

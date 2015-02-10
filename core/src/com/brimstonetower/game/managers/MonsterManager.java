@@ -3,9 +3,8 @@ package com.brimstonetower.game.managers;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
-import com.brimstonetower.game.gameobjects.items.Armor;
-import com.brimstonetower.game.gameobjects.items.Item;
-import com.brimstonetower.game.gameobjects.items.Weapon;
+import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gameobjects.Monster;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.helpers.RandomGen;
@@ -45,7 +44,6 @@ public class MonsterManager
             probabilityOfAppearance = new ArrayList<Vector2>();
             this.nature = nature;
             this.texture = AssetManager.getTextureRegion("monster", textureRegionPosition.x, textureRegionPosition.y, DungeonMap.TileSize, DungeonMap.TileSize);
-            this.texture.flip(false, true);
         }
 
         public void addProbabilityOfAppearing(float probability, int depth)

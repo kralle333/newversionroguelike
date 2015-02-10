@@ -1,11 +1,15 @@
-package com.brimstonetower.game.helpers;
+package com.brimstonetower.game.gamestateupdating;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brimstonetower.game.gameobjects.*;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
+import com.brimstonetower.game.gameobjects.scrolls.Scroll;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.gui.Inventory;
-import com.brimstonetower.game.gameobjects.items.*;
+import com.brimstonetower.game.helpers.ColorHelper;
+import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -20,13 +24,14 @@ public class GameStateUpdater
 
 
 
-    private Player _player;
+    public static Player player;
+    public static Inventory inventory;
+    public static  DungeonMap playedMap;
     private ArrayList<Monster> _monsters;
     private ArrayList<Gas> _gasClouds = new ArrayList<Gas>();
     private ArrayList<Chest> _chests = new ArrayList<Chest>();
     private ArrayList<Trap> _traps = new ArrayList<Trap>();
-    private Inventory _inventory;
-    private DungeonMap _playedMap;
+
 
     //Turn handling
     private HashMap<Monster, Integer> _monsterTime = new HashMap<Monster, Integer>();
@@ -43,56 +48,56 @@ public class GameStateUpdater
     private static int _turn = 0;
 
     //Animation
-    private ArrayList<GameCharacterAnimation> _currentAnimations = new ArrayList<GameCharacterAnimation>();
     private GameCharacterAnimation _currentAnimation = new GameCharacterAnimation();
     public GameCharacterAnimation getCurrentAnimation(){return _currentAnimation;}
-    private boolean _showingThrowingAnimation = false;
     private final float timePerAnimation = 0.20f;
 
 
     //Select item dialog
-    private boolean _selectItemDialog = false;
-    public boolean isSelectingItemToIdentify()
+    private static boolean _selectItemDialog = false;
+    public static boolean isSelectingItemForScroll()
     {
         return _selectItemDialog;
+    }
+    private static boolean _selectTileDialog = false;
+    public static boolean isSelectingTileForScroll(){return _selectTileDialog;}
+
+    private Scroll _usedScroll;
+    public Scroll getUsedScroll()
+    {
+        return _usedScroll;
     }
 
     public void setGameState(Player player, Inventory inventory, DungeonMap playedMap)
     {
         _turn = 1;
-        _player = player;
+        GameStateUpdater.player = player;
         _monsters = playedMap.getMonsters();
 
-        _inventory = inventory;
-        _playedMap = playedMap;
+        GameStateUpdater.inventory = inventory;
+        GameStateUpdater.playedMap = playedMap;
         _chests = playedMap.getChests();
         _traps = playedMap.getTraps();
         _gasClouds.clear();
-        _player.getCurrentTile().setLight(Tile.LightAmount.Shadow, _player.getLanternStrength()*2, _player.getLanternStrength()*2);
-        _player.getCurrentTile().setLight(Tile.LightAmount.Light, _player.getLanternStrength(), _player.getLanternStrength());
+        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getLanternStrength()*2);
+        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getLanternStrength());
         _monsterTime.clear();
         for (Monster monster : _monsters)
         {
             _monsterTime.put(monster, 0);
-            monster.lookForPlayer(_player);
+            monster.lookForPlayer(GameStateUpdater.player);
         }
         _monsterTurns = new PriorityQueue<Monster>(_monsters.size() + 1, new CharacterSpeedComparator());
 
     }
 
-    public void resumeGameStateUpdating()
+    public static void resumeGameStateUpdating()
     {
         if (_selectItemDialog)
         {
             _selectItemDialog = false;
         }
-        else if (_showingThrowingAnimation)
-        {
-            _showingThrowingAnimation = false;
-        }
     }
-
-
 
     //Update:
     private int turnState = 0;
@@ -125,7 +130,7 @@ public class GameStateUpdater
     private void startTurn()
     {
         GameAction playerAction;
-        if ((playerAction = _player.getNextAction()) != null)
+        if ((playerAction = player.getNextAction()) != null)
         {
             _turn++;
 
@@ -161,7 +166,7 @@ public class GameStateUpdater
             Monster monster = _monsterTurns.peek();
             if (_monsterTime.get(monster) > 0 && !monster.isDead())
             {
-                monster.setNextAction(_player);
+                monster.setNextAction(player);
                 _monsterTime.put(monster, _monsterTime.get(monster) - monster.getCostOfNextAction());
                 GameAction nextAction = monster.getNextAction();
                 if(GameCharacterAnimation.typeIsAnimated(nextAction.getType()))
@@ -203,15 +208,15 @@ public class GameStateUpdater
             _gasClouds.remove(gas);
         }
 
-            _player.updateEffects();
+            player.updateEffects();
             for(Monster monster :_monsters)
             {
-                monster.lookForPlayer(_player);
+                monster.lookForPlayer(player);
                 monster.updateEffects();
             }
             for(Chest chest : _chests)
             {
-                chest.update(_player);
+                chest.update(player);
             }
         turnState=0;
     }
@@ -229,23 +234,23 @@ public class GameStateUpdater
             case Equip:
                 Item equipment = action.getTargetItem();
                 action.getOwner().equip(equipment);
-                _inventory.equip(equipment);
+                inventory.equip(equipment);
                 break;
             case Unequip:
                 Item unequipment = action.getTargetItem();
                 action.getOwner().unequip(unequipment);
-                _inventory.unequip(unequipment);
+                inventory.unequip(unequipment);
                 break;
             case Wait:
                 break;
             case PickUp:
                 Item item = action.getTargetTile().pickupItem();
-                _inventory.addItem(item);
+                inventory.addItem(item);
                 GameConsole.addMessage("Picked up item " + item.getName());
                 break;
             case Drop:
                 Item droppedItem = action.getTargetItem();
-                _inventory.removeItem(droppedItem);
+                inventory.removeItem(droppedItem);
                 break;
             case Throw:
                 //The animation for throwing has just ended, resolve the result of the throw:
@@ -284,7 +289,7 @@ public class GameStateUpdater
         {
             if (defender.isDead())
             {
-                _player.retrieveExperience((Monster) (defender));
+                player.retrieveExperience((Monster) (defender));
                 _monsters.remove(defender);
             }
         }
@@ -292,7 +297,7 @@ public class GameStateUpdater
         {
             if (defender.isDead())
             {
-                _player.setKilledBy(attacker.getName());
+                player.setKilledBy(attacker.getName());
             }
         }
 
@@ -302,7 +307,7 @@ public class GameStateUpdater
     {
         Tile newTile = action.getTargetTile();
         GameCharacter character = action.getOwner();
-        if (character == _player)
+        if (character == player)
         {
             Trap trapOnTile = newTile.getTrap();
             if (trapOnTile != null && !trapOnTile.hasBeenActivated())
@@ -310,16 +315,16 @@ public class GameStateUpdater
                 int chanceToBeat = RandomGen.getRandomInt(1, 100);
                 if (5>=chanceToBeat)
                 {
-                    GameConsole.addMessage(_player.getName() + " spotted a trap");
-                    _player.clearNextActions();
+                    GameConsole.addMessage(player.getName() + " spotted a trap");
+                    player.clearNextActions();
                     return;
                 }
                 else
                 {
-                    String trapMessage = _player.getName() + " stepped on a trap ";
+                    String trapMessage = player.getName() + " stepped on a trap ";
 
                     chanceToBeat = RandomGen.getRandomInt(0, 100);
-                    if (_player.getDodgeRate() >= chanceToBeat)
+                    if (player.getDodgeRate() >= chanceToBeat)
                     {
                         trapMessage += ", but didn't activate it";
                     }
@@ -332,16 +337,16 @@ public class GameStateUpdater
                             _gasClouds.add(trapOnTile.retrieveCreatedGas());
                         }
                         //Player was hurt by trap
-                        if (_player.isDead())
+                        if (player.isDead())
                         {
-                            _player.setKilledBy("trap");
+                            player.setKilledBy("trap");
                         }
                     }
                     GameConsole.addMessage(trapMessage);
                 }
             }
-            _inventory.step();
-            _player.moveTo(newTile);
+            inventory.step();
+            player.moveTo(newTile);
         }
         else
         {
@@ -352,10 +357,10 @@ public class GameStateUpdater
 
     private void executeUseAction(GameAction action)
     {
-        if (action.getOwner() == _player)
+        if (action.getOwner() == player)
         {
             //Remove the item from the inventory
-            _inventory.removeItem(action.getTargetItem());
+            inventory.removeItem(action.getTargetItem());
 
             //Identify items similar to the used one
             if (!action.getTargetItem().isIdentified())
@@ -363,7 +368,7 @@ public class GameStateUpdater
                 //Identify the item as it has been used
                 action.getTargetItem().identify();
 
-                _inventory.identifyItems(action.getTargetItem());
+                inventory.identifyItems(action.getTargetItem());
                 ItemManager.identifyItem(action.getTargetItem());
             }
 
@@ -426,31 +431,22 @@ public class GameStateUpdater
     //
     private void useScroll(Scroll scroll)
     {
+        if(!scroll.canBeUsed())
+        {
+            Gdx.app.log("GSU-useScroll","Trying to use scroll which cant be used!!");
+            return;
+        }
         switch (scroll.getType())
         {
-            case Identify:
+            case Instant:scroll.use();break;
+            case OnItem:
+                _usedScroll = scroll;
                 _selectItemDialog = true;
-                _inventory.show();
                 break;
-            case Teleport:
-                _player.moveTo(_playedMap.getRandomEmptyTile());
-                GameConsole.addMessage("Player was teleported to a random tile");
+            case OnTile:
+                _usedScroll = scroll;
+                _selectTileDialog = true;
                 break;
-            case RemoveCurse:
-                _inventory.removeCurses();
-                GameConsole.addMessage("A magical light cleanse the items in your backpack");
-                break;
-            case Mapping:
-                _playedMap.revealAll();
-                for (Trap trap : _traps)
-                {
-                    trap.reveal();
-                }
-                GameConsole.addMessage("Map has been revealed");
-                _player.getCurrentTile().setLight(Tile.LightAmount.Light, _player.getLanternStrength(), _player.getLanternStrength());
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid scroll type: " + scroll.getName());
         }
     }
 
@@ -483,7 +479,7 @@ public class GameStateUpdater
     //
     public void drawGameState(SpriteBatch batch)
     {
-        _playedMap.draw(batch);
+        playedMap.draw(batch);
 
         for (Trap trap : _traps)
         {
@@ -497,7 +493,7 @@ public class GameStateUpdater
         {
             gas.draw(batch);
         }
-        _player.draw(batch);
+        player.draw(batch);
         for (Monster monster : _monsters)
         {
             monster.draw(batch);
