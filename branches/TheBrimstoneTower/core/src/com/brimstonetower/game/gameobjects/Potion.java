@@ -1,4 +1,4 @@
-package com.brimstonetower.game.gameobjects.items;
+package com.brimstonetower.game.gameobjects;
 
 
 import com.badlogic.gdx.graphics.Color;

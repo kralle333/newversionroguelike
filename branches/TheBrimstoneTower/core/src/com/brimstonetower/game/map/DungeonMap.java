@@ -2,12 +2,10 @@ package com.brimstonetower.game.map;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.gameobjects.items.Item;
 import com.brimstonetower.game.map.mapgeneration.BSPMapNode;
 import com.brimstonetower.game.map.mapgeneration.Corridor;
 
@@ -24,9 +22,7 @@ public class DungeonMap extends BSPMapNode
         return _tileMapPath;
     }
 
-    private TextureRegion _stairTextureRegion;
     private ArrayList<Monster> _monsters = new ArrayList<Monster>();
-
     public ArrayList<Monster> getMonsters()
     {
         return _monsters;
@@ -45,13 +41,26 @@ public class DungeonMap extends BSPMapNode
     {
         super(0, 0, width, height, 0, null);
         _tileMapPath = texturePath;
-        _stairTextureRegion = AssetManager.getTextureRegion("tile", "stairs", TileSize, TileSize);
-        _stairTextureRegion.flip(false, true);
     }
 
-
+    public void reveal(Tile tile, int diameter)
+    {
+        //Not implemented - Requires tile based map
+    }
     public void revealAll()
     {
+        for(Chest chest : _chests)
+        {
+            chest.reveal();
+        }
+        for(Monster monster :_monsters)
+        {
+            monster.reveal();
+        }
+        for(Trap trap : _traps)
+        {
+            trap.reveal();
+        }
         revealChildren(getLeftNode());
         revealChildren(getRightNode());
     }

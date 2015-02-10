@@ -11,9 +11,11 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
-import com.brimstonetower.game.gameobjects.items.Item;
+import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gameobjects.scrolls.Scroll;
+import com.brimstonetower.game.gamestateupdating.GameAction;
+import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 public class PlayScreen implements Screen, GestureDetector.GestureListener, InputProcessor
 {
     private final OrthographicCamera mainCamera;
+    private final float minZoom;
+    private final float maxZoom;
     private final OrthographicCamera guiCamera;
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
@@ -43,7 +47,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private Item _itemToThrow;
 
     //Gui elements
-
     private Inventory _inventory;
     private Button _waitActionButton;
     private Button _openInventoryButton;
@@ -71,11 +74,15 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         float h = Gdx.graphics.getHeight();
 
         mainCamera = new OrthographicCamera(w, h);
-        mainCamera.zoom = 0.7f;
+        minZoom = (5*DungeonMap.TileSize)/(w>h?h:w);
+        mainCamera.zoom = (10*DungeonMap.TileSize)/(w>h?h:w);
+        maxZoom = (15*DungeonMap.TileSize)/(w>h?h:w);
+
         mainCamera.setToOrtho(true, w, h);
         guiCamera = new OrthographicCamera(w, h);
         guiCamera.setToOrtho(true, w, h);
 
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         _font = AssetManager.getFont("description");
@@ -138,8 +145,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _goToMainMenuPrompt.arrangeButtons(0.1f, 0.7f, 0.1f, 0, 2);
         if(width<height)
         {
-            int buttonY = (int) (GameConsole.getPosition().y - ((buttonHeight / 2) * 1.1f));
             GameConsole.setup(4, (height - Gdx.graphics.getHeight() / 8),Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8);
+            int buttonY = (int) (GameConsole.getPosition().y - ((buttonHeight / 2) * 1.1f));
             _waitActionButton.reposition(width / 2 - buttonWidth / 2, buttonY, buttonWidth, buttonHeight / 2);
             _openInventoryButton.reposition(_waitActionButton.getX()+buttonWidth,buttonY, buttonWidth, buttonHeight/2);
             _searchFloorButton.reposition(_waitActionButton.getX() - buttonWidth,buttonY, buttonWidth, buttonHeight / 2);
@@ -323,10 +330,10 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                 }
                 break;
             case Input.Keys.PLUS:
-                mainCamera.zoom=Math.max(0.5f, mainCamera.zoom - 0.1f);
+                mainCamera.zoom=Math.max(minZoom, mainCamera.zoom - 0.1f);
                 break;
             case Input.Keys.MINUS:
-                mainCamera.zoom=Math.min(1.5f,mainCamera.zoom+0.1f);
+                mainCamera.zoom=Math.min(maxZoom,mainCamera.zoom+0.1f);
                 break;
         }
         if(newTile != null && newTile.isWalkable())
@@ -425,28 +432,25 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             _playerAction.setAction(_player, GameAction.Type.Search, _player.getCurrentTile(), null);
             _player.clearQueueAndSetAction(_playerAction);
         }
-        else if (_gameStateUpdater.isSelectingItemToIdentify())
+        else if (_gameStateUpdater.isSelectingItemForScroll())
         {
             _inventory.tap(x, y);
             if (!_inventory.isOpen())
             {
                 _gameStateUpdater.resumeGameStateUpdating();
                 _player.clearNextActions();
+                //Put warning here
             }
             else
             {
                 Item item = _inventory.retrieveItem();
-                if (item != null && !item.isIdentified())
+                Scroll usedScroll = _gameStateUpdater.getUsedScroll();
+                usedScroll.useOnItem(item);
+                if(usedScroll.isUsed())
                 {
-                    String oldName = item.getName();
-                    item.identify();
-                    GameConsole.addMessage(oldName + " was identified to be " + item.getName());
-                    _inventory.identifyItems(item);
-                    ItemManager.identifyItem(item);
-                    _gameStateUpdater.resumeGameStateUpdating();
-                    _inventory.hide();
+                    GameStateUpdater.resumeGameStateUpdating();
+                    GameStateUpdater.inventory.hide();
                 }
-
             }
         }
         else
@@ -547,7 +551,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     @Override
     public boolean pan(float x, float y, float dx, float dy)
     {
-        mainCamera.translate(-dx,-dy);
+        mainCamera.translate(-dx*mainCamera.zoom,-dy*mainCamera.zoom);
         mainCamera.update();
         return true;
     }
@@ -555,9 +559,10 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     @Override
     public boolean zoom(float initialDistance, float distance)
     {
+        final float zoomAmount = (maxZoom-minZoom)/10;
         float ratio = (initialDistance / distance);
-        float newZoom = MathUtils.clamp(mainCamera.zoom * ratio, mainCamera.zoom - 0.005f, mainCamera.zoom + 0.005f);
-        newZoom = MathUtils.clamp(newZoom, 0.5f, 1.5f);
+        float newZoom = MathUtils.clamp(mainCamera.zoom * ratio, mainCamera.zoom - zoomAmount, mainCamera.zoom + zoomAmount);
+        newZoom = MathUtils.clamp(newZoom, minZoom, maxZoom);
 
         //Clamp range and set zoom
         mainCamera.zoom =newZoom;
@@ -577,6 +582,13 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     public void resize(int w, int h)
     {
         repositionGuiElements(w, h);
+    }
+    @Override
+    public boolean scrolled(int amount)
+    {
+        float zoomChange = ((float)amount)/10;
+        mainCamera.zoom=MathUtils.clamp(mainCamera.zoom + zoomChange,minZoom,maxZoom );
+        return true;
     }
     //NOT CURRENTLY USED
 
@@ -673,10 +685,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         return false;
     }
 
-    @Override
-    public boolean scrolled(int amount)
-    {
-        return false;
-    }
+
 }
 

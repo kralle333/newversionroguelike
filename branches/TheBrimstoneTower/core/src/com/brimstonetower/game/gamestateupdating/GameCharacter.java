@@ -1,15 +1,14 @@
-package com.brimstonetower.game.gameobjects;
+package com.brimstonetower.game.gamestateupdating;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.Effect;
-import com.brimstonetower.game.helpers.GameAction;
-import com.brimstonetower.game.gameobjects.items.Armor;
-import com.brimstonetower.game.gameobjects.items.Item;
-import com.brimstonetower.game.gameobjects.items.Weapon;
+import com.brimstonetower.game.gameobjects.equipment.Armor;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.map.Tile;

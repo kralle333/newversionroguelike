@@ -1,4 +1,4 @@
-package com.brimstonetower.game.gameobjects.items;
+package com.brimstonetower.game.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

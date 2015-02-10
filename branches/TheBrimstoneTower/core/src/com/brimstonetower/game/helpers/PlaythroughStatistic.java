@@ -1,6 +1,8 @@
 package com.brimstonetower.game.helpers;
 
 
+import com.brimstonetower.game.gamestateupdating.GameAction;
+
 public class PlaythroughStatistic
 {
     private float _playerDamage = 0;

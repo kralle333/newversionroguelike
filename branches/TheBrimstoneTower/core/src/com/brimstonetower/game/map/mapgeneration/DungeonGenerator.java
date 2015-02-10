@@ -1,14 +1,11 @@
 package com.brimstonetower.game.map.mapgeneration;
 
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gameobjects.Chest;
-import com.brimstonetower.game.gameobjects.Monster;
 import com.brimstonetower.game.gameobjects.Trap;
-import com.brimstonetower.game.gameobjects.items.Armor;
-import com.brimstonetower.game.gameobjects.items.Weapon;
+import com.brimstonetower.game.gameobjects.equipment.Armor;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.helpers.RandomGen;
-import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.managers.MonsterManager;
 import com.brimstonetower.game.map.DungeonMap;

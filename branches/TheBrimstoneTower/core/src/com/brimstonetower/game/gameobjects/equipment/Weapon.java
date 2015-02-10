@@ -1,10 +1,11 @@
-package com.brimstonetower.game.gameobjects.items;
+package com.brimstonetower.game.gameobjects.equipment;
 
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.RandomGen;
 

@@ -3,10 +3,10 @@ package com.brimstonetower.game.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
-import com.brimstonetower.game.gameobjects.items.Item;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -33,6 +33,7 @@ public class Player extends GameCharacter
 
     private TextureRegion _waypointRegion;
 
+
     public Player(String name)
     {
         super(name, _startStr, 5, _startHp, AssetManager.getTextureRegion("mainHeroesWithBorder", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
@@ -41,10 +42,8 @@ public class Player extends GameCharacter
         _equippedWeapon.identify();
         _equippedArmor.identify();
 
-        _texture.flip(false, true);
         _equippedWeapon.identify();
         _waypointRegion = AssetManager.getTextureRegion("misc","wayPoint",DungeonMap.TileSize,DungeonMap.TileSize);
-        _waypointRegion.flip(false,true);
     }
 
     @Override

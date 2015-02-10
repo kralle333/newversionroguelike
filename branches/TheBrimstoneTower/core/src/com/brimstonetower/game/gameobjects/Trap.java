@@ -2,9 +2,9 @@ package com.brimstonetower.game.gameobjects;
 
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.DungeonMap;
@@ -42,7 +42,6 @@ public class Trap
     {
         _effect = effect;
         _textureRegion = AssetManager.getTextureRegion("misc","trap",DungeonMap.TileSize,DungeonMap.TileSize);
-        _textureRegion.flip(false,true);
         _color= _effect.isGas()?_effect.getColor():Color.GRAY;
     }
 
