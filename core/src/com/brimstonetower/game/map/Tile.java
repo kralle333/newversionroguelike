@@ -27,7 +27,7 @@ public class Tile
     public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door || _type == Types.StairCase;}
     public enum LightAmount
     {
-        Non, Shadow, Light
+        Non, Shadow,DarkShadow, Light
     }
 
     private LightAmount _lightToChangeTo;
@@ -337,6 +337,7 @@ public class Tile
         {
             case Non:return Color.BLACK;
             case Shadow:return Color.GRAY;
+            case DarkShadow:return Color.DARK_GRAY;
             case Light:return Color.WHITE;
         }
         return Color.MAGENTA;

@@ -114,7 +114,10 @@ public class Gas
         batch.setColor(_color);
         for (Tile tile : _gasDensityMap.keySet())
         {
-            batch.draw(_gasTextures.get(tile), tile.getX() * DungeonMap.TileSize, tile.getY() * DungeonMap.TileSize, DungeonMap.TileSize, DungeonMap.TileSize);
+            if(tile.getLightAmount() != Tile.LightAmount.Non)
+            {
+                batch.draw(_gasTextures.get(tile), tile.getX() * DungeonMap.TileSize, tile.getY() * DungeonMap.TileSize, DungeonMap.TileSize, DungeonMap.TileSize);
+            }
         }
         batch.setColor(Color.WHITE);
     }
