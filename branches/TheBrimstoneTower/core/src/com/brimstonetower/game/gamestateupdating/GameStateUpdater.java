@@ -9,6 +9,7 @@ import com.brimstonetower.game.gameobjects.scrolls.Scroll;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.gui.Inventory;
 import com.brimstonetower.game.helpers.ColorHelper;
+import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
@@ -21,8 +22,6 @@ import java.util.PriorityQueue;
 
 public class GameStateUpdater
 {
-
-
 
     public static Player player;
     public static Inventory inventory;
@@ -138,7 +137,7 @@ public class GameStateUpdater
             int playerActionCost = playerAction.getCost();
             for (Monster monster : _monsters)
             {
-                if(monster.wasSeen())
+                if(!monster.isDead() && monster.wasSeen())
                 {
                     //Let the time a monster has to act be the time the player's action take
                     _monsterTime.put(monster, _monsterTime.get(monster) + playerActionCost);
@@ -211,8 +210,11 @@ public class GameStateUpdater
             player.updateEffects();
             for(Monster monster :_monsters)
             {
-                monster.lookForPlayer(player);
-                monster.updateEffects();
+                if(!monster.isDead())
+                {
+                    monster.lookForPlayer(player);
+                    monster.updateEffects();
+                }
             }
             for(Chest chest : _chests)
             {
@@ -290,7 +292,6 @@ public class GameStateUpdater
             if (defender.isDead())
             {
                 player.retrieveExperience((Monster) (defender));
-                _monsters.remove(defender);
             }
         }
         else if (defender instanceof Player)
@@ -456,7 +457,7 @@ public class GameStateUpdater
         if (potion.getEffect().isGas())
         {
             GameConsole.addMessage("A " + ColorHelper.convertColorToString(potion.getEffect().getColor()) + " gas spreads from the bottle");
-            _gasClouds.add(new Gas(tile, potion.getEffect()));
+            _gasClouds.add(new Gas(tile,new Effect( potion.getEffect())));
         }
         else if (target != null)
         {
@@ -464,7 +465,7 @@ public class GameStateUpdater
             {
                 GameConsole.addMessage(target.getName() + " drank the " +potionColor+ " potion");
             }
-            target.giveEffect(potion.getEffect());
+            target.giveEffect(new Effect(potion.getEffect()));
         }
         else
         {
@@ -493,11 +494,11 @@ public class GameStateUpdater
         {
             gas.draw(batch);
         }
-        player.draw(batch);
         for (Monster monster : _monsters)
         {
             monster.draw(batch);
         }
+        player.draw(batch);
         if(_currentAnimation.isPlaying())
         {
             _currentAnimation.draw(batch);

@@ -559,7 +559,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     @Override
     public boolean zoom(float initialDistance, float distance)
     {
-        final float zoomAmount = (maxZoom-minZoom)/10;
+        final float zoomAmount = (maxZoom-minZoom)/80;
         float ratio = (initialDistance / distance);
         float newZoom = MathUtils.clamp(mainCamera.zoom * ratio, mainCamera.zoom - zoomAmount, mainCamera.zoom + zoomAmount);
         newZoom = MathUtils.clamp(newZoom, minZoom, maxZoom);
@@ -569,7 +569,13 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
         return true;
     }
-
+    @Override
+    public boolean scrolled(int amount)
+    {
+        float zoomChange = ((float)amount)/10;
+        mainCamera.zoom=MathUtils.clamp(mainCamera.zoom + zoomChange,minZoom,maxZoom );
+        return true;
+    }
     @Override
     public void dispose()
     {
@@ -583,13 +589,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     {
         repositionGuiElements(w, h);
     }
-    @Override
-    public boolean scrolled(int amount)
-    {
-        float zoomChange = ((float)amount)/10;
-        mainCamera.zoom=MathUtils.clamp(mainCamera.zoom + zoomChange,minZoom,maxZoom );
-        return true;
-    }
+
+
     //NOT CURRENTLY USED
 
     @Override

@@ -13,7 +13,7 @@ import com.brimstonetower.game.map.Tile;
 
 public class Player extends GameCharacter
 {
-    private static int _startHp = 30;
+    private static int _startHp = 48;
     private static int _startStr = 2;
     private int _lanternStrength = 3;
     public int getLanternStrength()

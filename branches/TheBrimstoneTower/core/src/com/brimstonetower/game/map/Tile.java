@@ -32,7 +32,7 @@ public class Tile
 
     private LightAmount _lightToChangeTo;
     private float _lightTimer = 0;
-    private final float lightChangeTime = 0.2f;
+    private final float lightChangeTime = 0.15f;
     private LightAmount _lightAmount = LightAmount.Light;
     public LightAmount getLightAmount()
     {
@@ -140,6 +140,10 @@ public class Tile
     public void removeCharacter()
     {
         _character = null;
+        if(_type==Types.Door)
+        {
+            _type = Types.Floor;
+        }
     }
 
     public GameCharacter getCharacter()
@@ -209,6 +213,12 @@ public class Tile
         _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
     }
 
+    public void placeDoor(TileSetCoordinate doorRegion)
+    {
+        GameCharacter door = new GameCharacter("Locked door",0,0,1,AssetManager.getTextureRegion("tile",doorRegion,DungeonMap.TileSize,DungeonMap.TileSize));
+        door.placeOnTile(this);
+        setCharacter(door);
+    }
     public void setType(Types type)
     {
         _type = type;
@@ -263,9 +273,9 @@ public class Tile
 
     public Boolean isAdjacent(Tile otherTile)
     {
-        for (Tile t : walkableNeighbours)
+        for (Tile tile : walkableNeighbours)
         {
-            if (t == otherTile)
+            if (tile == otherTile)
             {
                 return true;
             }
@@ -290,6 +300,10 @@ public class Tile
 
             batch.setColor(toDraw);
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
+            if(_type == Types.Door)
+            {
+                _character.draw(batch);
+            }
             _lightTimer+=Gdx.graphics.getDeltaTime();
             if(_lightTimer>lightChangeTime)
             {
@@ -301,6 +315,10 @@ public class Tile
         {
             batch.setColor(usedColor);
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
+            if(_type == Types.Door)
+            {
+                _character.draw(batch);
+            }
         }
 
         if (_lightAmount != LightAmount.Non)

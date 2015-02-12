@@ -30,6 +30,7 @@ public class Monster extends GameCharacter
     public boolean wasSeen(){return _wasSeen;}
     private TextureRegion _wasSeenRegion;
     private boolean _wasJustSeen = false;
+    private TextureRegion _deadRegion;
 
     public int retrieveExperienceGiven()
     {
@@ -38,14 +39,15 @@ public class Monster extends GameCharacter
         return toReturn;
     }
 
-    public Monster(String name, int str, int hp, int def, int dodgeChance, int experienceGiven, Nature nature, TextureRegion textureRegion)
+    public Monster(String name, int str, int hp, int def, int dodgeChance, int experienceGiven, Nature nature, TextureRegion aliveRegion,TextureRegion deadRegion)
     {
-        super(name, str, dodgeChance, hp,textureRegion);
+        super(name, str, dodgeChance, hp,aliveRegion);
         nextAction = new GameAction();
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
         _experienceGiven = experienceGiven;
         _nature = nature;
         _wasSeenRegion = AssetManager.getTextureRegion("misc","wasSeen", DungeonMap.TileSize,DungeonMap.TileSize);
+        _deadRegion = deadRegion;
     }
 
     public void addItemToDrop(Item item)
@@ -147,6 +149,10 @@ public class Monster extends GameCharacter
                 }
             }
         }
+        else
+        {
+            super.draw(batch);
+        }
     }
 
     @Override
@@ -161,5 +167,6 @@ public class Monster extends GameCharacter
             }
 
         }
+        _texture = _deadRegion;
     }
 }
