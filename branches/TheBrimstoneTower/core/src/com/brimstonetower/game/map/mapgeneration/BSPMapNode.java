@@ -115,8 +115,8 @@ public class BSPMapNode
 
     public boolean canSplit()
     {
-        return _width > MapGenerator.minWidth * 2 + 1 + RandomGen.getRandomInt(0, MapGenerator.minWidth) ||
-                _height > MapGenerator.minHeight * 2 + 1 + RandomGen.getRandomInt(0, MapGenerator.minWidth);
+        return _width > MapGenerator.minWidth * 2 + 1  ||
+                _height > MapGenerator.minHeight * 2 + 1;
     }
 
     public void split()

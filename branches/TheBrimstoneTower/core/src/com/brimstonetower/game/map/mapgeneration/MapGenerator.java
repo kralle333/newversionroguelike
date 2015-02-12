@@ -30,7 +30,6 @@ public class MapGenerator
 
         Gdx.app.log("MapGen", "Created " + leaves.size() + " rooms");
 
-
         return rootNode;
     }
 
