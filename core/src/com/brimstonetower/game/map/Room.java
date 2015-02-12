@@ -323,17 +323,21 @@ public class Room
         switch (orientation)
         {
             case West:
-                doorTile.setTextureRegion(AssetManager.getTileSetPosition("wDoor"));
+                doorTile.setTextureRegion(AssetManager.getTileSetPosition("nCorridor"));
+                doorTile.placeDoor(AssetManager.getTileSetPosition("wDoor"));
                 break;
             case East:
-                doorTile.setTextureRegion(AssetManager.getTileSetPosition("eDoor"));
+                doorTile.setTextureRegion(AssetManager.getTileSetPosition("nCorridor"));
+                doorTile.placeDoor(AssetManager.getTileSetPosition("eDoor"));
                 break;
             case North:
-                doorTile.setTextureRegion(RandomGen.getRandomInt(0,1)==1?
-                        AssetManager.getTileSetPosition("nDoor-1"):AssetManager.getTileSetPosition("nDoor-2"));
+                doorTile.setTextureRegion(AssetManager.getTileSetPosition("eCorridor"));
+                doorTile.placeDoor(RandomGen.getRandomInt(0, 1) == 1 ?
+                        AssetManager.getTileSetPosition("nDoor-1") : AssetManager.getTileSetPosition("nDoor-2"));
                 break;
             case South:
-                doorTile.setTextureRegion(AssetManager.getTileSetPosition("sDoor"));
+                doorTile.setTextureRegion(AssetManager.getTileSetPosition("wCorridor"));
+                doorTile.placeDoor(AssetManager.getTileSetPosition("sDoor"));
                 break;
         }
 

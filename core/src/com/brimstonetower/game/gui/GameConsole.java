@@ -28,7 +28,7 @@ public class GameConsole
     {
         _position = new Vector2(x, y);
         _font = AssetManager.getFont("description");
-        _frame = new Window(x, y, width,height, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
+        _frame = new Window(x, y, width,height, new Color(0.3f, 0.3f, 0.3f, 0.2f), 2, new Color(0.4f, 0.4f, 0.4f, 0.2f));
         _frame.show();
         _textOffset=new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
         _fontHeight=_font.getBounds("Test console message").height;
@@ -43,7 +43,7 @@ public class GameConsole
         _frame.reposition(x,y,width,height);
         _textOffset.x=Gdx.graphics.getWidth()/128;
         _textOffset.y=Gdx.graphics.getWidth()/128;
-        _linesToShow = (int)((height)/((_textOffset.y*2f)+_font.getBounds("Test console message").height));
+        _linesToShow = (int)((height)/((_textOffset.y*1.5f)+_font.getBounds("Test console message").height));
     }
 
     public static void reset()

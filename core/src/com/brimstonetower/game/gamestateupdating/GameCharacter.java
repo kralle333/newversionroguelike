@@ -272,7 +272,6 @@ public class GameCharacter
     //Effects
     public void giveEffect(Effect effect)
     {
-
         _currentEffects.add(effect);
     }
     public void updateEffects()

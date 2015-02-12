@@ -22,7 +22,8 @@ public class MonsterManager
     private static class MonsterPrototype
     {
         public ArrayList<Vector2> probabilityOfAppearance;
-        public TextureRegion texture;
+        public TextureRegion aliveTexture;
+        public TextureRegion deadTexture;
         public Monster.Nature nature;
         public String name;
         public int minHp;
@@ -33,7 +34,7 @@ public class MonsterManager
         public Weapon attack;
         public HashMap<Item, Float> droppedItemsAndProbability = new HashMap<Item, Float>();
 
-        public MonsterPrototype(String name, int minHp, int maxHp, int defense, int dodgeChance, int experience, Monster.Nature nature, TileSetCoordinate textureRegionPosition)
+        public MonsterPrototype(String name, int minHp, int maxHp, int defense, int dodgeChance, int experience, Monster.Nature nature, TileSetCoordinate textureRegionPositionAlive,TileSetCoordinate textureRegionPositionDead)
         {
             this.name = name;
             this.minHp = minHp;
@@ -43,7 +44,8 @@ public class MonsterManager
             this.experience = experience;
             probabilityOfAppearance = new ArrayList<Vector2>();
             this.nature = nature;
-            this.texture = AssetManager.getTextureRegion("monster", textureRegionPosition.x, textureRegionPosition.y, DungeonMap.TileSize, DungeonMap.TileSize);
+            this.aliveTexture = AssetManager.getTextureRegion("monster", textureRegionPositionAlive.x, textureRegionPositionAlive.y, DungeonMap.TileSize, DungeonMap.TileSize);
+            this.deadTexture = AssetManager.getTextureRegion("monster", textureRegionPositionDead.x, textureRegionPositionDead.y, DungeonMap.TileSize, DungeonMap.TileSize);
         }
 
         public void addProbabilityOfAppearing(float probability, int depth)
@@ -58,25 +60,19 @@ public class MonsterManager
     {
         if (!prototypesInitialized)
         {
-            MonsterPrototype beaverRat = new MonsterPrototype("Rat", 5, 15, 1, 5, 2, Monster.Nature.Aggressive, new TileSetCoordinate(0, 0));
-            beaverRat.addProbabilityOfAppearing(1, 1);
-            beaverRat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 2, 0, 10, false);
+            MonsterPrototype rat = new MonsterPrototype("Rat", 5, 15, 1, 5, 2, Monster.Nature.Aggressive, new TileSetCoordinate(0, 0),new TileSetCoordinate(0,1));
+            rat.addProbabilityOfAppearing(1, 1);
+            rat.addProbabilityOfAppearing(0, 5);
+            rat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 2, 0, 10, false);
 
-            MonsterPrototype bat = new MonsterPrototype("Bat", 4, 8, 1, 20, 1, Monster.Nature.Aggressive, new TileSetCoordinate(1, 0));
-            bat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 1, 0, 5, false);
-            bat.addProbabilityOfAppearing(0.2f, 1);
-            bat.addProbabilityOfAppearing(0.5f, 3);
-            bat.addProbabilityOfAppearing(1, 5);
+            MonsterPrototype skeleton = new MonsterPrototype("Skeleton", 10, 20, 5, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(1, 0),new TileSetCoordinate(1, 1));
+            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 4, 0, 10, false);
+            skeleton.addProbabilityOfAppearing(0.33f, 3);
+            skeleton.addProbabilityOfAppearing(0.66f, 5);
+            skeleton.addProbabilityOfAppearing(0.99f, 7);
+            skeleton.addProbabilityOfAppearing(0, 10);
 
-            MonsterPrototype skeleton = new MonsterPrototype("Skeleton", 10, 20, 5, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(2, 0));
-            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 6, 0, 10, false);
-            skeleton.addProbabilityOfAppearing(0.4f, 4);
-            skeleton.addProbabilityOfAppearing(0.6f, 6);
-            skeleton.addProbabilityOfAppearing(0.8f, 8);
-            skeleton.addProbabilityOfAppearing(1, 10);
-
-            monsterPrototypes.add(beaverRat);
-            monsterPrototypes.add(bat);
+            monsterPrototypes.add(rat);
             monsterPrototypes.add(skeleton);
             numberOfPrototypes = monsterPrototypes.size();
             prototypesInitialized = true;
@@ -127,7 +123,7 @@ public class MonsterManager
                 droppedItems.add(item.getKey());
             }
         }
-        Monster monsterToReturn = new Monster(prototype.name, str, hp, prototype.defense, prototype.dodgeChance, prototype.experience, prototype.nature, prototype.texture);
+        Monster monsterToReturn = new Monster(prototype.name, str, hp, prototype.defense, prototype.dodgeChance, prototype.experience, prototype.nature, prototype.aliveTexture,prototype.deadTexture);
         for (Item item : droppedItems)
         {
             monsterToReturn.addItemToDrop(item);

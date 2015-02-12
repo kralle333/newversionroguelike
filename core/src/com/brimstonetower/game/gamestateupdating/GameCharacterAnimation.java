@@ -68,8 +68,9 @@ public class GameCharacterAnimation
     private float lungeTime;
     private float retractTime;
     private boolean isLunging=true;
-    GameCharacter defender;
-    GameCharacter attacker;
+    private GameCharacter defender;
+    private GameCharacter attacker;
+    private Vector2 attackedPosition = new Vector2();
 
     //Keeping track of thrown items
     private Item _thrownItem;
@@ -95,12 +96,7 @@ public class GameCharacterAnimation
         _gameActionToPlay = new GameAction();
         _gameActionToPlay.setAsEmpty();
     }
-    public GameCharacterAnimation(GameAction gameAction,float playTime)
-    {
-        _gameActionToPlay = new GameAction();
-        _gameActionToPlay.setAsEmpty();
-        playGameAction(gameAction, playTime);
-    }
+
     public void emptyGameAction()
     {
         _gameActionToPlay.setAsEmpty();
@@ -120,6 +116,9 @@ public class GameCharacterAnimation
             attacker = _gameActionToPlay.getOwner();
             //Done here such that we can retrieve the damage total
             attacker.attack(defender);
+
+            attackedPosition.x=(attacker.getWorldPosition().x+defender.getWorldPosition().x)/2;
+            attackedPosition.y=(attacker.getWorldPosition().y+defender.getWorldPosition().y)/2;
 
             Color color = attacker instanceof Player?Color.GREEN:Color.RED;
             Vector2 indicatorPosition = new Vector2(defender.getWorldPosition().x+(DungeonMap.TileSize/2),defender.getWorldPosition().y);
@@ -163,7 +162,7 @@ public class GameCharacterAnimation
                 {
                     attacker.setPosition(
                             moveTowards(attacker.getCurrentTile().getWorldPosition(),
-                                    defender.getWorldPosition(),
+                                    attackedPosition,
                                     (_timer-lungeTime)/retractTime));
                     if(_timer>=lungeTime)
                     {
@@ -173,7 +172,7 @@ public class GameCharacterAnimation
                 else
                 {
                     attacker.setPosition(
-                            moveTowards(defender.getWorldPosition(),
+                            moveTowards(attackedPosition,
                                     attacker.getCurrentTile().getWorldPosition(),(_timer-lungeTime)/retractTime));
                 }
                 for (DamageIndicator damageIndicator : _damageIndicators)
