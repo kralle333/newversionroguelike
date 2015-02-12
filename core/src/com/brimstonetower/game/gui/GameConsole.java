@@ -6,19 +6,20 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.managers.AssetManager;
 
+import java.util.ArrayList;
+
 public class GameConsole
 {
-    private static String[] messages = new String[100000];
+    private static ArrayList<String> messages = new  ArrayList<String>();
     private static Vector2 _position;
     public static Vector2 getPosition(){return _position;}
     public static int getWidth(){return _frame.getWidth();}
     public static int getHeight(){return _frame.getHeight();}
     private static int _linesToShow;
-    private static int drawIndex;
-    private static int messagesAdded = 0;
     private static BitmapFont _font;
     private static float _fontHeight;
     private static Window _frame;
@@ -33,8 +34,6 @@ public class GameConsole
         _textOffset=new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
         _fontHeight=_font.getBounds("Test console message").height;
         _linesToShow = (int)((height)/(_textOffset.y+(_fontHeight*1.5f)));
-        drawIndex = -_linesToShow;
-
     }
     public static void reposition(int x, int y, int width, int height)
     {
@@ -48,17 +47,13 @@ public class GameConsole
 
     public static void reset()
     {
-        messages = new String[100000];
-        drawIndex = -_linesToShow;
-        messagesAdded = 0;
+        messages.clear();
     }
 
     public static void addMessage(String message)
     {
-        messages[messagesAdded] = message;
+        messages.add(message);
         Gdx.app.log("Console",message);
-        messagesAdded++;
-        drawIndex++;
     }
 
     public static void render(SpriteBatch batch, ShapeRenderer shapeRenderer)
@@ -66,10 +61,11 @@ public class GameConsole
 
         _frame.draw(batch, shapeRenderer);
         batch.begin();
-        int startIndex = Math.max(drawIndex, 0);
-        for (int i = startIndex; i < drawIndex + _linesToShow; i++)
+        int startIndex = Math.max(messages.size() - _linesToShow, 0);
+        for(int i = startIndex;i<Math.min(startIndex+_linesToShow,messages.size());i++)
         {
-            _font.draw(batch, messages[i], _position.x + _textOffset.x, _position.y + _textOffset.y + (_fontHeight*1.5f* (i - startIndex)));
+            _font.draw(batch, messages.get(i), _position.x + _textOffset.x, _position.y + _textOffset.y + (_fontHeight*1.5f* (i - startIndex)));
+
         }
         batch.end();
     }
