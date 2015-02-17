@@ -123,8 +123,31 @@ public class GameCharacterAnimation
             Color color = attacker instanceof Player?Color.GREEN:Color.RED;
             Vector2 indicatorPosition = new Vector2(defender.getWorldPosition().x+(DungeonMap.TileSize/2),defender.getWorldPosition().y);
 
-            String damageToShow = attacker.getDealtDamage()==0?"Miss":String.valueOf(attacker.getDealtDamage());
+            String damageToShow = "Magenta";
+            switch (attacker.getLastHitState())
+            {
+                case Normal:
+                    damageToShow =String.valueOf(attacker.getDealtDamage());
+                    AssetManager.getSound("hit").play();
+                    break;
+                case Critical:
+                    damageToShow =String.valueOf(attacker.getDealtDamage())+"!";
+                    AssetManager.getSound("critical").play();
+                    break;
+                case Blocked:
+                    damageToShow ="Blocked";
+                    AssetManager.getSound("block").play();
+                    break;
+                case Miss:
+                    damageToShow = "Miss";
+                    AssetManager.getSound("miss").play();
+                    break;
+            }
+
             _damageIndicators.add(new DamageIndicator(0,0.8f,indicatorPosition,damageToShow, color, 0.5f));
+            isLunging=true;
+
+
         }
         else if(gameAction.getType() == GameAction.Type.Throw)
         {
@@ -132,6 +155,7 @@ public class GameCharacterAnimation
             _thrownItemCurrentPosition = gameAction.getOwner().getWorldPosition();
             _thrownItemFromPosition=_thrownItemCurrentPosition;
             _thrownItemTarget = gameAction.getTargetTile().getWorldPosition();
+            AssetManager.getSound("throw").play();
         }
         else if(gameAction.getType() == GameAction.Type.Search)
         {
@@ -141,6 +165,7 @@ public class GameCharacterAnimation
                 scaleOfSearchIcons.put(tile, RandomGen.getRandomFloat(0.45f, 0.5f));
             }
             _searchIconRegion =AssetManager.getTextureRegion("misc","searchEye",DungeonMap.TileSize,DungeonMap.TileSize);
+            AssetManager.getSound("search").play();
         }
     }
     public void playDamageIndication(int damage, Vector2 position, Color color,float playTime)

@@ -13,6 +13,7 @@ import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.map.mapgeneration.Corridor;
+import javafx.scene.effect.Light;
 
 import java.util.ArrayList;
 
@@ -143,6 +144,8 @@ public class Tile
         if(_type==Types.Door)
         {
             _type = Types.Floor;
+            setLight(LightAmount.Shadow,2,2);
+            setLight(LightAmount.Light,1,1);
         }
     }
 

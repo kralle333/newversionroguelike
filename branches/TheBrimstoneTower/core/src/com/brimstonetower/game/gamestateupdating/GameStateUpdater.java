@@ -11,6 +11,7 @@ import com.brimstonetower.game.gui.Inventory;
 import com.brimstonetower.game.helpers.ColorHelper;
 import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.helpers.RandomGen;
+import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -249,6 +250,7 @@ public class GameStateUpdater
                 Item item = action.getTargetTile().pickupItem();
                 inventory.addItem(item);
                 GameConsole.addMessage("Picked up item " + item.getName());
+                AssetManager.getSound("pickup").play();
                 break;
             case Drop:
                 Item droppedItem = action.getTargetItem();
@@ -335,7 +337,12 @@ public class GameStateUpdater
                         trapOnTile.activate();
                         if (trapOnTile.hasCreatedGas())
                         {
+                            AssetManager.getSound("gas").play();
                             _gasClouds.add(trapOnTile.retrieveCreatedGas());
+                        }
+                        else
+                        {
+                            AssetManager.getSound("critical").play();
                         }
                         //Player was hurt by trap
                         if (player.isDead())
@@ -449,6 +456,7 @@ public class GameStateUpdater
                 _selectTileDialog = true;
                 break;
         }
+        AssetManager.getSound("effect").play();
     }
 
     private void usePotion(Potion potion, GameCharacter target, Tile tile)
@@ -456,6 +464,7 @@ public class GameStateUpdater
         String potionColor = ColorHelper.convertColorToString(potion.getColor());
         if (potion.getEffect().isGas())
         {
+            AssetManager.getSound("gas").play();
             GameConsole.addMessage("A " + ColorHelper.convertColorToString(potion.getEffect().getColor()) + " gas spreads from the bottle");
             _gasClouds.add(new Gas(tile,new Effect( potion.getEffect())));
         }
@@ -463,6 +472,7 @@ public class GameStateUpdater
         {
             if (tile == null)
             {
+                AssetManager.getSound("effect").play();
                 GameConsole.addMessage(target.getName() + " drank the " +potionColor+ " potion");
             }
             target.giveEffect(new Effect(potion.getEffect()));
