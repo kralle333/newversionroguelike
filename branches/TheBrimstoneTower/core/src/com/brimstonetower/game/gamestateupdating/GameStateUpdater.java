@@ -303,6 +303,11 @@ public class GameStateUpdater
                 player.setKilledBy(attacker.getName());
             }
         }
+        else
+        {
+            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getLanternStrength()*2);
+            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getLanternStrength());
+        }
 
     }
 
