@@ -137,7 +137,7 @@ public class Room
         //East wall
         for(int y = 1;y<_height-1;y++)
         {
-            _tiles[_width-1][y] = new Tile(Tile.Types.Wall, _width-1+_x, y + _y, AssetManager.getTileSetPosition("wWall"));
+            _tiles[_width-1][y] = new Tile(Tile.Types.Wall, _width-1+_x, y + _y, AssetManager.getTileSetPosition("eWall"));
         }
 
         //Floor

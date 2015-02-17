@@ -117,6 +117,7 @@ public class GameCharacter
         return currentTile;
     }
 
+
     public int getCostOfNextAction()
     {
         if (isMoving())
@@ -148,9 +149,8 @@ public class GameCharacter
         return _lastHitState;
     }
 
-    private boolean _displayAttackRange = false;
+    protected boolean _displayAttackRange = false;
     public void DisplayAttackRange(){_displayAttackRange=true;}
-    public void HideAttackRange(){_displayAttackRange=false;}
 
     public GameCharacter(String name, int str, int dodgeChance, int hp,TextureRegion texture)
     {
@@ -279,6 +279,7 @@ public class GameCharacter
         {
             currentTile.removeCharacter();
             placeOnTile(tile);
+            _displayAttackRange=false;
         }
     }
 
@@ -442,16 +443,6 @@ public class GameCharacter
     public void draw(SpriteBatch batch)
     {
         batch.draw(_texture, _worldPosition.x, _worldPosition.y);
-        if(_displayAttackRange)
-        {
-            if(_equippedWeapon==null || !_equippedWeapon.isRanged())
-            {
-                for(Tile tile : currentTile.getWalkableNeighbours())
-                {
-                    tile.drawOverLay(batch, Color.GREEN);
-                }
-            }
-        }
     }
 
 

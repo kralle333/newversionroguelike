@@ -1,6 +1,7 @@
 package com.brimstonetower.game.gameobjects;
 
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
@@ -31,7 +32,7 @@ public class Monster extends GameCharacter
     private TextureRegion _wasSeenRegion;
     private boolean _wasJustSeen = false;
     private TextureRegion _deadRegion;
-
+    private static Color _attackRangeColor = new Color(1,0,0,0.2f);
     public int retrieveExperienceGiven()
     {
         int toReturn = _experienceGiven;
@@ -147,6 +148,16 @@ public class Monster extends GameCharacter
                 if(_wasJustSeen)
                 {
                     batch.draw(_wasSeenRegion,getWorldPosition().x,getWorldPosition().y,DungeonMap.TileSize,DungeonMap.TileSize);
+                }
+            }
+            if(_displayAttackRange)
+            {
+                if(_equippedWeapon==null || !_equippedWeapon.isRanged())
+                {
+                    for(Tile tile : currentTile.getWalkableNeighbours())
+                    {
+                        tile.drawOverLay(batch, _attackRangeColor);
+                    }
                 }
             }
         }
