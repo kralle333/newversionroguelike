@@ -1,6 +1,7 @@
 package com.brimstonetower.game.gameobjects;
 
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
@@ -30,7 +31,7 @@ public class Player extends GameCharacter
     {
         _killedBy = killedBy;
     }
-
+    private static Color _attackRangeColor = new Color(0,1,0,0.2f);
     private TextureRegion _waypointRegion;
 
 
@@ -143,6 +144,16 @@ public class Player extends GameCharacter
         {
             Tile lastTile = movementQueue.get(movementQueue.size()-1).getTargetTile();
             batch.draw(_waypointRegion,lastTile.getWorldPosition().x,lastTile.getWorldPosition().y,DungeonMap.TileSize,DungeonMap.TileSize);
+        }
+        if(_displayAttackRange)
+        {
+            if(_equippedWeapon==null || !_equippedWeapon.isRanged())
+            {
+                for(Tile tile : currentTile.getWalkableNeighbours())
+                {
+                    tile.drawOverLay(batch, _attackRangeColor);
+                }
+            }
         }
     }
 }

@@ -158,8 +158,17 @@ public class Tile
     {
         if(_overlay==null)
         {
-            Texture overLayTexture = new Texture(new Pixmap(DungeonMap.TileSize,DungeonMap.TileSize, Pixmap.Format.RGB888));
-            _overlay = new TextureRegion(overLayTexture);
+            Pixmap pixmap =new Pixmap(DungeonMap.TileSize,DungeonMap.TileSize, Pixmap.Format.RGBA8888);
+            pixmap.setColor(Color.WHITE);
+            for(int pX = 0;pX<DungeonMap.TileSize;pX++)
+            {
+                for(int pY = 0;pY<DungeonMap.TileSize;pY++)
+                {
+
+                    pixmap.drawPixel(pX,pY);
+                }
+            }
+            _overlay = new TextureRegion(new Texture(pixmap));
         }
         _tilePosition = new Vector2(x, y);
         _x = x;

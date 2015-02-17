@@ -95,6 +95,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         im.addProcessor(gd);
         im.addProcessor(this);
         Gdx.input.setInputProcessor(im);
+        gd.setLongPressSeconds(0.4f);
+
         createNewDungeon();
     }
     private void setupGuiElements()
@@ -547,6 +549,19 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         }
     }
 
+    @Override
+    public boolean longPress(float x, float y)
+    {
+        Vector3 unprojectedPos = mainCamera.unproject(new Vector3(x,y,0));
+        Tile pressedTile = _currentDungeonMap.getTouchedTile(unprojectedPos.x,unprojectedPos.y);
+        if(!pressedTile.isEmpty())
+        {
+            pressedTile.getCharacter().DisplayAttackRange();
+        }
+        return true;
+    }
+
+
     //Camera control
     @Override
     public boolean pan(float x, float y, float dx, float dy)
@@ -594,15 +609,9 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     //NOT CURRENTLY USED
 
     @Override
-    public boolean touchDown(float v, float v2, int i, int i2)
+    public boolean touchDown(float x, float y, int i, int i2)
     {
         return false;
-    }
-
-    @Override
-    public boolean longPress(float v, float v2)
-    {
-        return true;
     }
 
     @Override
