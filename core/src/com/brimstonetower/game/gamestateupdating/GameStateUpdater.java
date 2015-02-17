@@ -318,6 +318,7 @@ public class GameStateUpdater
                 int chanceToBeat = RandomGen.getRandomInt(1, 100);
                 if (5>=chanceToBeat)
                 {
+                    AssetManager.getSound("surprise").play();
                     GameConsole.addMessage(player.getName() + " spotted a trap");
                     player.clearNextActions();
                     return;
@@ -401,7 +402,7 @@ public class GameStateUpdater
         {
             usePotion((Potion) thrownObject, targetTile.getCharacter(), targetTile);
         }
-        else if (targetTile.getCharacter() != null && thrownObject instanceof Weapon)
+        else if (!targetTile.isEmpty() && thrownObject instanceof Weapon)
         {
             Weapon thrownWeapon = (Weapon) thrownObject;
             int damage = 0;

@@ -15,22 +15,10 @@ public class Room
 {
     private Tile[][] _tiles;
     private ArrayList<Tile> _doors = new ArrayList<Tile>();
-
-    public ArrayList<Tile> getDoors()
-    {
-        return _doors;
-    }
-
     private ArrayList<Corridor> _corridors = new ArrayList<Corridor>();
-
     public void addCorridor(Corridor corridor)
     {
         _corridors.add(corridor);
-    }
-
-    public ArrayList<Corridor> getCorridors()
-    {
-        return _corridors;
     }
 
     private int _x;
@@ -70,15 +58,7 @@ public class Room
     {
         return _y + _height - 1;
     }
-
     private Tile.LightAmount _lighting;
-
-    public Tile.LightAmount getLighting()
-    {
-        return _lighting;
-    }
-
-    private Tile _playerTile;
 
     public boolean isLeftOf(Room otherRoom)
     {
@@ -130,62 +110,43 @@ public class Room
 
     public void setWallsAndFloor()
     {
-        for (int x = 0; x < _width; x++)
+        //Top wall
+        _tiles[0][0] = new Tile(Tile.Types.Wall, _x, _y, AssetManager.getTileSetPosition("nwWall"));
+        _tiles[1][0] = new Tile(Tile.Types.Wall, 1+_x, _y, AssetManager.getTileSetPosition("nwRoomWall"));
+        _tiles[_width - 1][0] = new Tile(Tile.Types.Wall,_width - 1+ _x, _y, AssetManager.getTileSetPosition("neWall"));
+        _tiles[_width - 2][0] = new Tile(Tile.Types.Wall, _width - 2+ _x, _y, AssetManager.getTileSetPosition("neRoomWall"));
+        for(int x = 2;x<_width-2;x++)
         {
-            for (int y = 0; y < _height; y++)
-            {
-                if (y == 0)
-                {
-                    if (x == 0)
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("nwWall"));
-                    }
-                    else if (x == 1)
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("nwRoomWall"));
-                    }
-                    else if (x == _width - 1)
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("neWall"));
-                    }
-                    else if (x == _width - 2)
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("neRoomWall"));
-                    }
-                    else
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("nRoomWall"));
-                    }
+            _tiles[x][0] = new Tile(Tile.Types.Wall, x + _x,  _y, AssetManager.getTileSetPosition("nRoomWall"));
+        }
 
-                }
-                else if (y == _height - 1)
-                {
-                    if (x == 0)
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("swWall"));
-                    }
-                    else if (x == _width - 1)
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("seWall"));
-                    }
-                    else
-                    {
-                        _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("sWall"));
-                    }
-                }
-                else if (x == 0)
-                {
-                    _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("wWall"));
-                }
-                else if (x == _width - 1)
-                {
-                    _tiles[x][y] = new Tile(Tile.Types.Wall, x + _x, y + _y, this, AssetManager.getTileSetPosition("eWall"));
-                }
-                else
-                {
+        //Bottom wall
+        _tiles[0][_height - 1] = new Tile(Tile.Types.Wall, _x, _height - 1+ _y, AssetManager.getTileSetPosition("swWall"));
+        _tiles[_width - 1][_height - 1] = new Tile(Tile.Types.Wall, _width - 1 + _x, _height - 1 + _y, AssetManager.getTileSetPosition("seWall"));
+        for(int x = 1;x<_width-1;x++)
+        {
+            _tiles[x][_height - 1] = new Tile(Tile.Types.Wall, x + _x, _height - 1 + _y, AssetManager.getTileSetPosition("sWall"));
+        }
+
+        //West Wall
+        for(int y = 1;y<_height-1;y++)
+        {
+            _tiles[0][y] = new Tile(Tile.Types.Wall, _x, y + _y, AssetManager.getTileSetPosition("wWall"));
+        }
+
+        //East wall
+        for(int y = 1;y<_height-1;y++)
+        {
+            _tiles[_width-1][y] = new Tile(Tile.Types.Wall, _width-1+_x, y + _y, AssetManager.getTileSetPosition("wWall"));
+        }
+
+        //Floor
+        for(int x =1;x<_width-1;x++)
+        {
+            for(int y=1;y<_height-1;y++)
+            {
                     //Random floor
-                    _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, this, AssetManager.getTileSetPosition("floor-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
-                }
+                    _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, AssetManager.getTileSetPosition("floor-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
             }
         }
         for (int x = 0; x < getWidth(); x++)
@@ -267,11 +228,6 @@ public class Room
 
     public void createDoorAndConnect(Tile doorTile, Tile corridorTile, WallSide orientation)
     {
-        if (doorTile.getRoom() != this)
-        {
-            throw new RuntimeException("Door tile did not match room");
-        }
-
         switch (orientation)
         {
             case West:

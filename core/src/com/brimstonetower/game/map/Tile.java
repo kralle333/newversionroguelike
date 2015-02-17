@@ -2,6 +2,8 @@ package com.brimstonetower.game.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -44,16 +46,13 @@ public class Tile
         return _lightToChangeTo;
     }
 
-
     private Types _type;
-
     public Types getType()
     {
         return _type;
     }
 
     private TextureRegion _textureRegion;
-
     public void setTextureRegion(TileSetCoordinate tileCoordinates)
     {
         _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileCoordinates.x, tileCoordinates.y, DungeonMap.TileSize, DungeonMap.TileSize);
@@ -61,19 +60,16 @@ public class Tile
 
     private float _x;
     private float _y;
-
     public float getX()
     {
         return _x;
     }
-
     public float getY()
     {
         return _y;
     }
 
     private Vector2 _tilePosition;
-
     public Vector2 getTilePosition()
     {
         return _tilePosition;
@@ -89,22 +85,15 @@ public class Tile
         return _worldPosition;
     }
 
-
     private ArrayList<Tile> walkableNeighbours = new ArrayList<Tile>();
-
     public ArrayList<Tile> getWalkableNeighbours()
     {
         return walkableNeighbours;
     }
-
     private ArrayList<Tile> nonWalkableNeighbours = new ArrayList<Tile>();
 
     //Items
     private ArrayList<Item> _items = new ArrayList<Item>();
-    public ArrayList<Item> getItems()
-    {
-        return _items;
-    }
     public boolean containsItem()
     {
         return _items.size() > 0;
@@ -121,7 +110,6 @@ public class Tile
 
     //Characters
     private GameCharacter _character;
-
     public void setCharacter(GameCharacter character)
     {
         if (_character != null)
@@ -129,57 +117,29 @@ public class Tile
             Gdx.app.log("Tile", "Tile already contains character!");
         }
         _character = character;
-        if (_character instanceof Player)
-        {
-            if (_corridorOwner != null)
-            {
-                _corridorOwner.playerHasEntered(this);
-            }
-        }
     }
-
     public void removeCharacter()
     {
         _character = null;
         if(_type==Types.Door)
         {
             _type = Types.Floor;
-            setLight(LightAmount.Shadow,2,2);
-            setLight(LightAmount.Light,1,1);
         }
     }
-
     public GameCharacter getCharacter()
     {
         return _character;
     }
-
     public boolean isEmpty()
     {
         return _character == null;
     }
 
-    private Room _roomOwner;
-
-    public Room getRoom()
-    {
-        return _roomOwner;
-    }
-
-    private Corridor _corridorOwner;
-
-    public Corridor getCorridor()
-    {
-        return _corridorOwner;
-    }
-
     private Trap _trap;
-
     public Trap getTrap()
     {
         return _trap;
     }
-
     public void setTrap(Trap trap)
     {
         if (_trap == null)
@@ -192,27 +152,21 @@ public class Tile
         }
     }
 
-    public Tile(Types type, int x, int y, Corridor owner, TileSetCoordinate tileTexture)
-    {
-        _tilePosition = new Vector2(x, y);
-        _x = x;
-        _y = y;
-        _lightAmount = LightAmount.Non;
-        _lightToChangeTo=LightAmount.Non;
-        _type = type;
-        _corridorOwner = owner;
-        _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
-    }
+    private static TextureRegion _overlay;
 
-    public Tile(Types type, int x, int y, Room owner, TileSetCoordinate tileTexture)
+    public Tile(Types type, int x, int y,TileSetCoordinate tileTexture)
     {
+        if(_overlay==null)
+        {
+            Texture overLayTexture = new Texture(new Pixmap(DungeonMap.TileSize,DungeonMap.TileSize, Pixmap.Format.RGB888));
+            _overlay = new TextureRegion(overLayTexture);
+        }
         _tilePosition = new Vector2(x, y);
         _x = x;
         _y = y;
         _lightAmount = LightAmount.Non;
         _lightToChangeTo=LightAmount.Non;
         _type = type;
-        _roomOwner = owner;
         _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
     }
 
@@ -331,6 +285,12 @@ public class Tile
                 item.draw(batch, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
             }
         }
+        batch.setColor(Color.WHITE);
+    }
+    public void drawOverLay(SpriteBatch batch, Color color)
+    {
+        batch.setColor(color);
+        batch.draw(_overlay, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
         batch.setColor(Color.WHITE);
     }
 

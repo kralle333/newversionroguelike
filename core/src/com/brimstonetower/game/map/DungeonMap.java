@@ -227,7 +227,7 @@ public class DungeonMap extends BSPMapNode
             int randY = RandomGen.getRandomInt(parent.getRoom().getY() + 1, parent.getRoom().getBottomSide() - 1);
             Tile randomTile = parent.getRoom().getTile(randX, randY);
             //Might become a problem - Might not be any empty tiles here
-            while (randomTile.getCharacter() != null || randomTile.containsItem() || randomTile.getTrap() != null ||
+            while (!randomTile.isEmpty()  || randomTile.containsItem() || randomTile.getTrap() != null ||
                     randomTile.getType() == Tile.Types.StairCase)
             {
                 randX = RandomGen.getRandomInt(parent.getRoom().getX() + 1, parent.getRoom().getRightSide() - 1);

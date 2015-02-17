@@ -14,30 +14,12 @@ import java.util.Collections;
 public class Corridor
 {
     private Room _room1;
-
-    public Room getRoom1()
-    {
-        return _room1;
-    }
-
     private Tile _door1;
     private Room _room2;
-
-    public Room getRoom2()
-    {
-        return _room2;
-    }
-
     private Tile _door2;
 
     private ArrayList<Tile> _tiles = new ArrayList<Tile>();
 
-    public ArrayList<Tile> getTiles()
-    {
-        return _tiles;
-    }
-
-    private Tile _playerTile;
 
     public Corridor(Room room1, Room room2)
     {
@@ -52,31 +34,6 @@ public class Corridor
         return _tiles.get(RandomGen.getRandomInt(0, _tiles.size() - 1));
     }
 
-    public ArrayList<Monster> getMonsters()
-    {
-        ArrayList<Monster> monstersInCorridor = new ArrayList<Monster>();
-        for (Tile tile : _tiles)
-        {
-            if (tile.getCharacter() instanceof Monster)
-            {
-                monstersInCorridor.add((Monster) tile.getCharacter());
-            }
-        }
-        return monstersInCorridor;
-    }
-
-    public ArrayList<Tile> getTilesWithItems()
-    {
-        ArrayList<Tile> tilesWithItems = new ArrayList<Tile>();
-        for (Tile tile : _tiles)
-        {
-            if (tile.containsItem())
-            {
-                tilesWithItems.add(tile);
-            }
-        }
-        return tilesWithItems;
-    }
 
     public void connectRoomsVertical()
     {
@@ -115,7 +72,7 @@ public class Corridor
 
         for (int a = x0 + 1; a < junctionPoint; a++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, a, y0, this, AssetManager.getTileSetPosition("nCorridor")));
+            _tiles.add(new Tile(Tile.Types.Floor, a, y0, AssetManager.getTileSetPosition("nCorridor")));
         }
         if (Math.abs(y0 - y1) > 0)//Multiple tiles in junction
         {
@@ -126,23 +83,23 @@ public class Corridor
             {
                 if (y == smallestY && smallestY == y0)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, this, AssetManager.getTileSetPosition("neCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("neCorridor")));
                 }
                 else if (y == smallestY && smallestY == y1)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, this, AssetManager.getTileSetPosition("nwCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("nwCorridor")));
                 }
                 else if (y == biggestY && biggestY == y1)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, this, AssetManager.getTileSetPosition("swCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("swCorridor")));
                 }
                 else if (y == biggestY && biggestY == y0)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, this, AssetManager.getTileSetPosition("seCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("seCorridor")));
                 }
                 else
                 {
-                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, this, AssetManager.getTileSetPosition("wCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("wCorridor")));
                 }
             }
             //To ensure that the path is in the correct order
@@ -154,12 +111,12 @@ public class Corridor
         }
         else//Only one in junction
         {
-            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0, this, AssetManager.getTileSetPosition("nCorridor")));
+            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0, AssetManager.getTileSetPosition("nCorridor")));
         }
 
         for (int b = junctionPoint + 1; b < x1; b++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, b, y1, this, AssetManager.getTileSetPosition("nCorridor")));
+            _tiles.add(new Tile(Tile.Types.Floor, b, y1, AssetManager.getTileSetPosition("nCorridor")));
         }
     }
 
@@ -185,7 +142,7 @@ public class Corridor
 
         for (int a = y0 + 1; a < junctionPoint; a++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x0, a, this, AssetManager.getTileSetPosition("wCorridor")));
+            _tiles.add(new Tile(Tile.Types.Floor, x0, a, AssetManager.getTileSetPosition("wCorridor")));
         }
 
         if (Math.abs(x1 - x0) > 0)//Multiple in junction
@@ -197,23 +154,23 @@ public class Corridor
             {
                 if (x == smallestX && smallestX == x1)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, this, AssetManager.getTileSetPosition("nwCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, AssetManager.getTileSetPosition("nwCorridor")));
                 }
                 else if (x == smallestX && smallestX == x0)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, this, AssetManager.getTileSetPosition("swCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, AssetManager.getTileSetPosition("swCorridor")));
                 }
                 else if (x == biggestX && biggestX == x1)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, this, AssetManager.getTileSetPosition("neCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, AssetManager.getTileSetPosition("neCorridor")));
                 }
                 else if (x == biggestX && biggestX == x0)
                 {
-                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, this, AssetManager.getTileSetPosition("seCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, AssetManager.getTileSetPosition("seCorridor")));
                 }
                 else
                 {
-                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, this, AssetManager.getTileSetPosition("nCorridor")));
+                    junction.add(new Tile(Tile.Types.Floor, x, junctionPoint, AssetManager.getTileSetPosition("nCorridor")));
                 }
             }
             if (smallestX == x1)
@@ -224,12 +181,12 @@ public class Corridor
         }
         else//Only one in junction point
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x0, junctionPoint, this, AssetManager.getTileSetPosition("wCorridor")));
+            _tiles.add(new Tile(Tile.Types.Floor, x0, junctionPoint, AssetManager.getTileSetPosition("wCorridor")));
         }
 
         for (int b = junctionPoint + 1; b < y1; b++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, x1, b, this, AssetManager.getTileSetPosition("wCorridor")));
+            _tiles.add(new Tile(Tile.Types.Floor, x1, b, AssetManager.getTileSetPosition("wCorridor")));
         }
     }
 
@@ -254,39 +211,6 @@ public class Corridor
         return null;
     }
 
-    public void playerHasEntered(Tile tile)
-    {
-        _playerTile = tile;
-        if (tile.isAdjacent(_door1))
-        {
-            _door1.changeLight(Tile.LightAmount.Light);
-        }
-        else if (_door1.getLightAmount() == Tile.LightAmount.Light)
-        {
-            _door1.changeLight(Tile.LightAmount.Shadow);
-        }
-        if (tile.isAdjacent(_door2))
-        {
-            _door2.changeLight(Tile.LightAmount.Light);
-        }
-        else if (_door2.getLightAmount() == Tile.LightAmount.Light)
-        {
-            _door2.changeLight(Tile.LightAmount.Shadow);
-        }
-
-
-        for (Tile t : _tiles)
-        {
-            if (t.isAdjacent(tile) || t == tile)
-            {
-                t.changeLight(Tile.LightAmount.Light);
-            }
-            else if (t.getLightAmount() == Tile.LightAmount.Light)
-            {
-                t.changeLight(Tile.LightAmount.Shadow);
-            }
-        }
-    }
 
     public void reveal()
     {
@@ -301,15 +225,7 @@ public class Corridor
 
     public void draw(SpriteBatch batch)
     {
-        if (_playerTile != null && !(_playerTile.getCharacter() instanceof Player))
-        {
-            _playerTile.changeLight(Tile.LightAmount.Shadow);
-            for (Tile neighbour : _playerTile.getWalkableNeighbours())
-            {
-                neighbour.changeLight(Tile.LightAmount.Shadow);
-            }
-            _playerTile = null;
-        }
+
         for (int i = 0; i < _tiles.size(); i++)
         {
             _tiles.get(i).draw(batch);

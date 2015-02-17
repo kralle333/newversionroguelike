@@ -47,7 +47,7 @@ public class Gas
 
         for (Tile gasTile : _gasDensityMap.keySet())
         {
-            if(gasTile.getCharacter()!=null)
+            if(!gasTile.isEmpty())
             {
                 gasTile.getCharacter().giveEffect(new Effect(_effect));
             }
