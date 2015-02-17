@@ -1,6 +1,9 @@
 package com.brimstonetower.game.gamestateupdating;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -145,6 +148,10 @@ public class GameCharacter
         return _lastHitState;
     }
 
+    private boolean _displayAttackRange = false;
+    public void DisplayAttackRange(){_displayAttackRange=true;}
+    public void HideAttackRange(){_displayAttackRange=false;}
+
     public GameCharacter(String name, int str, int dodgeChance, int hp,TextureRegion texture)
     {
         _name = name;
@@ -240,7 +247,7 @@ public class GameCharacter
         if (isMoving())
         {
             GameAction newAction = movementQueue.remove(0);
-            if(newAction.getTargetTile().getCharacter() ==null)
+            if(newAction.getTargetTile().isEmpty())
             {
                 return newAction;
             }
@@ -268,7 +275,7 @@ public class GameCharacter
 
     public void moveTo(Tile tile)
     {
-        if (tile.getCharacter() == null)
+        if (tile.isEmpty())
         {
             currentTile.removeCharacter();
             placeOnTile(tile);
@@ -435,6 +442,16 @@ public class GameCharacter
     public void draw(SpriteBatch batch)
     {
         batch.draw(_texture, _worldPosition.x, _worldPosition.y);
+        if(_displayAttackRange)
+        {
+            if(_equippedWeapon==null || !_equippedWeapon.isRanged())
+            {
+                for(Tile tile : currentTile.getWalkableNeighbours())
+                {
+                    tile.drawOverLay(batch, Color.GREEN);
+                }
+            }
+        }
     }
 
 

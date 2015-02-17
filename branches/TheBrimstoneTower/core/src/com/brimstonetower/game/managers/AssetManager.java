@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
-import com.brimstonetower.game.map.Tile;
-
 import java.util.HashMap;
 
 public class AssetManager
@@ -38,6 +36,7 @@ public class AssetManager
             _soundEffects.put("throw",Gdx.audio.newSound(Gdx.files.internal("sounds/throw.wav")));
             _soundEffects.put("gas",Gdx.audio.newSound(Gdx.files.internal("sounds/gas.wav")));
             _soundEffects.put("search",Gdx.audio.newSound(Gdx.files.internal("sounds/search.wav")));
+            _soundEffects.put("surprise",Gdx.audio.newSound(Gdx.files.internal("sounds/surprise.wav")));
         }
     }
 

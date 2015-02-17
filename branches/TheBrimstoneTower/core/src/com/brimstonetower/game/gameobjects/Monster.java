@@ -66,6 +66,7 @@ public class Monster extends GameCharacter
                         getCurrentTile().getLightAmountChangingTo() == Tile.LightAmount.Light))
         {
             GameConsole.addMessage("A "+getName()+" was spotted!");
+            AssetManager.getSound("surprise").play();
             player.clearNextActions();
             _wasJustSeen=true;
             _wasSeen=true;
@@ -112,7 +113,7 @@ public class Monster extends GameCharacter
                 nextAction.setAction(this, player, GameAction.Type.Attack, nextTile, null);
                 return nextAction;
             }
-            else if (tile.getTrap() == null && tile.getCharacter() ==null)
+            else if (tile.getTrap() == null && tile.isEmpty())
             {
                 currentDistance = tile.distanceTo(player.getCurrentTile());
                 if (currentDistance < smallestDistance)

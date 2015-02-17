@@ -35,7 +35,7 @@ public class DungeonGenerator
         newDungeon.addMonsters(MonsterManager.generateMonsters(depth));
 
         //Traps
-        int trapCount = RandomGen.getRandomInt((int)width/20,(int)width/10);
+        int trapCount = RandomGen.getRandomInt(width/20,width/10);
         ArrayList<Trap> traps = new ArrayList<Trap>();
         for(int i = 0;i<trapCount;i++)
         {
