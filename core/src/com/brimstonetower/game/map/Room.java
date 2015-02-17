@@ -100,59 +100,11 @@ public class Room
         _tiles = new Tile[_width][_height];
     }
 
-    public ArrayList<Monster> getMonsters()
-    {
-        final ArrayList<Monster> monstersInRoom = new ArrayList<Monster>();
-        monstersInRoom.clear();
-        for (int x = 0; x < _width; x++)
-        {
-            for (int y = 0; y < _height; y++)
-            {
-                if (_tiles[x][y].getCharacter() != null && _tiles[x][y].getCharacter() instanceof Monster)
-                {
-                    monstersInRoom.add((Monster) _tiles[x][y].getCharacter());
-                }
-            }
-        }
-        return monstersInRoom;
-    }
-
-    public ArrayList<Tile> getTilesWithItems()
-    {
-        final ArrayList<Tile> tilesWithItems = new ArrayList<Tile>();
-        tilesWithItems.clear();
-        for (int x = 0; x < _width; x++)
-        {
-            for (int y = 0; y < _height; y++)
-            {
-                if (_tiles[x][y].containsItem())
-                {
-                    tilesWithItems.add(_tiles[x][y]);
-                }
-            }
-        }
-        return tilesWithItems;
-    }
 
     public Tile getRandomTile()
     {
         Tile randomTile = _tiles[RandomGen.getRandomInt(1, _width - 2)][RandomGen.getRandomInt(1, _height - 2)];
         return randomTile;
-    }
-
-    public Tile getStairCase()
-    {
-        for (int x = 0; x < _width; x++)
-        {
-            for (int y = 0; y < _height; y++)
-            {
-                if (_tiles[x][y].getType() == Tile.Types.StairCase)
-                {
-                    return _tiles[x][y];
-                }
-            }
-        }
-        return null;
     }
 
 

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public class MapGenerator
 {
-    public static final int minWidth = 6;
-    public static final int minHeight = 6;
+    public static final int minWidth = 8;
+    public static final int minHeight = 8;
     private static DungeonMap rootNode;
 
     public static DungeonMap generateMap(int width, int height, String texturePath)

@@ -138,6 +138,12 @@ public class GameCharacter
     protected TextureRegion _texture;
     private int _dealtDamage = 0;
     public int getDealtDamage(){return _dealtDamage;}
+    public enum HitState{Miss,Normal,Critical,Blocked};
+    private HitState _lastHitState;
+    public HitState getLastHitState()
+    {
+        return _lastHitState;
+    }
 
     public GameCharacter(String name, int str, int dodgeChance, int hp,TextureRegion texture)
     {
@@ -366,12 +372,12 @@ public class GameCharacter
         int hitChance = _equippedWeapon != null ? _equippedWeapon.getAttackSpeed() : 0;
         int failChance = 5 + target.getDodgeRate();
 
-
         int result = RandomGen.getRandomInt(0, 100);
         if (result >= 98)
         {
             _dealtDamage = getMaxAttackPower() * 2;
             GameConsole.addMessage(_name + " landed a critical hit on " + target.getName() + "!");
+            _lastHitState=HitState.Critical;
             target.damage(_dealtDamage);
         }
         else if (result > (failChance - hitChance))
@@ -389,6 +395,7 @@ public class GameCharacter
             {
                 GameConsole.addMessage(_name + " attacked " + target.getName() + "-Dealt "+_dealtDamage+" damage.");
                 target.damage(_dealtDamage);
+                _lastHitState = HitState.Normal;
             }
             else
             {
@@ -400,7 +407,7 @@ public class GameCharacter
                 {
                     GameConsole.addMessage(target.getName()+" blocked "+_name + "'s attack");
                 }
-
+                _lastHitState=HitState.Blocked;
             }
         }
         else
@@ -411,6 +418,7 @@ public class GameCharacter
                 case 1:GameConsole.addMessage(_name + " tries to attack " + target.getName() + ", but misses!");break;
                 case 2:GameConsole.addMessage(target._name+" manage to dodge "+_name+"'s attack");break;
             }
+            _lastHitState = HitState.Miss;
             _dealtDamage=0;
         }
 

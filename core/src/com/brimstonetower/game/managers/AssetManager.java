@@ -1,6 +1,8 @@
 package com.brimstonetower.game.managers;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +17,7 @@ public class AssetManager
     private static HashMap<String, Texture> _assets = new HashMap<String, Texture>();
     private static HashMap<String, TileSetCoordinate> tileSetCoordinateMap = new HashMap<String, TileSetCoordinate>();
     private static HashMap<String, BitmapFont> _fonts = new HashMap<String, BitmapFont>();
+    private static HashMap<String, Sound> _soundEffects = new HashMap<String,Sound>();
     private static boolean _isInitialized = false;
 
 
@@ -25,6 +28,16 @@ public class AssetManager
             initializeTextures();
             initializeTileSetCoordinateMap();
             initializeFonts();
+
+            _soundEffects.put("hit",Gdx.audio.newSound(Gdx.files.internal("sounds/hit.wav")));
+            _soundEffects.put("miss",Gdx.audio.newSound(Gdx.files.internal("sounds/miss.wav")));
+            _soundEffects.put("critical",Gdx.audio.newSound(Gdx.files.internal("sounds/critical.wav")));
+            _soundEffects.put("block",Gdx.audio.newSound(Gdx.files.internal("sounds/block.wav")));
+            _soundEffects.put("pickup", Gdx.audio.newSound(Gdx.files.internal("sounds/pickup.wav")));
+            _soundEffects.put("effect",Gdx.audio.newSound(Gdx.files.internal("sounds/effect.wav")));
+            _soundEffects.put("throw",Gdx.audio.newSound(Gdx.files.internal("sounds/throw.wav")));
+            _soundEffects.put("gas",Gdx.audio.newSound(Gdx.files.internal("sounds/gas.wav")));
+            _soundEffects.put("search",Gdx.audio.newSound(Gdx.files.internal("sounds/search.wav")));
         }
     }
 
@@ -173,6 +186,10 @@ public class AssetManager
         _fonts.put("description",font);
         generator.dispose();
 
+    }
+    public static Sound getSound(String soundName)
+    {
+        return _soundEffects.get(soundName);
     }
 
     public static BitmapFont getFont(String string)
