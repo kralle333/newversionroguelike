@@ -12,6 +12,7 @@ import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
+import com.brimstonetower.game.helpers.HighScoreIO;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.map.Tile;
@@ -374,9 +375,9 @@ public class GameCharacter
             kill();
         }
     }
-    public void attack(GameCharacter target)
-    {
 
+    public void calculateAttackDamage(GameCharacter target)
+    {
         int hitChance = _equippedWeapon != null ? _equippedWeapon.getAttackSpeed() : 0;
         int failChance = 5 + target.getDodgeRate();
 
@@ -386,7 +387,6 @@ public class GameCharacter
             _dealtDamage = getMaxAttackPower() * 2;
             GameConsole.addMessage(_name + " landed a critical hit on " + target.getName() + "!");
             _lastHitState=HitState.Critical;
-            target.damage(_dealtDamage);
         }
         else if (result > (failChance - hitChance))
         {
@@ -402,7 +402,6 @@ public class GameCharacter
             if(_dealtDamage>0)
             {
                 GameConsole.addMessage(_name + " attacked " + target.getName() + "-Dealt "+_dealtDamage+" damage.");
-                target.damage(_dealtDamage);
                 _lastHitState = HitState.Normal;
             }
             else
@@ -429,7 +428,12 @@ public class GameCharacter
             _lastHitState = HitState.Miss;
             _dealtDamage=0;
         }
+    }
 
+    public void dealAttackDamage(GameCharacter target)
+    {
+        target.damage(_dealtDamage);
+        _dealtDamage=0;
     }
     public void kill()
     {

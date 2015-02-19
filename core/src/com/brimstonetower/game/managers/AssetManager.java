@@ -69,8 +69,10 @@ public class AssetManager
         tileSetCoordinateMap.put("playerType4",new TileSetCoordinate(1,1));
 
         //Floor tiles
-        tileSetCoordinateMap.put("floor-1", new TileSetCoordinate(3, 3));
-        tileSetCoordinateMap.put("floor-2", new TileSetCoordinate(4, 3));
+        tileSetCoordinateMap.put("floor-shiny-1", new TileSetCoordinate(3, 3));
+        tileSetCoordinateMap.put("floor-shiny-2", new TileSetCoordinate(4, 3));
+        tileSetCoordinateMap.put("floor-dungeon-1", new TileSetCoordinate(5, 3));
+        tileSetCoordinateMap.put("floor-dungeon-2", new TileSetCoordinate(6, 3));
 
         //Corridors - n=north,w=west,s=south,e=east
         tileSetCoordinateMap.put("nwCorridor", new TileSetCoordinate(0, 0));
