@@ -29,7 +29,6 @@ public class HighScoreIO
         {
             _scores = new DescriptionScoreMap[_maxScores];
             preferencesScores = Gdx.app.getPreferences("scores");
-
             for (int i = 0; i < _maxScores; i++)
             {
                 int value = preferencesScores.getInteger("scoreValue" + i);

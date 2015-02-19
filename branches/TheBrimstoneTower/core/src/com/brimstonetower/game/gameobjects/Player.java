@@ -109,8 +109,11 @@ public class Player extends GameCharacter
         {
             GameConsole.addMessage(effect.getEffectDescription());
         }
-
         super.applyEffect(effect);
+        if(_isDead)
+        {
+            _killedBy = effect.getName();
+        }
     }
 
     @Override

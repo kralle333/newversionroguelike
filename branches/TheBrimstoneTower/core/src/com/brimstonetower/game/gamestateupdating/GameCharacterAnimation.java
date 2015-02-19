@@ -115,7 +115,7 @@ public class GameCharacterAnimation
             defender = _gameActionToPlay.getTargetCharacter();
             attacker = _gameActionToPlay.getOwner();
             //Done here such that we can retrieve the damage total
-            attacker.attack(defender);
+            attacker.calculateAttackDamage(defender);
 
             attackedPosition.x=(attacker.getWorldPosition().x+defender.getWorldPosition().x)/2;
             attackedPosition.y=(attacker.getWorldPosition().y+defender.getWorldPosition().y)/2;

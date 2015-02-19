@@ -141,12 +141,13 @@ public class Room
         }
 
         //Floor
+        String floorType = "shiny";
         for(int x =1;x<_width-1;x++)
         {
             for(int y=1;y<_height-1;y++)
             {
                     //Random floor
-                    _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, AssetManager.getTileSetPosition("floor-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
+                    _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, AssetManager.getTileSetPosition("floor-"+floorType+"-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
             }
         }
         for (int x = 0; x < getWidth(); x++)

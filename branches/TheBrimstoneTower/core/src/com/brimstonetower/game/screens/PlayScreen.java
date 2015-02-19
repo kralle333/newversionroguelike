@@ -258,6 +258,15 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
     private void update()
     {
+        if (_player.isDead())
+        {
+            if (_currentScreenState != ScreenState.GameOver)
+            {
+                _currentScreenState = ScreenState.GameOver;
+                _gameOverWindow.show();
+                HighScoreIO.putScore(_player.getKilledBy(), playerName, _depth, (int) _player.calculateScore() * _depth);
+            }
+        }
         if (_currentScreenState == ScreenState.Moving)
         {
             _gameStateUpdater.updateGameState();
@@ -268,15 +277,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             _previousPlayerPosition = _player.getWorldPosition();
             mainCamera.position.x=_player.getWorldPosition().x+(DungeonMap.TileSize/2);
             mainCamera.position.y=_player.getWorldPosition().y+(DungeonMap.TileSize/2);
-        }
-        if (_player.isDead())
-        {
-            if (_currentScreenState != ScreenState.GameOver)
-            {
-                _currentScreenState = ScreenState.GameOver;
-                _gameOverWindow.show();
-                HighScoreIO.putScore(_player.getKilledBy(), playerName, _depth, (int) _player.calculateScore() * _depth);
-            }
         }
 
         //Keyboard controls

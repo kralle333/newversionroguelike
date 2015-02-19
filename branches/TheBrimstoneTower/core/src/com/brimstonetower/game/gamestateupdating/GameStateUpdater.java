@@ -288,7 +288,7 @@ public class GameStateUpdater
 
         //Animation can leave the attacker a bit outside of the tile
         attacker.setPosition(attacker.getCurrentTile().getWorldPosition());
-
+        attacker.dealAttackDamage(defender);
         if (defender instanceof Monster)
         {
             if (defender.isDead())
