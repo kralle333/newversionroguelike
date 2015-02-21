@@ -1,18 +1,15 @@
 package com.brimstonetower.game.gamestateupdating;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
-import com.brimstonetower.game.helpers.HighScoreIO;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.map.Tile;
@@ -104,6 +101,9 @@ public class GameCharacter
         return _equippedWeapon != null ? _equippedWeapon.getIdentifiedMaxDamage() + getCurrentStr() : getCurrentStr();
     }
 
+    public int getMinAttackRange(){return _equippedWeapon!=null?_equippedWeapon.getMinRange():1;}
+    public int getMaxAttackRange(){return _equippedWeapon!=null?_equippedWeapon.getMaxRange():1;}
+
     protected Vector2 _worldPosition;
     public Vector2 getWorldPosition()
     {
@@ -151,7 +151,8 @@ public class GameCharacter
     }
 
     protected boolean _displayAttackRange = false;
-    public void DisplayAttackRange(){_displayAttackRange=true;}
+    public void displayAttackRange(){_displayAttackRange=true;}
+    public void hideAttackRange(){_displayAttackRange = false;}
 
     public GameCharacter(String name, int str, int dodgeChance, int hp,TextureRegion texture)
     {
@@ -271,7 +272,7 @@ public class GameCharacter
     {
         currentTile = tile;
         currentTile.setCharacter(this);
-        _worldPosition = new Vector2(currentTile.getX() * DungeonMap.TileSize, currentTile.getY() * DungeonMap.TileSize);
+        _worldPosition = new Vector2(currentTile.getTileX() * DungeonMap.TileSize, currentTile.getTileY() * DungeonMap.TileSize);
     }
 
     public void moveTo(Tile tile)
@@ -280,7 +281,6 @@ public class GameCharacter
         {
             currentTile.removeCharacter();
             placeOnTile(tile);
-            _displayAttackRange=false;
         }
     }
 
@@ -391,14 +391,8 @@ public class GameCharacter
         else if (result > (failChance - hitChance))
         {
             _dealtDamage = (_equippedWeapon != null ? _equippedWeapon.getRandomDamage() : 0) + getCurrentStr();
-            if (_dealtDamage / 4 < target.getArmorDefense())
-            {
-                _dealtDamage -= _dealtDamage / 4;
-            }
-            else if (_dealtDamage / 2 < target.getArmorDefense())
-            {
-                _dealtDamage -= _dealtDamage / 2;
-            }
+            _dealtDamage-=target.getArmorDefense();
+
             if(_dealtDamage>0)
             {
                 GameConsole.addMessage(_name + " attacked " + target.getName() + "-Dealt "+_dealtDamage+" damage.");
@@ -437,7 +431,15 @@ public class GameCharacter
     }
     public void kill()
     {
-        GameConsole.addMessage(_name + " was killed");
+        //Lazy fix
+        if(_name.equals("Locked door") || _name.equals("Chest"))
+        {
+            GameConsole.addMessage(_name + " was smashed");
+        }
+       else
+        {
+            GameConsole.addMessage(_name + " was killed");
+        }
         _isDead = true;
         currentTile.removeCharacter();
         //Inherit
@@ -447,6 +449,7 @@ public class GameCharacter
     public void draw(SpriteBatch batch)
     {
         batch.draw(_texture, _worldPosition.x, _worldPosition.y);
+
     }
 
 

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.gameobjects.Monster;
 import com.brimstonetower.game.map.mapgeneration.Corridor;
 import com.brimstonetower.game.helpers.RandomGen;
 
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 public class Room
 {
     private Tile[][] _tiles;
+    public Tile[][] getTiles(){return _tiles;}
     private ArrayList<Tile> _doors = new ArrayList<Tile>();
     private ArrayList<Corridor> _corridors = new ArrayList<Corridor>();
     public void addCorridor(Corridor corridor)
@@ -166,8 +166,8 @@ public class Room
 
     private void setNeighbours(Tile tile)
     {
-        int x = (int) tile.getX() - _x;
-        int y = (int) tile.getY() - _y;
+        int x = (int) tile.getTileX() - _x;
+        int y = (int) tile.getTileY() - _y;
 
         ArrayList<Tile> walkableNeighbours = new ArrayList<Tile>();
         ArrayList<Tile> nonWalkableNeighbours = new ArrayList<Tile>();
@@ -251,8 +251,8 @@ public class Room
         }
 
         //Get local coordinates
-        int doorX = (int) doorTile.getX() - _x;
-        int doorY = (int) doorTile.getY() - _y;
+        int doorX = (int) doorTile.getTileX() - _x;
+        int doorY = (int) doorTile.getTileY() - _y;
 
         //Find the tile that is adjacent to the door
         ArrayList<Tile> adjacentToDoor = new ArrayList<Tile>();

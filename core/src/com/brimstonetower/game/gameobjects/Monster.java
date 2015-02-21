@@ -4,6 +4,7 @@ package com.brimstonetower.game.gameobjects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.gamestateupdating.GameAction;
@@ -23,7 +24,7 @@ public class Monster extends GameCharacter
 
     private Nature _nature;
     private int _experienceGiven;
-    private float _pursueDistance = 4;
+    private float _pursueDistance = 5;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
     private final int turnsToBeHidden = 2;
     private int _turnsNotSeen = 0;
@@ -104,26 +105,42 @@ public class Monster extends GameCharacter
 
     private GameAction pursuePlayer(Player player)
     {
-        float smallestDistance = Float.MAX_VALUE;
+        float bestDistance = Float.MAX_VALUE;
         Tile nextTile = currentTile;
-        float currentDistance;
-        for (Tile tile : currentTile.getWalkableNeighbours())
+        float currentDistance = currentTile.distanceTo(player.getCurrentTile());
+
+        boolean moveCloser = true;
+
+        if(currentDistance>=getMinAttackRange() && currentDistance<=getMaxAttackRange())
         {
-            if (tile.getCharacter() == player)
+            nextAction.setAction(this, player, GameAction.Type.Attack, nextTile, null);
+            return nextAction;
+        }
+        else if(currentDistance<getMinAttackRange())
+        {
+            moveCloser=false;
+            bestDistance=Float.MIN_VALUE;
+        }
+
+            for (Tile tile : currentTile.getWalkableNeighbours())
             {
-                nextAction.setAction(this, player, GameAction.Type.Attack, nextTile, null);
-                return nextAction;
-            }
-            else if (tile.getTrap() == null && tile.isEmpty())
-            {
-                currentDistance = tile.distanceTo(player.getCurrentTile());
-                if (currentDistance < smallestDistance)
+                if (tile.getTrap() == null && tile.isEmpty())
                 {
-                    smallestDistance = currentDistance;
-                    nextTile = tile;
+                    currentDistance = tile.distanceTo(player.getCurrentTile());
+                    if (moveCloser && currentDistance < bestDistance)
+                    {
+                        bestDistance = currentDistance;
+                        nextTile = tile;
+                    }
+                    else if (!moveCloser && currentDistance>bestDistance)
+                    {
+                        bestDistance = currentDistance;
+                        nextTile = tile;
+                    }
                 }
             }
-        }
+
+
         if (nextTile != currentTile)
         {
             nextAction.setAction(this, GameAction.Type.Move, nextTile, null);
@@ -152,13 +169,9 @@ public class Monster extends GameCharacter
             }
             if(_displayAttackRange)
             {
-                if(_equippedWeapon==null || !_equippedWeapon.isRanged())
-                {
-                    for(Tile tile : currentTile.getWalkableNeighbours())
-                    {
-                        tile.drawOverLay(batch, _attackRangeColor);
-                    }
-                }
+                int minRange = getEquippedWeapon()==null?1:getEquippedWeapon().getMinRange();
+                int maxRange = getEquippedWeapon()==null?1:getEquippedWeapon().getMaxRange();
+                currentTile.drawOverLay(batch,minRange,maxRange,_attackRangeColor);
             }
         }
         else

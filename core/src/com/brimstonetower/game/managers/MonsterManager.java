@@ -17,7 +17,7 @@ public class MonsterManager
 {
     private static ArrayList<MonsterPrototype> monsterPrototypes = new ArrayList<MonsterPrototype>();
     private static int numberOfPrototypes;
-    private static int[] maxMonsters = new int[]{3, 4, 5, 6, 7, 8};
+    private static int[] maxMonsters = new int[]{6, 8, 8, 8, 8, 8};
 
     private static class MonsterPrototype
     {
@@ -60,20 +60,28 @@ public class MonsterManager
     {
         if (!prototypesInitialized)
         {
-            MonsterPrototype rat = new MonsterPrototype("Rat", 5, 15, 1, 5, 2, Monster.Nature.Aggressive, new TileSetCoordinate(0, 0),new TileSetCoordinate(0,1));
+            MonsterPrototype rat = new MonsterPrototype("Rat", 5, 10, 0, 5, 2, Monster.Nature.Aggressive, new TileSetCoordinate(0, 0),new TileSetCoordinate(0,1));
             rat.addProbabilityOfAppearing(1, 1);
             rat.addProbabilityOfAppearing(0, 5);
-            rat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 2, 0, 10, false);
+            rat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 4, 0, 1,1,10, Weapon.RangeType.Melee);
 
-            MonsterPrototype skeleton = new MonsterPrototype("Skeleton", 10, 20, 5, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(1, 0),new TileSetCoordinate(1, 1));
-            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 4, 0, 10, false);
+            MonsterPrototype skeleton = new MonsterPrototype("Skeleton Soldier", 10, 20, 2, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(1, 0),new TileSetCoordinate(1, 1));
+            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 6, 0, 1,1, 10, Weapon.RangeType.Melee);
             skeleton.addProbabilityOfAppearing(0.33f, 3);
             skeleton.addProbabilityOfAppearing(0.66f, 5);
             skeleton.addProbabilityOfAppearing(0.99f, 7);
             skeleton.addProbabilityOfAppearing(0, 10);
 
+            MonsterPrototype skeletonArcher = new MonsterPrototype("Skeleton Archer", 10, 10, 0, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(2, 0),new TileSetCoordinate(2, 1));
+            skeletonArcher.attack = new Weapon("Bow", "Bow", true, null, 1, 4, 0,2,4,  10,Weapon.RangeType.AmmoThrower);
+            skeletonArcher.addProbabilityOfAppearing(0.33f, 4);
+            skeletonArcher.addProbabilityOfAppearing(0.66f, 6);
+            skeletonArcher.addProbabilityOfAppearing(0.99f, 8);
+            skeletonArcher.addProbabilityOfAppearing(0, 10);
+
             monsterPrototypes.add(rat);
             monsterPrototypes.add(skeleton);
+            monsterPrototypes.add(skeletonArcher);
             numberOfPrototypes = monsterPrototypes.size();
             prototypesInitialized = true;
         }

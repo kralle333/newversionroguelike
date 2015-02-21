@@ -14,6 +14,11 @@ public class IdentifyScroll extends Scroll
         super("Identify","Identifies a single item",false,textureRegion,unidentifiedName,Type.OnItem,0,0,0);
     }
 
+    @Override
+    public void use()
+    {
+        GameConsole.addMessage("Select item to identify:");
+    }
 
     @Override
     public void useOnItem(Item item)

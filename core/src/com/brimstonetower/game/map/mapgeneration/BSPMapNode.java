@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.map.Room;
+import com.brimstonetower.game.map.Tile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class BSPMapNode
 {
@@ -113,20 +115,69 @@ public class BSPMapNode
         _level = level;
     }
 
+    public Tile[][] convertToDoubleArray()
+    {
+        Tile[][] tiles = new Tile[_width][_height];
+
+        HashSet<Corridor> checkedCorridors = new HashSet<Corridor>();
+        ArrayList<BSPMapNode> nodesLeft = new ArrayList<BSPMapNode>();
+        nodesLeft.add(this);
+        while(!nodesLeft.isEmpty())
+        {
+            BSPMapNode currentNode = nodesLeft.remove(0);
+            if(currentNode.getRoom()!=null)
+            {
+                Tile[][] roomTiles = currentNode.getRoom().getTiles();
+                for(int x = 0;x<roomTiles.length;x++)
+                {
+                    for(int y =0;y<roomTiles[0].length;y++)
+                    {
+                        int tileX = roomTiles[x][y].getTileX();
+                        int tileY = roomTiles[x][y].getTileY();
+                        tiles[tileX][tileY] = roomTiles[x][y];
+                    }
+                }
+            }
+            ArrayList<Corridor> corridors = currentNode.getCorridors();
+            for(Corridor corridor : corridors)
+            {
+                if(!checkedCorridors.contains(corridor))
+                {
+                    ArrayList<Tile> corridorTiles = corridor.getTiles();
+                    for(Tile tile : corridorTiles)
+                    {
+                        int tileX = tile.getTileX();
+                        int tileY = tile.getTileY();
+                        tiles[tileX][tileY] = tile;
+                    }
+                    checkedCorridors.add(corridor);
+                }
+            }
+            if(currentNode._leftNode!=null){nodesLeft.add(currentNode._leftNode);}
+            if(currentNode._rightNode!=null){nodesLeft.add(currentNode._rightNode);}
+        }
+
+        return tiles;
+    }
+
     public boolean canSplit()
     {
-        return _width > MapGenerator.minWidth * 2 + 1  ||
-                _height > MapGenerator.minHeight * 2 + 1;
+        int minSplitX = _x + MapGenerator.minWidth+1;
+        int maxSplitX = _x + _width - MapGenerator.minWidth-1;
+        int minSplitY = _y + MapGenerator.minHeight+1;
+        int maxSplitY = _y + _height - MapGenerator.minHeight-1;
+        return minSplitX<maxSplitX  ||
+                minSplitY <maxSplitY;
     }
 
     public void split()
     {
         _isLeaf = false;
         _hasBeenConnected = false;
-        int minSplitX = _x + MapGenerator.minWidth;
-        int maxSplitX = _x + _width - MapGenerator.minWidth;
-        int minSplitY = _y + MapGenerator.minHeight;
-        int maxSplitY = _y + _height - MapGenerator.minHeight;
+        int minSplitX = _x + MapGenerator.minWidth+1;
+        int maxSplitX = _x + _width - MapGenerator.minWidth-1;
+        int minSplitY = _y + MapGenerator.minHeight+1;
+        int maxSplitY = _y + _height - MapGenerator.minHeight-1;
 
         if (minSplitX >= maxSplitX)
         {
@@ -207,11 +258,11 @@ public class BSPMapNode
 
         if (doVerticalSplit)
         {
-            corridor.connectRoomsHorizontal();
+            corridor.connectRoomsHorizontal(split);
         }
         else
         {
-            corridor.connectRoomsVertical();
+            corridor.connectRoomsVertical(split);
         }
         _corridors.add(corridor);
     }

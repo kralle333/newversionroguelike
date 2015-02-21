@@ -197,7 +197,7 @@ public class ItemManager
         //Steel
         TextureRegion region=AssetManager.getTextureRegion("weapons","steelSword", DungeonMap.TileSize,DungeonMap.TileSize);
         Weapon newWeapon = new Weapon("Steel Short Sword", "A standard short sword found in most armies and militias",
-                false,region , 1, 6, 0, 10, false);
+                false,region , 1, 6, 0, 1,1,10, Weapon.RangeType.Melee);
 
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
@@ -207,7 +207,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","steelAxe", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Steel Great Axe", "A 2-handed great axe made of steel, slow to use but powerful",
-                false, region, 1, 8, 0, 15, false);
+                false, region, 1, 10, 0, 1,1,15, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));
@@ -216,7 +216,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","steelDagger", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Steel Dagger", "A steel dagger, its small size makes it possible getting multiple hits on foes.",
-                false,region , 2, 4, 0, 5, false);
+                false,region , 2, 4, 0,1,1, 5, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));
@@ -225,7 +225,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","steelThrow", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon= new Weapon("Steel Throwing axe", "Flimsy throwing axes made of steel",
-                false, region, 1, 2, 0, 10, true);
+                false, region, 1, 2, 0,1,4, 10, Weapon.RangeType.Throwable);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));
@@ -235,7 +235,7 @@ public class ItemManager
         //Crystal
         region=AssetManager.getTextureRegion("weapons","crystalSword", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Crystal Sword", "A sword so clear you can see your own reflection in it",
-                false, region, 2, 8, 0, 10, false);
+                false, region, 2, 8, 0,  1,1,10,Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
@@ -244,7 +244,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","crystalAxe", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Crystal Great Axe", "A massive great axe made in clear blue crystal",
-                false, AssetManager.getTextureRegion("weapons","crystalAxe", DungeonMap.TileSize,DungeonMap.TileSize), 1, 10, 0, 15, false);
+                false, AssetManager.getTextureRegion("weapons","crystalAxe", DungeonMap.TileSize,DungeonMap.TileSize), 1, 10, 0, 15, 1,1,Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
@@ -253,7 +253,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","crystalDagger", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Crystal Dagger", "A small dagger made of pure crystal, it is as sharp as sharpened broken glass",
-                false, region, 2, 6, 0, 5, false);
+                false, region, 2, 6, 0, 1,1,5, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
@@ -262,7 +262,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","crystalThrow", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Crystal throwing scythe", "A scythe meant for throwing at your foes, has a crystal blue color",
-                false, region, 1, 3, 0, 10, true);
+                false, region, 1, 3, 0, 1,4,10, Weapon.RangeType.Throwable);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(3,0.5f));
@@ -272,7 +272,7 @@ public class ItemManager
         //Unholy
         region=AssetManager.getTextureRegion("weapons","unholySword", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Unholy Sword", "Holding the sword in the right angle you can see you yourself as if you were dead in the reflection of the sword.",
-                false, region, 3, 10, 0, 10, false);
+                false, region, 3, 10, 0,1,1, 10, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
@@ -281,7 +281,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","unholyCudgel", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Unholy Cudgel", "A gigantic cudgel with a razor sharp green spikes",
-                false, region, 1, 12, 0, 15, false);
+                false, region, 1, 12, 0,  1,1,15,Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
@@ -290,7 +290,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","unholyDagger", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Unholy Ceremonial dagger", "A menacing dagger, that looks like its used for ceremonial sacrifices",
-                false, region, 2, 8, 0, 5, false);
+                false, region, 2, 8, 0, 1,1,5, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
@@ -299,7 +299,7 @@ public class ItemManager
 
         region= AssetManager.getTextureRegion("weapons","unholyThrow", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Unholy throwing axe", "A throwing axe embedded with a large emerald. In it haunted souls can be seen crying for peace",
-                false,region, 1, 5, 0, 10, true);
+                false,region, 1, 5, 0, 1,4,10, Weapon.RangeType.Throwable);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(8,0.2f));
@@ -308,7 +308,7 @@ public class ItemManager
         //Demonic
         region=AssetManager.getTextureRegion("weapons","demonicSword", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Demonic Sword", "Holding this sword fills your head with noise and your hands with pure energy",
-                false,region , 4, 12, 0, 10, false);
+                false,region , 4, 12, 0, 1,1,10, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(15,0.3f));
@@ -316,7 +316,7 @@ public class ItemManager
 
         region= AssetManager.getTextureRegion("weapons","demonicMace", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Demonic Mace", "A mace with red sparks flying out of it",
-                false,region, 1, 14, 0, 15, false);
+                false,region, 1, 14, 0, 1,1,15, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(15,0.5f));
@@ -324,7 +324,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","demonicDagger", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Demonic dagger", "A large dagger inscribed with demonic lettering",
-                false, region, 2, 10, 0, 5, false);
+                false, region, 2, 10, 0, 1,1,5, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(15,0.2f));
@@ -332,7 +332,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","demonicThrow", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Brimstone throwing axe", "A throwing axe made of brimstone. Overwhelming heat comes out of it",
-                false,region , 1, 7, 0, 10, true);
+                false,region , 1, 7, 0, 1,4,10, Weapon.RangeType.Throwable);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(10,0.1f));

@@ -119,14 +119,7 @@ public class SelectedItemWindow extends Window
         }
         else if (item instanceof Weapon)
         {
-            if (((Weapon) item).isRanged())
-            {
-                hideButton("Equip");
-            }
-            else
-            {
-                showButton("Equip");
-            }
+            showButton("Equip");
             hideButton("Use");
         }
         else

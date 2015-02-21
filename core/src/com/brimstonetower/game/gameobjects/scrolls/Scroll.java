@@ -4,8 +4,10 @@ package com.brimstonetower.game.gameobjects.scrolls;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.managers.ItemManager;
+import com.brimstonetower.game.map.Tile;
 
 public class Scroll extends Item
 {
@@ -74,6 +76,10 @@ public class Scroll extends Item
     {
     }
     public void useOnItem(Item item)
+    {
+
+    }
+    public void useOnTile(Tile tile)
     {
 
     }

@@ -19,7 +19,9 @@ public class DungeonGenerator
         MonsterManager.Initialize();
         int width = 30 + (int) (depth * RandomGen.getRandomFloat(1, 3));
         int height = 30 + (int) (depth * RandomGen.getRandomFloat(1, 3));
-        DungeonMap newDungeon = MapGenerator.generateMap(width, height, "tile");
+        BSPMapNode bspMap = MapGenerator.generateMap(width,height);
+
+        DungeonMap newDungeon = new DungeonMap("tile",bspMap);
         newDungeon.createStairs();
 
         //Add chests
@@ -66,7 +68,7 @@ public class DungeonGenerator
                 break;
             case 6:
                 Weapon weapon =ItemManager.getRandomWeapon(depth);
-                if(!weapon.isRanged() && weapon.getIdentifiedMaxDamage()<weapon.getExpectedMaxDamage())
+                if(weapon.getRangeType() == Weapon.RangeType.Melee && weapon.getIdentifiedMaxDamage()<weapon.getExpectedMaxDamage())
                 {
                     if(RandomGen.getRandomInt(1,100)<=equipmentCurseRate)
                     {

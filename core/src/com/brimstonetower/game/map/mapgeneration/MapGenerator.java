@@ -10,12 +10,12 @@ public class MapGenerator
 {
     public static final int minWidth = 8;
     public static final int minHeight = 8;
-    private static DungeonMap rootNode;
+    private static BSPMapNode rootNode;
 
-    public static DungeonMap generateMap(int width, int height, String texturePath)
+    public static BSPMapNode generateMap(int width, int height)
     {
 
-        rootNode = new DungeonMap(width, height, texturePath);
+        rootNode = new BSPMapNode(0,0,width, height,0,null);
 
         //Creates the BSP tree and saves the leaf nodes
         ArrayList<BSPMapNode> leaves = createBSPAndGetLeaves(rootNode);

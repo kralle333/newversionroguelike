@@ -52,7 +52,6 @@ public class GameStateUpdater
     public GameCharacterAnimation getCurrentAnimation(){return _currentAnimation;}
     private final float timePerAnimation = 0.20f;
 
-
     //Select item dialog
     private static boolean _selectItemDialog = false;
     public static boolean isSelectingItemForScroll()
@@ -67,6 +66,7 @@ public class GameStateUpdater
     {
         return _usedScroll;
     }
+    public void clearUsedScroll(){_usedScroll=null;}
 
     public void setGameState(Player player, Inventory inventory, DungeonMap playedMap)
     {
@@ -93,9 +93,16 @@ public class GameStateUpdater
 
     public static void resumeGameStateUpdating()
     {
-        if (_selectItemDialog)
+        _selectItemDialog = false;
+        _selectTileDialog=false;
+    }
+
+    public void hideAttackRanges()
+    {
+        player.hideAttackRange();
+        for(Monster monster : _monsters)
         {
-            _selectItemDialog = false;
+            monster.hideAttackRange();
         }
     }
 
@@ -133,11 +140,12 @@ public class GameStateUpdater
         if ((playerAction = player.getNextAction()) != null)
         {
             _turn++;
-
+            player.hideAttackRange();
             //Record the time of the next action of characters
             int playerActionCost = playerAction.getCost();
             for (Monster monster : _monsters)
             {
+                monster.hideAttackRange();
                 if(!monster.isDead() && monster.wasSeen())
                 {
                     //Let the time a monster has to act be the time the player's action take
@@ -324,22 +332,24 @@ public class GameStateUpdater
                 if (5>=chanceToBeat)
                 {
                     AssetManager.getSound("surprise").play();
-                    GameConsole.addMessage(player.getName() + " spotted a trap");
+                    GameConsole.addMessage(player.getName() + " almost stepped on a trap!");
+                    trapOnTile.reveal();
                     player.clearNextActions();
                     return;
                 }
                 else
                 {
-                    String trapMessage = player.getName() + " stepped on a trap ";
+                    String trapMessage = player.getName() + " stepped on a trap";
 
                     chanceToBeat = RandomGen.getRandomInt(0, 100);
                     if (player.getDodgeRate() >= chanceToBeat)
                     {
                         trapMessage += ", but didn't activate it";
+                        trapOnTile.reveal();
                     }
                     else
                     {
-                        trapMessage += "and activated it";
+                        trapMessage += " and activated it";
                         trapOnTile.activate();
                         if (trapOnTile.hasCreatedGas())
                         {
@@ -406,12 +416,13 @@ public class GameStateUpdater
         if (thrownObject instanceof Potion)//Use the potion on the tile
         {
             usePotion((Potion) thrownObject, targetTile.getCharacter(), targetTile);
+            GameConsole.addMessage(targetTile.getCharacter().getName() + " was hit by " + thrownObject.getName());
         }
         else if (!targetTile.isEmpty() && thrownObject instanceof Weapon)
         {
             Weapon thrownWeapon = (Weapon) thrownObject;
             int damage = 0;
-            if (thrownWeapon.isRanged() && RandomGen.getRandomInt(1, 100) > 20 + targetTile.getCharacter().getDodgeRate())//Get ranged damage
+            if (thrownWeapon.getRangeType() == Weapon.RangeType.Throwable && RandomGen.getRandomInt(1, 100) > 20 + targetTile.getCharacter().getDodgeRate())//Get ranged damage
             {
                 damage = thrownWeapon.getRandomDamage();
             }
@@ -422,7 +433,7 @@ public class GameStateUpdater
 
             if (damage > 0)
             {
-                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " from thrown " + thrownWeapon.getName());
+                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " damage from thrown " + thrownWeapon.getName());
                 targetTile.getCharacter().damage(damage);
                 _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN,timePerAnimation);
 
@@ -438,6 +449,7 @@ public class GameStateUpdater
             targetTile.addItem(thrownObject);
             GameConsole.addMessage(thrownObject.getName() + " landed on the floor");
         }
+        inventory.removeItem(thrownObject);
     }
 
     //

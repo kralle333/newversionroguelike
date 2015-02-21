@@ -11,66 +11,63 @@ import com.brimstonetower.game.helpers.RandomGen;
 
 public class Weapon extends Item
 {
-    private boolean _isRanged = false;
-
-    public boolean isRanged()
-    {
-        return _isRanged;
-    }
+    public enum RangeType{Melee,Throwable,AmmoThrower}
+    private RangeType _rangeType;
+    public RangeType getRangeType(){return _rangeType;}
 
     private int _ammoCount = 0;
-
     public int getAmmoCount()
     {
         return _ammoCount;
     }
 
     private int _minDamage;
-
     public int getMinDamage()
     {
         return _minDamage;
     }
-
     private int _maxDamage;
-
     public int getMaxDamage()
     {
         return _maxDamage;
     }
-
     private int _bonusDamage;
-
     public int getIdentifiedMaxDamage()
     {
         return _maxDamage + _bonusDamage;
     }
-
     public int getExpectedMaxDamage()
     {
         return _maxDamage;
     }
 
     private int _attackSpeed;
-
     public int getAttackSpeed()
     {
         return _attackSpeed;
     }
 
+    private int _minRange;
+    public int getMinRange(){return _minRange;}
+    private int _maxRange;
+    public int getMaxRange(){return _maxRange;}
+
     private int _stepsTillIdentified;
     private static int weaponId=1;
 
+
     public Weapon(String name, String description, boolean isIdentified, TextureRegion textureRegion, int minDamage,
-                  int maxDamage, int bonusDamage, int attackSpeed, boolean isRanged)
+                  int maxDamage, int bonusDamage,int minRange, int maxRange, int attackSpeed, RangeType rangeType)
     {
-        super(name, description, isIdentified, textureRegion, isRanged,weaponId++);
+        super(name, description, isIdentified, textureRegion, rangeType==RangeType.Throwable ,weaponId++);
         _minDamage = minDamage;
         _maxDamage = maxDamage;
         _bonusDamage = bonusDamage;
-        _isRanged = isRanged;
+        _minRange = minRange;
+        _maxRange = maxRange;
+        _rangeType = rangeType;
         _attackSpeed = attackSpeed;
-        if (_isRanged)
+        if (_rangeType==RangeType.Throwable)
         {
             _ammoCount = RandomGen.getRandomInt(3, 5) + _bonusDamage * 2;
             _bonusDamage = 0;
@@ -89,7 +86,7 @@ public class Weapon extends Item
     public Weapon(Weapon toCopy, int bonusAttack)
     {
         this(toCopy.getNameWithoutBonus(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getMinDamage(),
-                toCopy.getMaxDamage(), bonusAttack, toCopy.getAttackSpeed(), toCopy.isRanged());
+                toCopy.getMaxDamage(), bonusAttack,toCopy.getMinRange(),toCopy.getMaxRange(), toCopy.getAttackSpeed(), toCopy.getRangeType());
     }
 
     public int getRandomDamage()
@@ -121,7 +118,7 @@ public class Weapon extends Item
     {
         if (_isIdentified)
         {
-            if (_isRanged)
+            if (_rangeType == RangeType.Throwable)
             {
                 return _name + "(" + _ammoCount + ")";
             }
@@ -137,11 +134,11 @@ public class Weapon extends Item
     {
         if (_isIdentified)
         {
-            if (_isRanged)
+            if (_rangeType==RangeType.Throwable)
             {
                 return super.getDescription() + "- There are " + _ammoCount + " of them";
             }
-            return super.getDescription() + "- Gives " + (_maxDamage + _bonusDamage) + " attack";
+            return super.getDescription() + "- Can deal " +_minDamage+"-"+(_maxDamage + _bonusDamage) + " damage";
         }
         else
         {
@@ -156,7 +153,7 @@ public class Weapon extends Item
 
     public void decreaseRangedAmmo()
     {
-        if (!_isRanged)
+        if (_rangeType!=RangeType.Throwable)
         {
             Gdx.app.log("Weapon", "Decreasing ammo on a non ranged weapon!");
         }
