@@ -26,7 +26,7 @@ public class DungeonGenerator
 
         //Add chests
         ArrayList<Chest> chests = new ArrayList<Chest>();
-        int numberOfItems = RandomGen.getRandomInt(width/20,width/10);
+        int numberOfItems = RandomGen.getRandomInt(width/6,width/3);
         for (int i = 0; i < numberOfItems; i++)
         {
             chests.add(generateChest(depth));
@@ -37,7 +37,7 @@ public class DungeonGenerator
         newDungeon.addMonsters(MonsterManager.generateMonsters(depth));
 
         //Traps
-        int trapCount = RandomGen.getRandomInt(width/20,width/10);
+        int trapCount = RandomGen.getRandomInt(width/12,width/6);
         ArrayList<Trap> traps = new ArrayList<Trap>();
         for(int i = 0;i<trapCount;i++)
         {
