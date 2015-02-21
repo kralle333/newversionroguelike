@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
@@ -30,6 +31,7 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     private final String _gameTitle;
     private final String _versionString;
     private Vector2 _titlePosition;
+    private TextureRegion _background;
 
     public MenuScreen()
     {
@@ -37,7 +39,8 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         int h = Gdx.graphics.getHeight();
         int buttonWidth = (int)(w * 0.2f);
         int buttonHeight = (int)(h * 0.12f);
-
+        _background = new TextureRegion(AssetManager.getBackgroundMenu(),1280,960);
+        _background.flip(false,true);
         startButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.55f - buttonHeight), buttonWidth, buttonHeight, "Start Game", _buttonColor);
         highScoreButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.7f - buttonHeight), buttonWidth, buttonHeight, "High scores", _buttonColor);
         exitGameButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.85f - buttonHeight), buttonWidth, buttonHeight, "Exit Game", _buttonColor);
@@ -58,21 +61,25 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        guiCamera.update();
-
         batch.setProjectionMatrix(guiCamera.combined);
         shapeRenderer.setProjectionMatrix(guiCamera.combined);
-
-        startButton.draw(batch, shapeRenderer);
-        highScoreButton.draw(batch, shapeRenderer);
-        exitGameButton.draw(batch, shapeRenderer);
         batch.begin();
+        batch.draw(_background,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         _font.draw(batch, _gameTitle, _titlePosition.x, _titlePosition.y);
         _font.draw(batch,
                 TheBrimstoneTowerGame.version + " " + TheBrimstoneTowerGame.versionState,
                 Gdx.graphics.getWidth() - (_font.getBounds(_versionString).width*1.1f),
                 Gdx.graphics.getHeight()-_font.getBounds(_versionString).height*1.1f);
+
         batch.end();
+        guiCamera.update();
+
+
+
+        startButton.draw(batch, shapeRenderer);
+        highScoreButton.draw(batch, shapeRenderer);
+        exitGameButton.draw(batch, shapeRenderer);
+
     }
 
     @Override

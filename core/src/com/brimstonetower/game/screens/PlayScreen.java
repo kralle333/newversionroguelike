@@ -25,6 +25,7 @@ import com.brimstonetower.game.gui.*;
 import com.brimstonetower.game.helpers.*;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PlayScreen implements Screen, GestureDetector.GestureListener, InputProcessor
 {
@@ -243,6 +244,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _currentDungeonMap.addPlayer(_player);
         _gameStateUpdater.setGameState( _player, _inventory, _currentDungeonMap);
     }
+
+
 
     private void restartGame()
     {
@@ -535,8 +538,11 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         {
             if(_itemToThrow!=null)
             {
-                _player.setThrowAction(_itemToThrow, touchedTile);
-                _itemToThrow = null;
+                if(_player.getThrowRange()>=touchedTile.distanceTo(_player.getCurrentTile()))
+                {
+                    _player.setThrowAction(_itemToThrow, touchedTile);
+                    _itemToThrow = null;
+                }
                 _player.hideThrowRange();
                 _currentScreenState = ScreenState.Playing;
             }

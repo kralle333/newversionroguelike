@@ -2,6 +2,7 @@ package com.brimstonetower.game.map.mapgeneration;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.map.Room;
 import com.brimstonetower.game.map.Tile;
@@ -128,9 +129,9 @@ public class BSPMapNode
             if(currentNode.getRoom()!=null)
             {
                 Tile[][] roomTiles = currentNode.getRoom().getTiles();
-                for(int x = 0;x<roomTiles.length;x++)
+                for(int x = 0;x<currentNode.getRoom().getWidth();x++)
                 {
-                    for(int y =0;y<roomTiles[0].length;y++)
+                    for(int y =0;y<currentNode.getRoom().getHeight();y++)
                     {
                         int tileX = roomTiles[x][y].getTileX();
                         int tileY = roomTiles[x][y].getTileY();
@@ -162,10 +163,10 @@ public class BSPMapNode
 
     public boolean canSplit()
     {
-        int minSplitX = _x + MapGenerator.minWidth+1;
-        int maxSplitX = _x + _width - MapGenerator.minWidth-1;
-        int minSplitY = _y + MapGenerator.minHeight+1;
-        int maxSplitY = _y + _height - MapGenerator.minHeight-1;
+        int minSplitX = _x + MapGenerator.minWidth;
+        int maxSplitX = _x + _width - MapGenerator.minWidth;
+        int minSplitY = _y + MapGenerator.minHeight;
+        int maxSplitY = _y + _height - MapGenerator.minHeight;
         return minSplitX<maxSplitX  ||
                 minSplitY <maxSplitY;
     }
@@ -174,10 +175,10 @@ public class BSPMapNode
     {
         _isLeaf = false;
         _hasBeenConnected = false;
-        int minSplitX = _x + MapGenerator.minWidth+1;
-        int maxSplitX = _x + _width - MapGenerator.minWidth-1;
-        int minSplitY = _y + MapGenerator.minHeight+1;
-        int maxSplitY = _y + _height - MapGenerator.minHeight-1;
+        int minSplitX = _x + MapGenerator.minWidth;
+        int maxSplitX = _x + _width - MapGenerator.minWidth;
+        int minSplitY = _y + MapGenerator.minHeight;
+        int maxSplitY = _y + _height - MapGenerator.minHeight;
 
         if (minSplitX >= maxSplitX)
         {
@@ -269,20 +270,27 @@ public class BSPMapNode
 
     private Room getRoomClosestTo(BSPMapNode node, int x, int y, boolean isXPriority)
     {
+        final Vector2 leftRoomCenter = new Vector2();
+        final Vector2 rightRoomCenter = new Vector2();
         if (node.isLeaf())
         {
             return node.getRoom();
         }
         Room leftNodeRoom = getRoomClosestTo(node.getLeftNode(), x, y, isXPriority);
+        leftRoomCenter.x =leftNodeRoom.getX()+leftNodeRoom.getWidth()/2;
+        leftRoomCenter.y =leftNodeRoom.getY()+leftNodeRoom.getHeight()/2;
+
         Room rightNodeRoom = getRoomClosestTo(node.getRightNode(), x, y, isXPriority);
+        rightRoomCenter.x =rightNodeRoom.getX()+rightNodeRoom.getWidth()/2;
+        rightRoomCenter.y =rightNodeRoom.getY()+rightNodeRoom.getHeight()/2;
 
         if (isXPriority)//Are we using x or y to find the closest? this case is using x
         {
-            int dxLeft = Math.abs(leftNodeRoom.getX() - x);
-            int dxRight = Math.abs(rightNodeRoom.getX() - x);
+            int dxLeft = Math.abs((int)leftRoomCenter.x - x);
+            int dxRight = Math.abs((int)rightRoomCenter.x - x);
             if (dxLeft == dxRight)
             {
-                if (Math.abs(leftNodeRoom.getY() - y) < Math.abs(rightNodeRoom.getY() - y))
+                if (Math.abs((int)leftRoomCenter.y - y) < Math.abs((int)rightRoomCenter.y - y))
                 {
                     return leftNodeRoom;
                 }
@@ -302,11 +310,11 @@ public class BSPMapNode
         }
         else//Using y to find closest
         {
-            int dyLeft = Math.abs(leftNodeRoom.getY() - y);
-            int dyRight = Math.abs(rightNodeRoom.getY() - y);
+            int dyLeft = Math.abs((int)leftRoomCenter.y - y);
+            int dyRight = Math.abs((int)rightRoomCenter.y - y);
             if (dyLeft == dyRight)
             {
-                if (Math.abs(leftNodeRoom.getX() - x) < Math.abs(rightNodeRoom.getX() - x))
+                if (Math.abs((int)leftRoomCenter.x - x) < Math.abs((int)rightRoomCenter.x - x))
                 {
                     return leftNodeRoom;
                 }

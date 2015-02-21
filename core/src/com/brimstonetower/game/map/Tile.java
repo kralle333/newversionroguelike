@@ -29,7 +29,7 @@ public class Tile
     public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door || _type == Types.StairCase;}
     public enum LightAmount
     {
-        Non, Shadow, Light
+        Non, Shadow,DarkShadow, Light
     }
 
     private LightAmount _lightToChangeTo;
@@ -44,6 +44,7 @@ public class Tile
     {
         return _lightToChangeTo;
     }
+    private boolean _wasEverLight = false;
 
     private Types _type;
     public Types getType()
@@ -191,6 +192,14 @@ public class Tile
     public void changeLight(LightAmount light)
     {
         _lightToChangeTo = light;
+        if(light == LightAmount.Light)
+        {
+            _wasEverLight=true;
+        }
+        else if(light == LightAmount.Shadow && _wasEverLight==false)
+        {
+            _lightToChangeTo= LightAmount.DarkShadow;
+        }
     }
 
     public void setLight(LightAmount light, int strength, int currentStrength)
@@ -345,6 +354,7 @@ public class Tile
         {
             case Non:return Color.BLACK;
             case Shadow:return Color.GRAY;
+            case DarkShadow:return Color.DARK_GRAY;
             case Light:return Color.WHITE;
         }
         return Color.MAGENTA;

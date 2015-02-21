@@ -12,6 +12,8 @@ import java.util.HashMap;
 
 public class AssetManager
 {
+    private static Texture backgroundMenu;
+    public static Texture getBackgroundMenu(){return backgroundMenu;}
     private static HashMap<String, Texture> _assets = new HashMap<String, Texture>();
     private static HashMap<String, TileSetCoordinate> tileSetCoordinateMap = new HashMap<String, TileSetCoordinate>();
     private static HashMap<String, BitmapFont> _fonts = new HashMap<String, BitmapFont>();
@@ -42,6 +44,7 @@ public class AssetManager
 
     private static void initializeTextures()
     {
+        backgroundMenu = new Texture(Gdx.files.internal("art/art_big_workInProgress.png"));
         _assets.put("player", new Texture(Gdx.files.internal("art/player.png")));
         _assets.put("mainHeroes",new Texture(Gdx.files.internal("art/mainHeroes.png")));
         _assets.put("mainHeroesWithBorder",new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
