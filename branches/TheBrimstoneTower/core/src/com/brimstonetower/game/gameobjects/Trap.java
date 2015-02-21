@@ -88,13 +88,13 @@ public class Trap
         if (_hasBeenDiscovered)
         {
             batch.setColor(_color);
-            batch.draw(_textureRegion, _occupiedTile.getX() * DungeonMap.TileSize, _occupiedTile.getY() * DungeonMap.TileSize);
+            batch.draw(_textureRegion, _occupiedTile.getTileX() * DungeonMap.TileSize, _occupiedTile.getTileY() * DungeonMap.TileSize);
             batch.setColor(Color.WHITE);
         }
         else if (hasBeenActivated())
         {
             batch.setColor(Color.GRAY);
-            batch.draw(_textureRegion, _occupiedTile.getX() * DungeonMap.TileSize, _occupiedTile.getY() * DungeonMap.TileSize);
+            batch.draw(_textureRegion, _occupiedTile.getTileX() * DungeonMap.TileSize, _occupiedTile.getTileY() * DungeonMap.TileSize);
             batch.setColor(Color.WHITE);
         }
     }

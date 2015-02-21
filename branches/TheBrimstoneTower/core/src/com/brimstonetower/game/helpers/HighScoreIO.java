@@ -38,7 +38,14 @@ public class HighScoreIO
             _isInitialized = true;
         }
     }
-
+    public static void clearScores()
+    {
+        initialize();
+        preferencesScores.clear();
+        preferencesScores.flush();
+        _isInitialized = false;
+        initialize();
+    }
     public static String getScoreText(int i)
     {
         if (i < 0 || i >= _maxScores)

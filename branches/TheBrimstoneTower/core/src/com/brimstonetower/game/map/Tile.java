@@ -14,10 +14,9 @@ import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
-import com.brimstonetower.game.map.mapgeneration.Corridor;
-import javafx.scene.effect.Light;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class Tile
@@ -30,7 +29,7 @@ public class Tile
     public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door || _type == Types.StairCase;}
     public enum LightAmount
     {
-        Non, Shadow,DarkShadow, Light
+        Non, Shadow, Light
     }
 
     private LightAmount _lightToChangeTo;
@@ -55,16 +54,16 @@ public class Tile
     private TextureRegion _textureRegion;
     public void setTextureRegion(TileSetCoordinate tileCoordinates)
     {
-        _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileCoordinates.x, tileCoordinates.y, DungeonMap.TileSize, DungeonMap.TileSize);
+        _textureRegion = AssetManager.getTextureRegion("tile", tileCoordinates.x, tileCoordinates.y, DungeonMap.TileSize, DungeonMap.TileSize);
     }
 
-    private float _x;
-    private float _y;
-    public float getX()
+    private int _x;
+    private int _y;
+    public int getTileX()
     {
         return _x;
     }
-    public float getY()
+    public int getTileY()
     {
         return _y;
     }
@@ -176,14 +175,13 @@ public class Tile
         _lightAmount = LightAmount.Non;
         _lightToChangeTo=LightAmount.Non;
         _type = type;
-        _textureRegion = AssetManager.getTextureRegion(DungeonMap.getTileMapPath(), tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
+        _textureRegion = AssetManager.getTextureRegion("tile", tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
     }
 
     public void placeDoor(TileSetCoordinate doorRegion)
     {
         GameCharacter door = new GameCharacter("Locked door",0,0,1,AssetManager.getTextureRegion("tile",doorRegion,DungeonMap.TileSize,DungeonMap.TileSize));
         door.placeOnTile(this);
-        setCharacter(door);
     }
     public void setType(Types type)
     {
@@ -205,14 +203,14 @@ public class Tile
                 {
                     for (Tile n : walkableNeighbours)
                     {
-                        if ((n.getX() == _x || n.getY() == _y))
+                        if ((n.getTileX() == _x || n.getTileY() == _y))
                         {
                             n.setLight(light, strength, currentStrength - 1);
                         }
                     }
                     for (Tile n : nonWalkableNeighbours)
                     {
-                        if ((n.getX() == _x || n.getY() == _y))
+                        if ((n.getTileX() == _x || n.getTileY() == _y))
                         {
                             n.setLight(light, strength, currentStrength - 1);
                         }
@@ -302,6 +300,44 @@ public class Tile
         batch.draw(_overlay, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
         batch.setColor(Color.WHITE);
     }
+    public void drawOverLay(SpriteBatch batch,int minRange,int maxRange,Color color)
+    {
+        final HashSet<Tile> drawnTiles = new HashSet<Tile>();
+        final HashSet<Tile> previousTiles = new HashSet<Tile>();
+        final HashSet<Tile> currentNeighbours = new HashSet<Tile>();
+        final HashSet<Tile> nextRangeNeighbours = new HashSet<Tile>();
+        drawnTiles.clear();
+        nextRangeNeighbours.clear();
+        currentNeighbours.clear();
+        previousTiles.clear();
+
+        previousTiles.add(this);
+        currentNeighbours.addAll(walkableNeighbours);
+
+        for(int i = 1;i<=maxRange;i++)
+        {
+            currentNeighbours.addAll(nextRangeNeighbours);
+            nextRangeNeighbours.clear();
+            for (Tile n : currentNeighbours)
+            {
+                if(!previousTiles.contains(n) && n.getLightAmount() != LightAmount.Non)
+                {
+                    nextRangeNeighbours.addAll(n.getWalkableNeighbours());
+                    if (i >= minRange)
+                    {
+                        drawnTiles.add(n);
+                    }
+                }
+            }
+            previousTiles.addAll(currentNeighbours);
+            currentNeighbours.clear();
+        }
+
+        for(Tile tile : drawnTiles)
+        {
+            tile.drawOverLay(batch,color);
+        }
+    }
 
     private Color getColorFromLight(LightAmount lightAmount)
     {
@@ -309,7 +345,6 @@ public class Tile
         {
             case Non:return Color.BLACK;
             case Shadow:return Color.GRAY;
-            case DarkShadow:return Color.DARK_GRAY;
             case Light:return Color.WHITE;
         }
         return Color.MAGENTA;

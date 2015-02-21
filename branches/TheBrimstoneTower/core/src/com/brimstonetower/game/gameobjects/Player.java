@@ -16,11 +16,16 @@ public class Player extends GameCharacter
 {
     private static int _startHp = 48;
     private static int _startStr = 2;
-    private int _lanternStrength = 3;
+    private int _lanternStrength = 4;
     public int getLanternStrength()
     {
         return _lanternStrength;
     }
+    private int _throwRange = 4;
+    public int getThrowRange(){return _throwRange;}
+    private boolean _displayThrowRange = false;
+    public void displayThrowRange(){_displayThrowRange=true;}
+    public void hideThrowRange(){_displayThrowRange=false;}
 
     private String _killedBy = null;
     public String getKilledBy()
@@ -78,14 +83,15 @@ public class Player extends GameCharacter
 
         level++;
         experienceToNextLevel *= 2;
+        float hpRatio = (float)currentHp/(float)maxHp;
         maxHp = (int) calculateNewStat((float) _startHp, 2000, level, 99);
         maxStr = (int) calculateNewStat((float) _startStr, 100, level, 99);
-
+        currentHp =(int)(hpRatio*maxHp);
         currentStr = maxStr;
 
         GameConsole.addMessage("Player leveled up! - Welcome to level " + level);
         GameConsole.addMessage("Strength is: " + getMaxStr());
-        GameConsole.addMessage("Hp is: " + getMaxHitPoints());
+        GameConsole.addMessage("Max hp is: " + getMaxHitPoints());
     }
 
     private float calculateNewStat(float startStat, float maxStat, float currentLevel, float maxLevel)
@@ -112,7 +118,7 @@ public class Player extends GameCharacter
         super.applyEffect(effect);
         if(_isDead)
         {
-            _killedBy = effect.getName();
+            _killedBy = effect.getName()+(effect.isGas()?" gas":"");
         }
     }
 
@@ -150,13 +156,13 @@ public class Player extends GameCharacter
         }
         if(_displayAttackRange)
         {
-            if(_equippedWeapon==null || !_equippedWeapon.isRanged())
-            {
-                for(Tile tile : currentTile.getWalkableNeighbours())
-                {
-                    tile.drawOverLay(batch, _attackRangeColor);
-                }
-            }
+            int minRange = getEquippedWeapon()==null?1:getEquippedWeapon().getMinRange();
+            int maxRange = getEquippedWeapon()==null?1:getEquippedWeapon().getMaxRange();
+            currentTile.drawOverLay(batch,minRange,maxRange,_attackRangeColor);
+        }
+        else if(_displayThrowRange)
+        {
+            currentTile.drawOverLay(batch,1,_throwRange,_attackRangeColor);
         }
     }
 }

@@ -1,8 +1,6 @@
 package com.brimstonetower.game.map.mapgeneration;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.brimstonetower.game.gameobjects.Monster;
-import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.Room;
@@ -19,7 +17,7 @@ public class Corridor
     private Tile _door2;
 
     private ArrayList<Tile> _tiles = new ArrayList<Tile>();
-
+    public ArrayList<Tile> getTiles(){return _tiles;}
 
     public Corridor(Room room1, Room room2)
     {
@@ -35,31 +33,31 @@ public class Corridor
     }
 
 
-    public void connectRoomsVertical()
+    public void connectRoomsVertical(int junctionPoint)
     {
         Room.WallSide door1Ori = _room1.isAboveOf(_room2) ? Room.WallSide.South : Room.WallSide.North;
         Room.WallSide door2Ori = door1Ori == Room.WallSide.South ? Room.WallSide.North : Room.WallSide.South;
         _door1 = _room1.getRandomEmptyWall(door1Ori);
         _door2 = _room2.getRandomEmptyWall(door2Ori);
-        createVerticalLine((int) _door1.getX(), (int) _door1.getY(), (int) _door2.getX(), (int) _door2.getY());
+        createVerticalLine( _door1.getTileX(),  _door1.getTileY(), _door2.getTileX(), _door2.getTileY(),junctionPoint);
         _room1.createDoorAndConnect(_door1, _tiles.get(0), door1Ori);
         _room2.createDoorAndConnect(_door2, _tiles.get(_tiles.size() - 1), door2Ori);
         addNeighbours();
     }
 
-    public void connectRoomsHorizontal()
+    public void connectRoomsHorizontal(int junctionPoint)
     {
         Room.WallSide door1Ori = _room1.isLeftOf(_room2) ? Room.WallSide.East : Room.WallSide.West;
         Room.WallSide door2Ori = door1Ori == Room.WallSide.East ? Room.WallSide.West : Room.WallSide.East;
         _door1 = _room1.getRandomEmptyWall(door1Ori);
         _door2 = _room2.getRandomEmptyWall(door2Ori);
-        createHorizontalLine((int) _door1.getX(), (int) _door1.getY(), (int) _door2.getX(), (int) _door2.getY());
+        createHorizontalLine(_door1.getTileX(), _door1.getTileY(), _door2.getTileX(), _door2.getTileY(),junctionPoint);
         _room1.createDoorAndConnect(_door1, _tiles.get(0), door1Ori);
         _room2.createDoorAndConnect(_door2, _tiles.get(_tiles.size() - 1), door2Ori);
         addNeighbours();
     }
 
-    private void createHorizontalLine(int x0, int y0, int x1, int y1)
+    private void createHorizontalLine(int x0, int y0, int x1, int y1,int junctionPoint)
     {
 
         /*                   |....|
@@ -68,7 +66,6 @@ public class Corridor
         |--------|
          */
 
-        int junctionPoint = RandomGen.getRandomInt(x0 + 1, x1 - 1);
 
         for (int a = x0 + 1; a < junctionPoint; a++)
         {
@@ -120,7 +117,7 @@ public class Corridor
         }
     }
 
-    private void createVerticalLine(int x0, int y0, int x1, int y1)
+    private void createVerticalLine(int x0, int y0, int x1, int y1,int junctionPoint)
     {
 
         /*
@@ -138,7 +135,6 @@ public class Corridor
         |........|
          */
 
-        int junctionPoint = RandomGen.getRandomInt(y0 + 1, y1 - 1);
 
         for (int a = y0 + 1; a < junctionPoint; a++)
         {
@@ -203,7 +199,7 @@ public class Corridor
     {
         for (Tile t : _tiles)
         {
-            if (t.getX() == x && t.getY() == y)
+            if (t.getTileX() == x && t.getTileY() == y)
             {
                 return t;
             }
@@ -212,16 +208,6 @@ public class Corridor
     }
 
 
-    public void reveal()
-    {
-        for (Tile tile : _tiles)
-        {
-            if (tile.getLightAmount() == Tile.LightAmount.Non)
-            {
-                tile.changeLight(Tile.LightAmount.Shadow);
-            }
-        }
-    }
 
     public void draw(SpriteBatch batch)
     {

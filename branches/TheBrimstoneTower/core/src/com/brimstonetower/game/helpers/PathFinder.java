@@ -109,12 +109,12 @@ public class PathFinder
 
     private static float getManhattanDistance(Tile from, Tile to)
     {
-        return Math.abs(to.getX() - from.getX()) + Math.abs(to.getY() - from.getY());
+        return Math.abs(to.getTileX() - from.getTileX()) + Math.abs(to.getTileY() - from.getTileY());
     }
 
     public static float getEuclideanDistance(Tile from, Tile to)
     {
-        return (float) Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2));
+        return (float) Math.sqrt(Math.pow(from.getTileX() - to.getTileX(), 2) + Math.pow(from.getTileY() - to.getTileY(), 2));
     }
 
 }

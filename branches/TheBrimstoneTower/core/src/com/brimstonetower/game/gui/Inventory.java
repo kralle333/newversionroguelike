@@ -93,7 +93,7 @@ public class Inventory extends Window
             item.identify();
         }
 
-        if (item instanceof Weapon && ((Weapon) item).isRanged())
+        if (item instanceof Weapon && ((Weapon) item).getRangeType() == Weapon.RangeType.Throwable)
         {
             for (Item i : _items)
             {
@@ -128,7 +128,7 @@ public class Inventory extends Window
     public void removeThrownItem(Item item)
     {
 
-        if (item instanceof Weapon && ((Weapon) item).isRanged())
+        if (item instanceof Weapon && ((Weapon) item).getRangeType() == Weapon.RangeType.Throwable)
         {
             ((Weapon) item).decreaseRangedAmmo();
             if (((Weapon) item).getAmmoCount() == 0)

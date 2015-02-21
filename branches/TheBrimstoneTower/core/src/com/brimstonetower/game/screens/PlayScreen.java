@@ -17,7 +17,6 @@ import com.brimstonetower.game.gameobjects.scrolls.Scroll;
 import com.brimstonetower.game.gamestateupdating.GameAction;
 import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
 import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -58,12 +57,11 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
     private enum ScreenState
     {
-        InventoryOpen, SelectingTarget, Moving, ShowingItem, ShowingAnimation, GameOver, GameWon
+        InventoryOpen, SelectingTileTarget,SelectingItemTarget, Playing, ShowingItemDescription, GameOver, GameWon
     }
 
-    private ScreenState _currentScreenState = ScreenState.Moving;
+    private ScreenState _currentScreenState = ScreenState.Playing;
     private final BitmapFont _font;
-
 
     public PlayScreen(String playerName)
     {
@@ -99,6 +97,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
         createNewDungeon();
     }
+
     private void setupGuiElements()
     {
         _openInventoryButton = new Button(0,0,10,10, "Inventory", new Color(0.6f, 0.2f, 0, 1));
@@ -163,7 +162,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             _inventory.showEquippedItems();
         }
     }
-
 
     //Rendering
     @Override
@@ -252,7 +250,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _depth = 1;
         _player = null;
         createNewDungeon();
-        _currentScreenState = ScreenState.Moving;
+        _currentScreenState = ScreenState.Playing;
         GameConsole.reset();
     }
 
@@ -267,7 +265,17 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                 HighScoreIO.putScore(_player.getKilledBy(), playerName, _depth, (int) _player.calculateScore() * _depth);
             }
         }
-        if (_currentScreenState == ScreenState.Moving)
+        if(GameStateUpdater.isSelectingItemForScroll())
+        {
+            _inventory.show();
+            _currentScreenState = ScreenState.SelectingItemTarget;
+        }
+        else if(GameStateUpdater.isSelectingTileForScroll())
+        {
+            _currentScreenState = ScreenState.SelectingTileTarget;
+        }
+
+        if(_currentScreenState == ScreenState.Playing)
         {
             _gameStateUpdater.updateGameState();
         }
@@ -379,14 +387,17 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             case InventoryOpen:
                 inventoryOpenStateTap(x, y);
                 break;
-            case Moving:
+            case Playing:
                 movingStateTap(x, y);
                 break;
-            case ShowingItem:
+            case ShowingItemDescription:
                 showingItemStateTap(x, y);
                 break;
-            case SelectingTarget:
-                selectingTargetTap(x, y);
+            case SelectingTileTarget:
+                selectingTileTarget(x, y);
+                break;
+            case SelectingItemTarget:
+                selectingItemTarget(x,y);
                 break;
         }
         return true;
@@ -409,11 +420,11 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         {
             _inventory.hide();
             _selectedItemWindow.show(_inventory.retrieveItem());
-            _currentScreenState = ScreenState.ShowingItem;
+            _currentScreenState = ScreenState.ShowingItemDescription;
         }
         else if (!_inventory.isOpen())
         {
-            _currentScreenState = ScreenState.Moving;
+            _currentScreenState = ScreenState.Playing;
         }
     }
 
@@ -433,27 +444,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         {
             _playerAction.setAction(_player, GameAction.Type.Search, _player.getCurrentTile(), null);
             _player.clearQueueAndSetAction(_playerAction);
-        }
-        else if (_gameStateUpdater.isSelectingItemForScroll())
-        {
-            _inventory.tap(x, y);
-            if (!_inventory.isOpen())
-            {
-                _gameStateUpdater.resumeGameStateUpdating();
-                _player.clearNextActions();
-                //Put warning here
-            }
-            else
-            {
-                Item item = _inventory.retrieveItem();
-                Scroll usedScroll = _gameStateUpdater.getUsedScroll();
-                usedScroll.useOnItem(item);
-                if(usedScroll.isUsed())
-                {
-                    GameStateUpdater.resumeGameStateUpdating();
-                    GameStateUpdater.inventory.hide();
-                }
-            }
         }
         else
         {
@@ -514,7 +504,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _selectedItemWindow.tap(x, y);
         if (!_selectedItemWindow.isOpen())
         {
-            _currentScreenState = ScreenState.Moving;
+            _currentScreenState = ScreenState.Playing;
         }
         else if (_selectedItemWindow.hasAction())
         {
@@ -523,29 +513,67 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             if (selectedAction.getType() == GameAction.Type.Throw)
             {
                 _itemToThrow = selectedAction.getTargetItem();
-                _currentScreenState = ScreenState.SelectingTarget;
+                _currentScreenState = ScreenState.SelectingTileTarget;
+                _player.displayThrowRange();
                 _selectedItemWindow.hide();
             }
             else
             {
                 _player.clearQueueAndSetAction(selectedAction);
                 _selectedItemWindow.hide();
-                _currentScreenState = ScreenState.Moving;
+                _currentScreenState = ScreenState.Playing;
             }
         }
     }
 
-    private void selectingTargetTap(float x, float y)
+    private void selectingTileTarget(float x, float y)
     {
         Vector3 touchedPosition = new Vector3(x, y, 0);
         mainCamera.unproject(touchedPosition);
         Tile touchedTile = _currentDungeonMap.getTouchedTile(touchedPosition.x, touchedPosition.y);
-        if (touchedTile != null && touchedTile.getLightAmount() == Tile.LightAmount.Light)
+        if (touchedTile != null && touchedTile.getLightAmount() != Tile.LightAmount.Non)
         {
-            _player.setThrowAction(_itemToThrow, touchedTile);
+            if(_itemToThrow!=null)
+            {
+                _player.setThrowAction(_itemToThrow, touchedTile);
+                _itemToThrow = null;
+                _player.hideThrowRange();
+                _currentScreenState = ScreenState.Playing;
+            }
+            else if(GameStateUpdater.isSelectingTileForScroll())
+            {
+                Scroll scroll =_gameStateUpdater.getUsedScroll();
+                scroll.useOnTile(touchedTile);
+                _gameStateUpdater.clearUsedScroll();
+                GameStateUpdater.resumeGameStateUpdating();
+                _currentScreenState = ScreenState.Playing;
+            }
+        }
+    }
 
-            _itemToThrow = null;
-            _currentScreenState = ScreenState.Moving;
+    private void selectingItemTarget(float x, float y)
+    {
+        _inventory.tap(x, y);
+        if (!_inventory.isOpen())
+        {
+            _player.clearNextActions();
+            _gameStateUpdater.clearUsedScroll();
+            GameStateUpdater.resumeGameStateUpdating();
+            _currentScreenState = ScreenState.Playing;
+            //Put warning here
+        }
+        else
+        {
+            Item item = _inventory.retrieveItem();
+            Scroll usedScroll = _gameStateUpdater.getUsedScroll();
+            usedScroll.useOnItem(item);
+            if(usedScroll.isUsed())
+            {
+                GameStateUpdater.inventory.hide();
+                _gameStateUpdater.clearUsedScroll();
+                GameStateUpdater.resumeGameStateUpdating();
+                _currentScreenState = ScreenState.Playing;
+            }
         }
     }
 
@@ -554,9 +582,10 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     {
         Vector3 unprojectedPos = mainCamera.unproject(new Vector3(x,y,0));
         Tile pressedTile = _currentDungeonMap.getTouchedTile(unprojectedPos.x,unprojectedPos.y);
-        if(!pressedTile.isEmpty())
+        if(pressedTile!= null && !pressedTile.isEmpty())
         {
-            pressedTile.getCharacter().DisplayAttackRange();
+            _gameStateUpdater.hideAttackRanges();
+            pressedTile.getCharacter().displayAttackRange();
         }
         return true;
     }

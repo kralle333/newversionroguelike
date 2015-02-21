@@ -2,7 +2,7 @@ package com.brimstonetower.game.map;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
@@ -11,7 +11,7 @@ import com.brimstonetower.game.map.mapgeneration.Corridor;
 
 import java.util.ArrayList;
 
-public class DungeonMap extends BSPMapNode
+public class DungeonMap
 {
 
     public static int TileSize = 32;
@@ -21,6 +21,10 @@ public class DungeonMap extends BSPMapNode
     {
         return _tileMapPath;
     }
+
+    private Tile[][] _tiles;
+    private int _tileWidth;
+    private int _tileHeight;
 
     private ArrayList<Monster> _monsters = new ArrayList<Monster>();
     public ArrayList<Monster> getMonsters()
@@ -37,10 +41,12 @@ public class DungeonMap extends BSPMapNode
     private ArrayList<Chest> _chests =new ArrayList<Chest>();
     public ArrayList<Chest> getChests(){return _chests;}
 
-    public DungeonMap(int width, int height, String texturePath)
+    public DungeonMap(String texturePath, BSPMapNode bspMapNode)
     {
-        super(0, 0, width, height, 0, null);
         _tileMapPath = texturePath;
+        _tiles = bspMapNode.convertToDoubleArray();
+        _tileWidth = _tiles.length;
+        _tileHeight = _tiles[0].length;
     }
 
     public void reveal(Tile tile, int diameter)
@@ -49,104 +55,38 @@ public class DungeonMap extends BSPMapNode
     }
     public void revealAll()
     {
-        for(Chest chest : _chests)
+        for(int x = 0;x<_tileWidth;x++)
         {
-            chest.reveal();
-        }
-        for(Monster monster :_monsters)
-        {
-            monster.reveal();
-        }
-        for(Trap trap : _traps)
-        {
-            trap.reveal();
-        }
-        revealChildren(getLeftNode());
-        revealChildren(getRightNode());
-    }
-
-    private void revealChildren(BSPMapNode node)
-    {
-        if (node.isLeaf())
-        {
-            node.getRoom().reveal();
-        }
-        else
-        {
-            for (Corridor corridor : node.getCorridors())
+            for(int y = 0;y<_tileHeight;y++)
             {
-                corridor.reveal();
+                if(_tiles[x][y]!=null && _tiles[x][y].getLightAmount() == Tile.LightAmount.Non)
+                {
+                    _tiles[x][y].changeLight(Tile.LightAmount.Shadow);
+                }
             }
-
-            revealChildren(node.getLeftNode());
-            revealChildren(node.getRightNode());
         }
     }
+
 
     public Tile getTouchedTile(int tileX, int tileY)
     {
-        if(tileX>=0 && tileX<getWidth() && tileY>=0 && tileY<getHeight())
+        if(tileX>=0 && tileX<_tileWidth && tileY>=0 && tileY<_tileHeight)
         {
-            return getTile(tileX,tileY,this);
+            return _tiles[tileX][tileY];
         }
         return null;
     }
     public Tile getTouchedTile(float windowX, float windowY)
     {
-        if (windowX < getWidth() * TileSize && windowY < getHeight() * TileSize)
-        {
-            return getTile((int) (windowX / (float) TileSize), (int) (windowY / (float) TileSize), this);
-        }
-
-        return null;
+        return getTouchedTile((int) (windowX / (float) TileSize), (int) (windowY / (float) TileSize));
     }
-
-    private Tile getTile(int x, int y, BSPMapNode parent)
-    {
-        if (parent.isLeaf())
-        {
-            return parent.getRoom().getTile(x, y);
-        }
-        for (Corridor c : parent.getCorridors())
-        {
-            Tile t = c.getTile(x, y);
-            if (t != null)
-            {
-                return t;
-            }
-        }
-
-        if (parent.wasVerticallySplit())
-        {
-            if (parent.getLeftNode().getX() <= x && parent.getLeftNode().getX() + parent.getLeftNode().getWidth() > x)
-            {
-                return getTile(x, y, parent.getLeftNode());
-            }
-            else
-            {
-                return getTile(x, y, parent.getRightNode());
-            }
-        }
-        else
-        {
-            if (parent.getLeftNode().getY() <= y && parent.getLeftNode().getY() + parent.getLeftNode().getHeight() > y)
-            {
-                return getTile(x, y, parent.getLeftNode());
-            }
-            else
-            {
-                return getTile(x, y, parent.getRightNode());
-            }
-        }
-    }
-
 
     public void addChests(ArrayList<Chest> chests)
     {
 
             for (Chest chest : chests)
             {
-                Tile emptyTile = getRandomEmptyTile();
+                Tile emptyTile = getRandomEmptyFloorTile();
                 if (emptyTile == null)
                 {
                     Gdx.app.log("Item", "No empty tile could be found - Aborting");
@@ -162,7 +102,7 @@ public class DungeonMap extends BSPMapNode
     {
         for (Monster monster : monsters)
         {
-            Tile emptyTile = getRandomEmptyTile();
+            Tile emptyTile = getRandomEmptyFloorTile();
             if (emptyTile == null)
             {
                 Gdx.app.log("Creating monsters", "No empty tile could be found - Aborting");
@@ -178,7 +118,7 @@ public class DungeonMap extends BSPMapNode
 
     public void addPlayer(Player player)
     {
-        Tile emptyTile = getRandomEmptyTile();
+        Tile emptyTile = getRandomEmptyFloorTile();
         if (emptyTile == null)
         {
             Gdx.app.log("Creating player", "No empty tile found - Aborting");
@@ -193,7 +133,7 @@ public class DungeonMap extends BSPMapNode
     {
         for (Trap trap : traps)
         {
-            Tile emptyTile = getRandomEmptyTile();
+            Tile emptyTile = getRandomEmptyFloorTile();
             if (emptyTile == null)
             {
                 Gdx.app.log("Creating monsters", "No empty tile could be found - Aborting");
@@ -209,40 +149,37 @@ public class DungeonMap extends BSPMapNode
 
     public void createStairs()
     {
-        Tile stairTile = getRandomEmptyTile();
+        Tile stairTile = getRandomEmptyFloorTile();
         stairTile.setType(Tile.Types.StairCase);
         stairTile.setTextureRegion(AssetManager.getTileSetPosition("stairs"));
     }
 
-    public Tile getRandomEmptyTile()
+
+    public Tile getRandomEmptyFloorTile()
     {
-        return getRandomEmptyTile(this);
+        Tile randomTile;
+        do
+        {
+            randomTile = _tiles[RandomGen.getRandomInt(0,_tileWidth-1)][RandomGen.getRandomInt(0,_tileHeight-1)];
+
+        }while(randomTile == null || !randomTile.isWalkable()  || !randomTile.isEmpty());
+
+
+        return randomTile;
     }
 
-    private Tile getRandomEmptyTile(BSPMapNode parent)
+    public void draw(SpriteBatch spriteBatch)
     {
-        if (parent.isLeaf())
+        for(int x = 0;x<_tileWidth;x++)
         {
-            int randX = RandomGen.getRandomInt(parent.getRoom().getX() + 1, parent.getRoom().getRightSide() - 1);
-            int randY = RandomGen.getRandomInt(parent.getRoom().getY() + 1, parent.getRoom().getBottomSide() - 1);
-            Tile randomTile = parent.getRoom().getTile(randX, randY);
-            //Might become a problem - Might not be any empty tiles here
-            while (!randomTile.isEmpty()  || randomTile.containsItem() || randomTile.getTrap() != null ||
-                    randomTile.getType() == Tile.Types.StairCase)
+            for(int y = 0;y<_tileHeight;y++)
             {
-                randX = RandomGen.getRandomInt(parent.getRoom().getX() + 1, parent.getRoom().getRightSide() - 1);
-                randY = RandomGen.getRandomInt(parent.getRoom().getY() + 1, parent.getRoom().getBottomSide() - 1);
-                randomTile = parent.getRoom().getTile(randX, randY);
+                if(_tiles[x][y] != null)
+                {
+                    _tiles[x][y].draw(spriteBatch);
+                }
             }
-            return randomTile;
-        }
-        if (RandomGen.getRandomInt(0, 1) == 1)
-        {
-            return getRandomEmptyTile(parent.getLeftNode());
-        }
-        else
-        {
-            return getRandomEmptyTile(parent.getRightNode());
         }
     }
+
 }

@@ -23,6 +23,7 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
     private ShapeRenderer renderer;
     private OrthographicCamera guiCamera;
     private Button mainMenuButton;
+    private Button clearScoresButton;
 
     @Override
     public boolean tap(float x, float y, int i, int i2)
@@ -30,6 +31,10 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
         if (mainMenuButton.isTouched(x, y))
         {
             TheBrimstoneTowerGame.getGameInstance().setScreen(new MenuScreen());
+        }
+        if(clearScoresButton.isTouched(x,y))
+        {
+            HighScoreIO.clearScores();
         }
         return true;
     }
@@ -40,7 +45,8 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
         batch = new SpriteBatch();
         int bW = Gdx.graphics.getWidth() / 4;
         int bH = Gdx.graphics.getHeight() / 8;
-        mainMenuButton = new Button((int)(Gdx.graphics.getWidth() / 2 - (bW / 2)), (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Main Menu", Color.BLUE);
+        mainMenuButton = new Button((Gdx.graphics.getWidth() / 2) -(bW*3/2), (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Main Menu", Color.BLUE);
+        clearScoresButton = new Button((Gdx.graphics.getWidth() / 2)+bW/2 , (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Clear Scores", Color.GRAY);
         renderer = new ShapeRenderer();
         guiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         guiCamera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -73,6 +79,7 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
         batch.end();
         renderer.setProjectionMatrix(guiCamera.combined);
         mainMenuButton.draw(batch, renderer);
+        clearScoresButton.draw(batch,renderer);
         if (Gdx.input.isKeyPressed(Input.Keys.BACK) || Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
         {
             TheBrimstoneTowerGame.getGameInstance().setScreen(new MenuScreen());

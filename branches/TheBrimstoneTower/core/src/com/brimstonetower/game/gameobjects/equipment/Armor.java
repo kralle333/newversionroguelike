@@ -44,7 +44,7 @@ public class Armor extends Item
         _bonusDef = bonusDef;
         if (!_isIdentified)
         {
-            _stepsTillIdentified = _defense * RandomGen.getRandomInt(30, 100);
+            _stepsTillIdentified = _defense * RandomGen.getRandomInt(50, 200);
             if (_bonusDef > 0)
             {
                 _stepsTillIdentified *= _bonusDef;
