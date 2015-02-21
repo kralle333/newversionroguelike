@@ -441,7 +441,7 @@ public class ItemManager
             }
         }
 
-        _potionPrototypes.add(createPotion(Effect.createPermanentEffect("Healing", "You feel refreshed", 10, 0, 0, 0, 0, 0, 0, 0, false, null),availablePotionTypes));
+        _potionPrototypes.add(createPotion(Effect.createPermanentEffect("Healing", "You feel refreshed", 20, 0, 0, 0, 0, 0, 0, 0, false, null),availablePotionTypes));
         _potionPrototypes.add(createPotion(Effect.createPermanentEffect("Death", "Haunting cries rip your soul apart", -5, 0, 0, 0, 0, 0, 0, 0, true, Color.DARK_GRAY),availablePotionTypes));
         _potionPrototypes.add(createPotion(Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down", "Time feels normal again", 0, 0, 0, 0, 0,10, 0, 5, false, null),availablePotionTypes));
         _potionPrototypes.add(createPotion(Effect.createTemporaryEffect("Blindness", "Your sight is blocked by gray blobs moving on your eyes", "The gray blobs fall from your eyes", 0, 0, 0, 0, 0, -5, -5, 5, false, null),availablePotionTypes));

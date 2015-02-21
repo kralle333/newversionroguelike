@@ -26,7 +26,7 @@ public class DungeonGenerator
 
         //Add chests
         ArrayList<Chest> chests = new ArrayList<Chest>();
-        int numberOfItems = 5;
+        int numberOfItems = RandomGen.getRandomInt(width/20,width/10);
         for (int i = 0; i < numberOfItems; i++)
         {
             chests.add(generateChest(depth));
