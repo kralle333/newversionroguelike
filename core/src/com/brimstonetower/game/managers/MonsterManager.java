@@ -17,7 +17,7 @@ public class MonsterManager
 {
     private static ArrayList<MonsterPrototype> monsterPrototypes = new ArrayList<MonsterPrototype>();
     private static int numberOfPrototypes;
-    private static int[] maxMonsters = new int[]{6, 8, 8, 8, 8, 8};
+    private static int[] maxMonsters = new int[]{6, 10, 10, 8, 8, 8};
 
     private static class MonsterPrototype
     {
