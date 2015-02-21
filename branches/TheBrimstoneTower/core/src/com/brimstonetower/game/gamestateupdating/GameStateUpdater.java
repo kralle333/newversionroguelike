@@ -416,7 +416,10 @@ public class GameStateUpdater
         if (thrownObject instanceof Potion)//Use the potion on the tile
         {
             usePotion((Potion) thrownObject, targetTile.getCharacter(), targetTile);
-            GameConsole.addMessage(targetTile.getCharacter().getName() + " was hit by " + thrownObject.getName());
+            if(targetTile.getCharacter()!=null)
+            {
+                GameConsole.addMessage(targetTile.getCharacter().getName() + " was hit by " + thrownObject.getName());
+            }
         }
         else if (!targetTile.isEmpty() && thrownObject instanceof Weapon)
         {

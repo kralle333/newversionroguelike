@@ -23,6 +23,7 @@ public class Chest extends GameCharacter
     {
         _droppedItems.add(item);
     }
+    @Override
     public void reveal()
     {
         _wasSeen = true;

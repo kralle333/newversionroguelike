@@ -7,7 +7,6 @@ import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.mapgeneration.BSPMapNode;
-import com.brimstonetower.game.map.mapgeneration.Corridor;
 
 import java.util.ArrayList;
 
@@ -61,7 +60,11 @@ public class DungeonMap
             {
                 if(_tiles[x][y]!=null && _tiles[x][y].getLightAmount() == Tile.LightAmount.Non)
                 {
-                    _tiles[x][y].changeLight(Tile.LightAmount.Shadow);
+                    _tiles[x][y].changeLight(Tile.LightAmount.DarkShadow);
+                    if(!_tiles[x][y].isEmpty())
+                    {
+                        _tiles[x][y].getCharacter().reveal();
+                    }
                 }
             }
         }

@@ -207,7 +207,7 @@ public class ItemManager
 
         region=AssetManager.getTextureRegion("weapons","steelAxe", DungeonMap.TileSize,DungeonMap.TileSize);
         newWeapon=new Weapon("Steel Great Axe", "A 2-handed great axe made of steel, slow to use but powerful",
-                false, region, 1, 10, 0, 1,1,15, Weapon.RangeType.Melee);
+                false, region, 1, 8, 0, 1,1,15, Weapon.RangeType.Melee);
         _weaponPrototypes.add(newWeapon);
         _weaponSpawnProbabilities.put(newWeapon,new ArrayList<Vector2>());
         _weaponSpawnProbabilities.get(newWeapon).add(new Vector2(1,1));

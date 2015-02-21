@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public class MapGenerator
 {
-    public static final int minWidth = 8;
-    public static final int minHeight = 8;
+    public static final int minWidth = 7;
+    public static final int minHeight = 7;
     private static BSPMapNode rootNode;
 
     public static BSPMapNode generateMap(int width, int height)

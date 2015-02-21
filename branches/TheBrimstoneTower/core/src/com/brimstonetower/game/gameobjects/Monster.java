@@ -57,6 +57,7 @@ public class Monster extends GameCharacter
         _droppedItems.add(item);
     }
 
+    @Override
     public void reveal()
     {
         _wasSeen = true;
@@ -107,7 +108,7 @@ public class Monster extends GameCharacter
     {
         float bestDistance = Float.MAX_VALUE;
         Tile nextTile = currentTile;
-        float currentDistance = currentTile.distanceTo(player.getCurrentTile());
+        int currentDistance = (int)currentTile.distanceTo(player.getCurrentTile());
 
         boolean moveCloser = true;
 
@@ -126,7 +127,7 @@ public class Monster extends GameCharacter
             {
                 if (tile.getTrap() == null && tile.isEmpty())
                 {
-                    currentDistance = tile.distanceTo(player.getCurrentTile());
+                    currentDistance = (int)tile.distanceTo(player.getCurrentTile());
                     if (moveCloser && currentDistance < bestDistance)
                     {
                         bestDistance = currentDistance;

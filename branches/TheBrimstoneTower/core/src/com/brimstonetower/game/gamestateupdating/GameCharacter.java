@@ -208,6 +208,10 @@ public class GameCharacter
         return false;
     }
 
+    public void reveal()
+    {
+
+    }
     public void setMovementActions(ArrayList<Tile> path)
     {
         int i = 0;
