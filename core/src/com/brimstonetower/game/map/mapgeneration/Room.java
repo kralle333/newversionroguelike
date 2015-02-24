@@ -3,6 +3,7 @@ package com.brimstonetower.game.map.mapgeneration;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.managers.AssetManager;
@@ -11,6 +12,7 @@ import com.brimstonetower.game.helpers.RandomGen;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 
 public class Room
 {
@@ -23,8 +25,8 @@ public class Room
         _corridors.add(corridor);
     }
 
-    public static final int minSubRoomWidth =4;
-    public static final int minSubRoomHeight = 4;
+    public static final int minSubRoomWidth =5;
+    public static final int minSubRoomHeight = 5;
 
     private HashSet<Integer> _usedWallsX = new HashSet<Integer>();
     private HashSet<Integer> _usedWallsY = new HashSet<Integer>();
@@ -126,7 +128,7 @@ public class Room
             }
         }
 
-        makeSubRooms(0,0,_width,_height);
+        makeSubRooms(0,0,_width,_height,_width/2,false);
 
         for (int x = 0; x < getWidth(); x++)
         {
@@ -140,7 +142,7 @@ public class Room
 
     }
 
-    private void makeSubRooms(int x,int y,int width, int height)
+    private void makeSubRooms(int x,int y,int width, int height, int previousSplit,boolean previousWasHor)
     {
         //Make some smaller rooms:
         int minSplitX = x + Room.minSubRoomWidth;
@@ -150,56 +152,89 @@ public class Room
 
         int split = 0;
         int door;
-        if(minSplitY<maxSplitY )//Horizontal
+        if(minSplitY<maxSplitY && !previousWasHor )//Horizontal
         {
             split = RandomGen.getRandomInt(minSplitY, maxSplitY-1);
-            door =RandomGen.getRandomInt(x+1,x+width-2);
-            TileSetCoordinate usedRegion;
+            door =RandomGen.getRandomInt(0,1)==0?RandomGen.getRandomInt(x+1,previousSplit-1): RandomGen.getRandomInt(previousSplit+1,x+width-2);
+
             for(int wX = 1;wX<width-1;wX++)
             {
-                if(_tiles[wX+x][split].getType()== Tile.Types.SubWall)
+                if(x+wX==door-1)
                 {
-                    _tiles[wX+x][split].setTextureRegion(AssetManager.getTileSetPosition("centerWall"));
-                    continue;
+                    _tiles[wX+x][split].setType(Tile.Types.SubWall);
+                    _tiles[wX+x][split].setTextureRegion(AssetManager.getTileSetPosition("nRoomWall"));
                 }
-                else if(wX==door-1){usedRegion = AssetManager.getTileSetPosition("horizontalWallEast");}
-                else if(wX==door+1){usedRegion = AssetManager.getTileSetPosition("horizontalWallWest");}
-                else if(wX==door){usedRegion = AssetManager.getTileSetPosition("floor-shiny-1");}
-                else{usedRegion = AssetManager.getTileSetPosition("horizontalWall");}
-
-                _tiles[wX+x][split] = new Tile(Tile.Types.SubWall, wX+_x, split+ _y,usedRegion);
+                else if(x+wX==door+1)
+                {
+                    _tiles[wX+x][split].setTextureRegion(AssetManager.getTileSetPosition("nRoomWall"));
+                    _tiles[wX+x][split].setType(Tile.Types.SubWall);
+                }
+                else if(x+wX==door)
+                {
+                    _tiles[door][split].setTextureRegion( AssetManager.getTileSetPosition("floor-shiny-1"));
+                    _tiles[door][split].placeDoor(AssetManager.getTileSetPosition("nDoor-1"));
+                    _tiles[door][split].setType(Tile.Types.Door);
+                }
+                else
+                {
+                    _tiles[wX+x][split].setTextureRegion(AssetManager.getTileSetPosition("nRoomWall"));
+                    _tiles[wX+x][split].setType(Tile.Types.SubWall);
+                }
             }
 
-            _tiles[door][split].setTextureRegion(AssetManager.getTileSetPosition("floor-shiny-1"));
-            _tiles[door][split].placeDoor(AssetManager.getTileSetPosition("nDoor-1"));
-            _tiles[door][split].setType(Tile.Types.Door);
-            makeSubRooms(x, y, width, split - y+1);
-            //makeSubRooms(x, split, width, height - (split - y) );
+            makeSubRooms(x, y, width, split - y+1,split,true);
+            makeSubRooms(x, split, width, height- (split - y),split,true);
             _usedWallsY.add(split);
         }
-        else if(minSplitX<maxSplitX)//Vertical
+        else if(minSplitX<maxSplitX&& previousWasHor)//Vertical
         {
             split = RandomGen.getRandomInt(minSplitX, maxSplitX-1);
-            door =RandomGen.getRandomInt(y+1,y+height-2);
+            door =RandomGen.getRandomInt(0,1)==0?RandomGen.getRandomInt(y+1,previousSplit-1): RandomGen.getRandomInt(previousSplit+1,y+height-2);
             TileSetCoordinate usedRegion;
+
+            //Make the wall
             for(int wY = 1;wY<height-1;wY++)
             {
-                if(_tiles[split][y+wY].getType()== Tile.Types.Wall)
+                if(y+wY==door-1)
                 {
-                    _tiles[split][y+wY].setTextureRegion(AssetManager.getTileSetPosition("centerWall"));
-                    continue;
+                    _tiles[split][y+wY].setType(Tile.Types.SubWall);
+                    _tiles[split][y+wY].setTextureRegion(AssetManager.getTileSetPosition("verticalWallBottom"));
                 }
-                else if(wY==door-1){usedRegion = AssetManager.getTileSetPosition("verticalWallBottom");}
-                else if(wY==door+1){usedRegion = AssetManager.getTileSetPosition("verticalWallTop");}
-                else if(wY==door){usedRegion = AssetManager.getTileSetPosition("floor-shiny-1");}
-                else{usedRegion = AssetManager.getTileSetPosition("verticalWall");}
-                _tiles[split][y+wY] = new Tile(Tile.Types.SubWall, split+_x, wY+ _y, usedRegion);
+                else if(y+wY==door+1)
+                {
+                    _tiles[split][y+wY].setType(Tile.Types.SubWall);
+                    _tiles[split][y+wY].setTextureRegion(AssetManager.getTileSetPosition("verticalWallTop"));
+                }
+                else if(y+wY==door)
+                {
+                    //Place a door in the wall
+                    _tiles[split][door].placeDoor(AssetManager.getTileSetPosition("wDoor"));
+                    _tiles[split][door].setType(Tile.Types.Door);
+                    _tiles[split][door].setTextureRegion(AssetManager.getTileSetPosition("floor-shiny-1"));
+                }
+                else
+                {
+                    _tiles[split][y+wY].setType(Tile.Types.SubWall);
+                    _tiles[split][y+wY].setTextureRegion(AssetManager.getTileSetPosition("verticalWall"));
+                }
             }
-            _tiles[split][door].placeDoor(AssetManager.getTileSetPosition("wDoor"));
-            _tiles[split][door].setType(Tile.Types.Door);
-            _tiles[split][y] = new Tile(Tile.Types.SubWall, split+_x, _y, AssetManager.getTileSetPosition("verticalWallTop"));
-            makeSubRooms(x, y, split - x, height);
-            makeSubRooms(split, y, width - (split - x), height);
+
+
+
+            //Determine whether or not to put a top tile or a normal one, depends on if the wall intersects with another
+            if(_tiles[split][y].getType() != Tile.Types.SubWall)
+            {
+                _tiles[split][y].setType(Tile.Types.SubWall);
+                _tiles[split][y].setTextureRegion(AssetManager.getTileSetPosition("verticalWallTop"));
+            }
+            else
+            {
+                _tiles[split][y].setTextureRegion(AssetManager.getTileSetPosition("verticalWall"));
+            }
+
+            //Recursively make smaller subrooms
+            makeSubRooms(x, y, split - x+1, height,split,false);
+            makeSubRooms(split, y, width - (split - x), height,split,false);
             _usedWallsX.add(split);
         }
         else return;
@@ -250,31 +285,36 @@ public class Room
     public Tile getRandomEmptyWall(WallSide side)
     {
         Tile returnedTile = null;
+        int randomTile=0;
         switch (side)
         {
             case West:
                 do
                 {
-                    returnedTile = _tiles[0][RandomGen.getRandomInt(1, _height - 2)];
-                } while (returnedTile.getType() != Tile.Types.Wall);
+                    randomTile = RandomGen.getRandomInt(1, _height - 2);
+                    returnedTile = _tiles[0][randomTile];
+                } while (returnedTile.getType() != Tile.Types.Wall && _usedWallsY.contains(randomTile));
                 break;
             case East:
                 do
                 {
-                    returnedTile = _tiles[_width - 1][RandomGen.getRandomInt(1, _height - 2)];
-                } while (returnedTile.getType() != Tile.Types.Wall);
+                    randomTile=RandomGen.getRandomInt(1, _height - 2);
+                    returnedTile = _tiles[_width - 1][randomTile];
+                } while (returnedTile.getType() != Tile.Types.Wall&& _usedWallsY.contains(randomTile));
                 break;
             case South:
                 do
                 {
-                    returnedTile = _tiles[RandomGen.getRandomInt(1, _width - 2)][_height - 1];
-                } while (returnedTile.getType() != Tile.Types.Wall);
+                    randomTile=RandomGen.getRandomInt(1, _width - 2);
+                    returnedTile = _tiles[randomTile][_height - 1];
+                } while (returnedTile.getType() != Tile.Types.Wall&& _usedWallsX.contains(randomTile));
                 break;
             case North:
                 do
                 {
-                    returnedTile = _tiles[RandomGen.getRandomInt(1, _width - 2)][0];
-                } while (returnedTile.getType() != Tile.Types.Wall);
+                    randomTile=RandomGen.getRandomInt(1, _width - 2);
+                    returnedTile = _tiles[randomTile][0];
+                } while (returnedTile.getType() != Tile.Types.Wall&& _usedWallsX.contains(randomTile));
                 break;
         }
         return returnedTile;
@@ -283,26 +323,28 @@ public class Room
 
     public void createDoorAndConnect(Tile doorTile, Tile corridorTile, WallSide orientation)
     {
+
         switch (orientation)
         {
             case West:
                 doorTile.setTextureRegion(AssetManager.getTileSetPosition("nCorridor"));
-                doorTile.placeDoor(AssetManager.getTileSetPosition("wDoor"));
+                //doorTile.placeDoor(AssetManager.getTileSetPosition("wDoor"));
                 break;
             case East:
                 doorTile.setTextureRegion(AssetManager.getTileSetPosition("nCorridor"));
-                doorTile.placeDoor(AssetManager.getTileSetPosition("eDoor"));
+                //doorTile.placeDoor(AssetManager.getTileSetPosition("eDoor"));
                 break;
             case North:
                 doorTile.setTextureRegion(AssetManager.getTileSetPosition("eCorridor"));
-                doorTile.placeDoor(RandomGen.getRandomInt(0, 1) == 1 ?
-                        AssetManager.getTileSetPosition("nDoor-1") : AssetManager.getTileSetPosition("nDoor-2"));
+                //doorTile.placeDoor(RandomGen.getRandomInt(0, 1) == 1 ?
+                //AssetManager.getTileSetPosition("nDoor-1") : AssetManager.getTileSetPosition("nDoor-2"));
                 break;
             case South:
                 doorTile.setTextureRegion(AssetManager.getTileSetPosition("wCorridor"));
-                doorTile.placeDoor(AssetManager.getTileSetPosition("sDoor"));
+                //doorTile.placeDoor(AssetManager.getTileSetPosition("sDoor"));
                 break;
         }
+        //doorTile.setType(Tile.Types.Door);
 
         //Get local coordinates
         int doorX = (int) doorTile.getTileX() - _x;
@@ -365,7 +407,6 @@ public class Room
 
         doorTile.addWalkableNeighbour(corridorTile);
         corridorTile.addWalkableNeighbour(doorTile);
-        doorTile.setType(Tile.Types.Door);
         _doors.add(doorTile);
 
     }
