@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.RandomGen;
-import com.brimstonetower.game.map.Room;
 import com.brimstonetower.game.map.Tile;
 
 import java.util.ArrayList;
@@ -180,13 +179,13 @@ public class BSPMapNode
         int minSplitY = _y + MapGenerator.minHeight;
         int maxSplitY = _y + _height - MapGenerator.minHeight;
 
-        if (minSplitX >= maxSplitX)
-        {
-            doVerticalSplit = false;
-        }
-        else if (minSplitY >= maxSplitY)
+        if (minSplitX < maxSplitX)
         {
             doVerticalSplit = true;
+        }
+        else if (minSplitY < maxSplitY)
+        {
+            doVerticalSplit = false;
         }
         else
         {

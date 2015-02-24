@@ -74,8 +74,7 @@ public class AssetManager
         //Floor tiles
         tileSetCoordinateMap.put("floor-shiny-1", new TileSetCoordinate(3, 3));
         tileSetCoordinateMap.put("floor-shiny-2", new TileSetCoordinate(4, 3));
-        tileSetCoordinateMap.put("floor-dungeon-1", new TileSetCoordinate(5, 3));
-        tileSetCoordinateMap.put("floor-dungeon-2", new TileSetCoordinate(6, 3));
+
 
         //Corridors - n=north,w=west,s=south,e=east
         tileSetCoordinateMap.put("nwCorridor", new TileSetCoordinate(0, 0));
@@ -98,6 +97,15 @@ public class AssetManager
         tileSetCoordinateMap.put("swWall", new TileSetCoordinate(3, 2));
         tileSetCoordinateMap.put("sWall", new TileSetCoordinate(6, 2));
         tileSetCoordinateMap.put("seWall", new TileSetCoordinate(7, 2));
+
+        tileSetCoordinateMap.put("verticalWallTop", new TileSetCoordinate(6, 3));
+        tileSetCoordinateMap.put("verticalWall", new TileSetCoordinate(5, 3));
+        tileSetCoordinateMap.put("verticalWallBottom",new TileSetCoordinate(6,5));
+        tileSetCoordinateMap.put("horizontalWallEast", new TileSetCoordinate(7, 4));
+        tileSetCoordinateMap.put("horizontalWall", new TileSetCoordinate(5, 5));
+        tileSetCoordinateMap.put("horizontalWallWest", new TileSetCoordinate(5, 4));
+        tileSetCoordinateMap.put("centerWall", new TileSetCoordinate(6, 4));
+
 
         //Doors - n=north,w=west,s=south,e=east
         tileSetCoordinateMap.put("nDoor-1", new TileSetCoordinate(0, 3));
