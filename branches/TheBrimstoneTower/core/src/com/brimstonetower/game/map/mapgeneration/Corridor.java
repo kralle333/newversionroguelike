@@ -3,7 +3,6 @@ package com.brimstonetower.game.map.mapgeneration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.map.Room;
 import com.brimstonetower.game.map.Tile;
 
 import java.util.ArrayList;

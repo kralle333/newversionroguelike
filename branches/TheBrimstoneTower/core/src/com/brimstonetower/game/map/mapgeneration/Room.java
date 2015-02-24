@@ -1,14 +1,16 @@
-package com.brimstonetower.game.map;
+package com.brimstonetower.game.map.mapgeneration;
 
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.map.mapgeneration.Corridor;
+import com.brimstonetower.game.map.Tile;
 import com.brimstonetower.game.helpers.RandomGen;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Room
 {
@@ -21,29 +23,31 @@ public class Room
         _corridors.add(corridor);
     }
 
-    private int _x;
+    public static final int minSubRoomWidth =4;
+    public static final int minSubRoomHeight = 4;
 
+    private HashSet<Integer> _usedWallsX = new HashSet<Integer>();
+    private HashSet<Integer> _usedWallsY = new HashSet<Integer>();
+
+    private int _x;
     public int getX()
     {
         return _x;
     }
 
     private int _y;
-
     public int getY()
     {
         return _y;
     }
 
     private int _width;
-
     public int getWidth()
     {
         return _width;
     }
 
     private int _height;
-
     public int getHeight()
     {
         return _height;
@@ -53,7 +57,6 @@ public class Room
     {
         return _x + _width - 1;
     }
-
     public int getBottomSide()
     {
         return _y + _height - 1;
@@ -64,7 +67,6 @@ public class Room
     {
         return getRightSide() < otherRoom.getX();
     }
-
     public boolean isAboveOf(Room otherRoom)
     {
         return getBottomSide() < otherRoom.getY();
@@ -80,33 +82,6 @@ public class Room
         _tiles = new Tile[_width][_height];
     }
 
-
-    public Tile getRandomTile()
-    {
-        Tile randomTile = _tiles[RandomGen.getRandomInt(1, _width - 2)][RandomGen.getRandomInt(1, _height - 2)];
-        return randomTile;
-    }
-
-
-    private void setLightingOnTiles(Tile.LightAmount light)
-    {
-        _lighting = light;
-        for (int x = 0; x < _width; x++)
-        {
-            for (int y = 0; y < _height; y++)
-            {
-                _tiles[x][y].changeLight(_lighting);
-            }
-        }
-    }
-
-    public void reveal()
-    {
-        if (_lighting == Tile.LightAmount.Non)
-        {
-            setLightingOnTiles(Tile.LightAmount.Shadow);
-        }
-    }
 
     public void setWallsAndFloor()
     {
@@ -150,6 +125,9 @@ public class Room
                     _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, AssetManager.getTileSetPosition("floor-"+floorType+"-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
             }
         }
+
+        makeSubRooms(0,0,_width,_height);
+
         for (int x = 0; x < getWidth(); x++)
         {
             for (int y = 0; y < getHeight(); y++)
@@ -157,7 +135,79 @@ public class Room
                 setNeighbours(_tiles[x][y]);
             }
         }
+
+
+
     }
+
+    private void makeSubRooms(int x,int y,int width, int height)
+    {
+        //Make some smaller rooms:
+        int minSplitX = x + Room.minSubRoomWidth;
+        int maxSplitX = x + width - Room.minSubRoomWidth;
+        int minSplitY = y + Room.minSubRoomHeight;
+        int maxSplitY = y + height - Room.minSubRoomHeight;
+
+        int split = 0;
+        int door;
+        if(minSplitY<maxSplitY )//Horizontal
+        {
+            split = RandomGen.getRandomInt(minSplitY, maxSplitY-1);
+            door =RandomGen.getRandomInt(x+1,x+width-2);
+            TileSetCoordinate usedRegion;
+            for(int wX = 1;wX<width-1;wX++)
+            {
+                if(_tiles[wX+x][split].getType()== Tile.Types.SubWall)
+                {
+                    _tiles[wX+x][split].setTextureRegion(AssetManager.getTileSetPosition("centerWall"));
+                    continue;
+                }
+                else if(wX==door-1){usedRegion = AssetManager.getTileSetPosition("horizontalWallEast");}
+                else if(wX==door+1){usedRegion = AssetManager.getTileSetPosition("horizontalWallWest");}
+                else if(wX==door){usedRegion = AssetManager.getTileSetPosition("floor-shiny-1");}
+                else{usedRegion = AssetManager.getTileSetPosition("horizontalWall");}
+
+                _tiles[wX+x][split] = new Tile(Tile.Types.SubWall, wX+_x, split+ _y,usedRegion);
+            }
+
+            _tiles[door][split].setTextureRegion(AssetManager.getTileSetPosition("floor-shiny-1"));
+            _tiles[door][split].placeDoor(AssetManager.getTileSetPosition("nDoor-1"));
+            _tiles[door][split].setType(Tile.Types.Door);
+            makeSubRooms(x, y, width, split - y+1);
+            //makeSubRooms(x, split, width, height - (split - y) );
+            _usedWallsY.add(split);
+        }
+        else if(minSplitX<maxSplitX)//Vertical
+        {
+            split = RandomGen.getRandomInt(minSplitX, maxSplitX-1);
+            door =RandomGen.getRandomInt(y+1,y+height-2);
+            TileSetCoordinate usedRegion;
+            for(int wY = 1;wY<height-1;wY++)
+            {
+                if(_tiles[split][y+wY].getType()== Tile.Types.Wall)
+                {
+                    _tiles[split][y+wY].setTextureRegion(AssetManager.getTileSetPosition("centerWall"));
+                    continue;
+                }
+                else if(wY==door-1){usedRegion = AssetManager.getTileSetPosition("verticalWallBottom");}
+                else if(wY==door+1){usedRegion = AssetManager.getTileSetPosition("verticalWallTop");}
+                else if(wY==door){usedRegion = AssetManager.getTileSetPosition("floor-shiny-1");}
+                else{usedRegion = AssetManager.getTileSetPosition("verticalWall");}
+                _tiles[split][y+wY] = new Tile(Tile.Types.SubWall, split+_x, wY+ _y, usedRegion);
+            }
+            _tiles[split][door].placeDoor(AssetManager.getTileSetPosition("wDoor"));
+            _tiles[split][door].setType(Tile.Types.Door);
+            _tiles[split][y] = new Tile(Tile.Types.SubWall, split+_x, _y, AssetManager.getTileSetPosition("verticalWallTop"));
+            makeSubRooms(x, y, split - x, height);
+            makeSubRooms(split, y, width - (split - x), height);
+            _usedWallsX.add(split);
+        }
+        else return;
+
+
+
+    }
+
 
     private Vector2[] directions = new Vector2[]{new Vector2(-1, 0), new Vector2(0, -1),
             new Vector2(1, 0), new Vector2(0, 1),
@@ -166,8 +216,8 @@ public class Room
 
     private void setNeighbours(Tile tile)
     {
-        int x = (int) tile.getTileX() - _x;
-        int y = (int) tile.getTileY() - _y;
+        int x = tile.getTileX() - _x;
+        int y = tile.getTileY() - _y;
 
         ArrayList<Tile> walkableNeighbours = new ArrayList<Tile>();
         ArrayList<Tile> nonWalkableNeighbours = new ArrayList<Tile>();
@@ -175,14 +225,18 @@ public class Room
         {
             int nX = x + (int) directions[d].x;
             int nY = y + (int) directions[d].y;
-            if (nX > 0 && nX < _width - 1 && nY > 0 && nY < _height - 1)
+            if(nX >= 0 && nX < _width && nY >= 0 && nY < _height)
             {
-                walkableNeighbours.add(_tiles[nX][nY]);
+                if (_tiles[nX][nY].isWalkable())
+                {
+                    walkableNeighbours.add(_tiles[nX][nY]);
+                }
+                else
+                {
+                    nonWalkableNeighbours.add(_tiles[nX][nY]);
+                }
             }
-            else if (nX >= 0 && nX < _width && nY >= 0 && nY < _height)
-            {
-                nonWalkableNeighbours.add(_tiles[nX][nY]);
-            }
+
         }
         tile.setNonWalkableNeighbours(nonWalkableNeighbours);
         tile.setWalkableNeighbours(walkableNeighbours);
@@ -316,19 +370,6 @@ public class Room
 
     }
 
-    public Tile getTile(int worldX, int worldY)
-    {
-        int localX = worldX - _x;
-        int localY = worldY - _y;
-        if (localX >= 0 && localY >= 0 && localX < _tiles.length && localY < _tiles[0].length)
-        {
-            return _tiles[localX][localY];
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     public void draw(SpriteBatch batch)
     {

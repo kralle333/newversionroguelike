@@ -24,9 +24,10 @@ public class Tile
     //Tile attributes
     public enum Types
     {
-        Wall, Floor, Door, StairCase, Empty
+        Wall,SubWall, Floor, Door, StairCase, Empty
     }
     public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door || _type == Types.StairCase;}
+
     public enum LightAmount
     {
         Non, Shadow,DarkShadow, Light
@@ -207,7 +208,7 @@ public class Tile
         changeLight(light);
         if (currentStrength > 0)
         {
-            if (_type != Types.Door || (_type == Types.Door && strength == currentStrength))
+            if ((_type != Types.Door && _type != Types.SubWall) || (_type == Types.Door && strength == currentStrength))
             {
                 {
                     for (Tile n : walkableNeighbours)
@@ -219,10 +220,7 @@ public class Tile
                     }
                     for (Tile n : nonWalkableNeighbours)
                     {
-                        if ((n.getTileX() == _x || n.getTileY() == _y))
-                        {
-                            n.setLight(light, strength, currentStrength - 1);
-                        }
+                        n.setLight(light, strength, 0);
                     }
                 }
             }
