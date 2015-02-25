@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.brimstonetower.game.gameobjects.BreakableObject;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.helpers.Effect;
@@ -234,6 +235,10 @@ public class GameCharacter
     public void setAttackAction(GameCharacter character)
     {
         nextAction.setAction(this, character, GameAction.Type.Attack, character.currentTile, null);
+    }
+    public void setDestroyAction(BreakableObject object)
+    {
+        nextAction.setAction(this, object, GameAction.Type.Destroy, object.getTile(), null);
     }
 
     public void clearQueueAndSetAction(GameAction action)

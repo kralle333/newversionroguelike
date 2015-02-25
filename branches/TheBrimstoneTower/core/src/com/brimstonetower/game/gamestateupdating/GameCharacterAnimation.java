@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.brimstonetower.game.gameobjects.BreakableObject;
 import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.helpers.RandomGen;
@@ -75,6 +76,9 @@ public class GameCharacterAnimation
     private GameCharacter attacker;
     private Vector2 attackedPosition = new Vector2();
 
+    //Destroy
+    private BreakableObject targetObject;
+
     //Keeping track of thrown items
     private Item _thrownItem;
     private Vector2 _thrownItemFromPosition;
@@ -87,8 +91,9 @@ public class GameCharacterAnimation
 
     public static boolean typeIsAnimated(GameAction.Type type)
     {
-        return type== GameAction.Type.Attack||
-                type== GameAction.Type.Move||
+        return type== GameAction.Type.Attack ||
+                type== GameAction.Type.Destroy ||
+                type== GameAction.Type.Move ||
                 type== GameAction.Type.Search ||
                 type == GameAction.Type.Throw;
     }
@@ -152,6 +157,17 @@ public class GameCharacterAnimation
 
 
         }
+        else if(gameAction.getType() == GameAction.Type.Destroy)
+        {
+            lungeTime = _playTime/3;
+            retractTime = _playTime*2/3;
+            attacker = gameAction.getOwner();
+            targetObject = gameAction.getTargetObject();
+            attackedPosition.x=(attacker.getWorldPosition().x+targetObject.getWorldPosition().x)/2;
+            attackedPosition.y=(attacker.getWorldPosition().y+targetObject.getWorldPosition().y)/2;
+            isLunging=true;
+            AssetManager.getSound("hit").play();
+        }
         else if(gameAction.getType() == GameAction.Type.Throw)
         {
             _thrownItem = gameAction.getTargetItem();
@@ -167,7 +183,7 @@ public class GameCharacterAnimation
             {
                 scaleOfSearchIcons.put(tile, RandomGen.getRandomFloat(0.45f, 0.5f));
             }
-            _searchIconRegion =AssetManager.getTextureRegion("misc","searchEye",DungeonMap.TileSize,DungeonMap.TileSize);
+            _searchIconRegion =AssetManager.getTextureRegion("misc", "searchEye", DungeonMap.TileSize, DungeonMap.TileSize);
             AssetManager.getSound("search").play();
         }
     }
@@ -180,11 +196,28 @@ public class GameCharacterAnimation
     final ArrayList<DamageIndicator> damageIndicatorsToRemove = new ArrayList<DamageIndicator>();
     public void drawAnimation(SpriteBatch batch)
     {
-
-
             switch(_gameActionToPlay.getType())
             {
                 case Attack:
+                    if(isLunging)
+                    {
+                        attacker.setPosition(
+                                moveTowards(attacker.getCurrentTile().getWorldPosition(),
+                                        attackedPosition,
+                                        (_timer - lungeTime) / retractTime));
+                        if(_timer >= lungeTime)
+                        {
+                            isLunging = false;
+                        }
+                    }
+                    else
+                    {
+                        attacker.setPosition(
+                                moveTowards(attackedPosition,
+                                        attacker.getCurrentTile().getWorldPosition(), (_timer - lungeTime) / retractTime));
+                    }
+                    break;
+                case Destroy:
                     if(isLunging)
                     {
                         attacker.setPosition(

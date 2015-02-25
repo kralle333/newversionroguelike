@@ -28,7 +28,6 @@ import com.brimstonetower.game.gui.*;
 import com.brimstonetower.game.helpers.*;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class PlayScreen implements Screen, GestureDetector.GestureListener, InputProcessor
 {
@@ -319,7 +318,9 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             _gameStateUpdater.updateGameState();
         }
 
-        if(_previousPlayerPosition!=_player.getWorldPosition() && _gameStateUpdater.getCurrentAnimation().getType() != GameAction.Type.Attack)
+        if(_previousPlayerPosition!=_player.getWorldPosition() &&
+                (_gameStateUpdater.getCurrentAnimation().getType() != GameAction.Type.Attack &&
+                _gameStateUpdater.getCurrentAnimation().getType() != GameAction.Type.Destroy))
         {
             _previousPlayerPosition = _player.getWorldPosition();
             mainCamera.position.x=_player.getWorldPosition().x+(DungeonMap.TileSize/2);
@@ -398,6 +399,10 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                     _player.setAttackAction(newTile.getCharacter());
                 }
 
+            }
+            else if(newTile.getObject() != null)
+            {
+                _player.setDestroyAction(newTile.getObject());
             }
             else
             {
@@ -540,6 +545,10 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                     {
                         _player.setThrowAction(_player.getEquippedWeapon(),touchedTile);
                     }
+                }
+                else if(touchedTile.getObject() != null&&touchedTile.isAdjacent(_player.getCurrentTile()))
+                {
+                    _player.setDestroyAction(touchedTile.getObject());
                 }
                 else
                 {
