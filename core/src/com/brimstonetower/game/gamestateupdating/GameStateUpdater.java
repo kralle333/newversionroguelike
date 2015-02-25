@@ -242,6 +242,12 @@ public class GameStateUpdater
             case Attack:
                 executeAttack(action);
                 break;
+            case Destroy:
+                action.getOwner().setPosition(action.getOwner().getCurrentTile().getWorldPosition());
+                action.getTargetObject().destroy();
+                GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow,  GameStateUpdater.player.getLanternStrength() * 2, GameStateUpdater.player.getCurrentTile());
+                GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(),  GameStateUpdater.player.getCurrentTile());
+                break;
             case Equip:
                 Item equipment = action.getTargetItem();
                 inventory.equip(equipment);
@@ -500,7 +506,7 @@ public class GameStateUpdater
         }
         else if (target != null)
         {
-            if (tile == null)
+            if (target==player)
             {
                 AssetManager.getSound("effect").play();
                 GameConsole.addMessage(target.getName() + " drank the " +potionColor+ " potion");

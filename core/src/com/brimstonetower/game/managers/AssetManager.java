@@ -28,20 +28,23 @@ public class AssetManager
             initializeTileSetCoordinateMap();
             initializeFonts();
 
-            _soundEffects.put("hit",Gdx.audio.newSound(Gdx.files.internal("sounds/hit.wav")));
-            _soundEffects.put("miss",Gdx.audio.newSound(Gdx.files.internal("sounds/miss.wav")));
-            _soundEffects.put("critical",Gdx.audio.newSound(Gdx.files.internal("sounds/critical.wav")));
-            _soundEffects.put("block",Gdx.audio.newSound(Gdx.files.internal("sounds/block.wav")));
-            _soundEffects.put("pickup", Gdx.audio.newSound(Gdx.files.internal("sounds/pickup.wav")));
-            _soundEffects.put("effect",Gdx.audio.newSound(Gdx.files.internal("sounds/effect.wav")));
-            _soundEffects.put("throw",Gdx.audio.newSound(Gdx.files.internal("sounds/throw.wav")));
-            _soundEffects.put("gas",Gdx.audio.newSound(Gdx.files.internal("sounds/gas.wav")));
-            _soundEffects.put("search",Gdx.audio.newSound(Gdx.files.internal("sounds/search.wav")));
-            _soundEffects.put("surprise",Gdx.audio.newSound(Gdx.files.internal("sounds/surprise.wav")));
-            _soundEffects.put("levelup",Gdx.audio.newSound(Gdx.files.internal("sounds/levelup.wav")));
+            loadSound("hit");
+            loadSound("miss");
+            loadSound("critical");
+            loadSound("block");
+            loadSound("pickup");
+            loadSound("effect");
+            loadSound("throw");
+            loadSound("gas");
+            loadSound("search");
+            loadSound("surprise");
+            loadSound("levelup");
         }
     }
-
+    private static void loadSound(String name)
+    {
+        _soundEffects.put(name,Gdx.audio.newSound(Gdx.files.internal("sounds/"+name+".wav")));
+    }
     private static void initializeTextures()
     {
         _guiAssets.put("levelUp",new Texture(Gdx.files.internal("art/levelUp.png")));

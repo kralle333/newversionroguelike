@@ -124,18 +124,29 @@ public class Tile
     public void removeCharacter()
     {
         _character = null;
-        if(_type==Types.Door)
-        {
-            _type = Types.Floor;
-        }
     }
     public GameCharacter getCharacter()
     {
         return _character;
     }
+
+    //Breakable Object
+    private BreakableObject _object;
+    public BreakableObject getObject(){return _object;}
+    public void setObject(BreakableObject object){_object=object;}
+    public void removeObject()
+    {
+        if(_type == Types.Door)
+        {
+            _type = Types.Floor;
+        }
+        _object=null;
+    }
+
+
     public boolean isEmpty()
     {
-        return _character == null;
+        return _character == null && _object==null;
     }
 
     private Trap _trap;
@@ -182,10 +193,11 @@ public class Tile
         _textureRegion = AssetManager.getTextureRegion("tile", tileTexture.x, tileTexture.y, DungeonMap.TileSize, DungeonMap.TileSize);
     }
 
-    public void placeDoor(TileSetCoordinate doorRegion)
+    public void placeDoor(String type)
     {
-        GameCharacter door = new GameCharacter("Locked door",0,0,1,AssetManager.getTextureRegion("tile",doorRegion,DungeonMap.TileSize,DungeonMap.TileSize));
+        Door door = new Door(type);
         door.placeOnTile(this);
+        _object=door;
     }
     public void setType(Types type)
     {
@@ -217,10 +229,10 @@ public class Tile
             switch(_lightToChangeTo)
             {
                 case Non: _lightChangeToColor= Color.BLACK;break;
-                case Shadow:_lightChangeToColor= Color.GRAY;break;
-                case DarkShadow:_lightChangeToColor= Color.DARK_GRAY;break;
+                case Shadow:_lightChangeToColor= Color.DARK_GRAY;break;
+                case DarkShadow:_lightChangeToColor= new Color(0.1f,0.1f,0.1f,1);break;
                 case Light:
-                    float gray = MathUtils.lerp(1, 0.5f, lightSource.distanceTo(this) / strength);
+                    float gray = MathUtils.lerp(1, 0.4f, lightSource.distanceTo(this) / strength);
                     _lightChangeToColor = new Color(gray, gray, gray, 1);
                     break;
             }
@@ -234,7 +246,14 @@ public class Tile
                     {
                         if ((n.getTileX() == _x || n.getTileY() == _y))
                         {
-                            n.setLight(light, strength, currentStrength - 1,lightSource);
+                            if(n.isEmpty())
+                            {
+                                n.setLight(light, strength, currentStrength - 1, lightSource);
+                            }
+                            else
+                            {
+                                n.setLight(light, strength, 0,lightSource);
+                            }
                         }
                     }
                     for (Tile n : nonWalkableNeighbours)
@@ -291,7 +310,7 @@ public class Tile
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
             if(_type == Types.Door)
             {
-                _character.draw(batch);
+                _object.draw(batch);
             }
             _lightTimer+=Gdx.graphics.getDeltaTime();
             if(_lightTimer>lightChangeTime)
@@ -307,7 +326,7 @@ public class Tile
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
             if(_type == Types.Door)
             {
-                _character.draw(batch);
+                _object.draw(batch);
             }
         }
 
@@ -365,17 +384,7 @@ public class Tile
         }
     }
 
-    private Color getColorFromLight(LightAmount lightAmount)
-    {
-        switch (lightAmount)
-        {
-            case Non:return Color.BLACK;
-            case Shadow:return Color.GRAY;
-            case DarkShadow:return Color.DARK_GRAY;
-            case Light:return Color.WHITE;
-        }
-        return Color.MAGENTA;
-    }
+
 
     public float distanceTo(Tile otherTile)
     {
