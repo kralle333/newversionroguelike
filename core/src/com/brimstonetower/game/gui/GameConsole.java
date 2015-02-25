@@ -27,22 +27,28 @@ public class GameConsole
 
     public static void setup(int x, int y, int width, int height)
     {
-        _position = new Vector2(x, y);
-        _font = AssetManager.getFont("description");
-        _frame = new Window(x, y, width,height, new Color(0.3f, 0.3f, 0.3f, 0.2f), 2, new Color(0.4f, 0.4f, 0.4f, 0.2f));
-        _frame.show();
         _textOffset=new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
+        _font = AssetManager.getFont("description");
         _fontHeight=_font.getBounds("Test console message").height;
         _linesToShow = (int)((height)/(_textOffset.y+(_fontHeight*1.5f)));
+
+        _position = new Vector2(x, Gdx.graphics.getHeight()-(_textOffset.y + (_fontHeight*1.5f* (_linesToShow))));
+        _frame = new Window(x, (int)_position.y, width,height, new Color(0.3f, 0.3f, 0.3f, 0.2f), 2, new Color(0.4f, 0.4f, 0.4f, 0.2f));
+        _frame.show();
+
     }
     public static void reposition(int x, int y, int width, int height)
     {
+        _textOffset.x = Gdx.graphics.getWidth()/128;
+        _textOffset.y = Gdx.graphics.getWidth()/128;
+        _fontHeight=_font.getBounds("Test console message").height;
+        _linesToShow = (int)((height)/(_textOffset.y+(_fontHeight*1.5f)));
+
         _position.x = x;
-        _position.y=y;
-        _frame.reposition(x,y,width,height);
-        _textOffset.x=Gdx.graphics.getWidth()/128;
-        _textOffset.y=Gdx.graphics.getWidth()/128;
-        _linesToShow = (int)((height)/((_textOffset.y*1.5f)+_font.getBounds("Test console message").height));
+        _position.y = Gdx.graphics.getHeight()-(_textOffset.y + (_fontHeight*1.5f* (_linesToShow)));
+        _frame.reposition(x, (int)_position.y, width,height);
+        _frame.show();
+
     }
 
     public static void reset()
@@ -53,13 +59,12 @@ public class GameConsole
     public static void addMessage(String message)
     {
         messages.add(message);
-        Gdx.app.log("Console",message);
     }
 
     public static void render(SpriteBatch batch, ShapeRenderer shapeRenderer)
     {
 
-        _frame.draw(batch, shapeRenderer);
+        //_frame.draw(batch, shapeRenderer);
         batch.begin();
         int startIndex = Math.max(messages.size() - _linesToShow, 0);
         for(int i = startIndex;i<Math.min(startIndex+_linesToShow,messages.size());i++)

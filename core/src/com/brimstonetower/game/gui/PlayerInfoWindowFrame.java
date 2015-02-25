@@ -70,7 +70,7 @@ public class PlayerInfoWindowFrame extends Window
         _font.draw(batch, "Name: " + player.getName(), namePos.x, namePos.y);
         _font.draw(batch, "Lvl: "+player.getLevel(),levelPos.x,levelPos.y);
         _font.draw(batch, "Hp: "+player.getHitpoints()+"/"+player.getMaxHitPoints(),hpPos.x, hpPos.y);
-        //_font.draw(batch, "Str: ", strPos.x,strPos.y);
+        //_font.drawAnimation(batch, "Str: ", strPos.x,strPos.y);
         _font.draw(batch, "Exp: "+player.getExperience()+"/"+player.getExperienceToNextLevel(),expPos.x, expPos.y);
         _font.draw(batch, "Floor: " + depth, Gdx.graphics.getWidth()/2, namePos.y);
     }

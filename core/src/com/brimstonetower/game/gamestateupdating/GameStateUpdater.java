@@ -244,7 +244,6 @@ public class GameStateUpdater
                 break;
             case Equip:
                 Item equipment = action.getTargetItem();
-                action.getOwner().equip(equipment);
                 inventory.equip(equipment);
                 break;
             case Unequip:
@@ -421,11 +420,11 @@ public class GameStateUpdater
                 GameConsole.addMessage(targetTile.getCharacter().getName() + " was hit by " + thrownObject.getName());
             }
         }
-        else if (!targetTile.isEmpty() && thrownObject instanceof Weapon)
+        else if (thrownObject instanceof Weapon)
         {
             Weapon thrownWeapon = (Weapon) thrownObject;
             int damage = 0;
-            if (thrownWeapon.getRangeType() == Weapon.RangeType.Throwable && RandomGen.getRandomInt(1, 100) > 20 + targetTile.getCharacter().getDodgeRate())//Get ranged damage
+            if (!targetTile.isEmpty() && thrownWeapon.getRangeType() == Weapon.RangeType.Throwable && RandomGen.getRandomInt(1, 100) > 20 + targetTile.getCharacter().getDodgeRate())//Get ranged damage
             {
                 damage = thrownWeapon.getRandomDamage();
             }
@@ -438,12 +437,22 @@ public class GameStateUpdater
             {
                 GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " damage from thrown " + thrownWeapon.getNameWithoutBonus());
                 targetTile.getCharacter().damage(damage);
-                _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN,timePerAnimation);
+                _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN);
 
             }
             else
             {
-                targetTile.addItem(thrownWeapon);
+                if(thrownWeapon.getRangeType() == Weapon.RangeType.Throwable)
+                {
+                    Weapon tileWeapon = new Weapon(thrownWeapon,thrownWeapon.getBonusDamage());
+                    tileWeapon.setAmmoCount(1);
+                    targetTile.addItem(tileWeapon);
+                }
+                else
+                {
+                    targetTile.addItem(thrownWeapon);
+                }
+
                 GameConsole.addMessage(thrownWeapon.getNameWithoutBonus() + " landed on the floor");
             }
         }
