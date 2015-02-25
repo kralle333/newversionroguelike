@@ -58,32 +58,33 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
 
     private void setupBackground(int screenWidth, int screenHeight)
     {
-        float bgScale = (float)1280/(float)960;
+        TextureRegion bgRegion = new TextureRegion(AssetManager.getGuiTexture("background"),0,0,1280,960);
+        bgRegion.flip(false, true);
+        bg = new Sprite(bgRegion);
+        float bgScale = bg.getWidth()/bg.getHeight();
         float screenScale = (float)screenWidth/(float)screenHeight;
 
         float scale= 1;
         if(bgScale>screenScale)
         {
-            scale = 960/(float)screenHeight;
-            crop.x = ((float)1280/scale)-screenWidth;
+            scale = bg.getHeight()/(float)screenHeight;
+            crop.x = (bg.getWidth()/scale)-screenWidth;
         }
         else if(bgScale<screenScale)
         {
-            scale = 1280/(float)screenWidth;
-            crop.y = ((float)960/scale)-screenHeight;
+            scale = bg.getWidth()/(float)screenWidth;
+            crop.y = (bg.getHeight()/scale)-screenHeight;
         }
         else
         {
-            scale = 1280/(float)screenWidth;
+            scale = bg.getWidth()/(float)screenWidth;
         }
         int x=(int)crop.x;
         int y=(int)crop.y;
-        int bW = (int)((float)1280/scale);
-        int bH = (int)((float)960/scale);
+        int bW = (int)(bg.getWidth()/scale);
+        int bH = (int)(bg.getHeight()/scale);
 
-        TextureRegion bgRegion = new TextureRegion(AssetManager.getBackgroundMenu(),0,0,1280,960);
-        bgRegion.flip(false, true);
-        bg = new Sprite(bgRegion);
+
         bg.setSize(bW, bH);
         bg.setPosition(-x, -y);
     }

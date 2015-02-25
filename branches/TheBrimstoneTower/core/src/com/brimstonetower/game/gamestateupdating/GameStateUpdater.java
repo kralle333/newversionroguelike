@@ -436,7 +436,7 @@ public class GameStateUpdater
 
             if (damage > 0)
             {
-                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " damage from thrown " + thrownWeapon.getName());
+                GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " damage from thrown " + thrownWeapon.getNameWithoutBonus());
                 targetTile.getCharacter().damage(damage);
                 _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN,timePerAnimation);
 
@@ -444,7 +444,7 @@ public class GameStateUpdater
             else
             {
                 targetTile.addItem(thrownWeapon);
-                GameConsole.addMessage(thrownWeapon.getName() + " landed on the floor");
+                GameConsole.addMessage(thrownWeapon.getNameWithoutBonus() + " landed on the floor");
             }
         }
         else //Otherwise the item lands on the tile
@@ -452,7 +452,7 @@ public class GameStateUpdater
             targetTile.addItem(thrownObject);
             GameConsole.addMessage(thrownObject.getName() + " landed on the floor");
         }
-        inventory.removeItem(thrownObject);
+        inventory.removeThrownItem(thrownObject);
     }
 
     //
@@ -530,11 +530,14 @@ public class GameStateUpdater
             monster.draw(batch);
         }
         player.draw(batch);
-        if(_currentAnimation.isPlaying())
+        if(_currentAnimation.isPlaying() )
         {
-            _currentAnimation.draw(batch);
+            _currentAnimation.drawAnimation(batch);
         }
-
+        if(_currentAnimation.isShowingDamageIndicator())
+        {
+            _currentAnimation.drawDamageIndicators(batch);
+        }
     }
 
 }

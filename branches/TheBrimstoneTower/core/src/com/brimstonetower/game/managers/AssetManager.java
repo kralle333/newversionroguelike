@@ -1,6 +1,5 @@
 package com.brimstonetower.game.managers;
 
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,9 +11,9 @@ import java.util.HashMap;
 
 public class AssetManager
 {
-    private static Texture backgroundMenu;
-    public static Texture getBackgroundMenu(){return backgroundMenu;}
-    private static HashMap<String, Texture> _assets = new HashMap<String, Texture>();
+
+    private static HashMap<String, Texture> _guiAssets = new HashMap<String,Texture>();
+    private static HashMap<String, Texture> _gameAssets = new HashMap<String, Texture>();
     private static HashMap<String, TileSetCoordinate> tileSetCoordinateMap = new HashMap<String, TileSetCoordinate>();
     private static HashMap<String, BitmapFont> _fonts = new HashMap<String, BitmapFont>();
     private static HashMap<String, Sound> _soundEffects = new HashMap<String,Sound>();
@@ -39,24 +38,27 @@ public class AssetManager
             _soundEffects.put("gas",Gdx.audio.newSound(Gdx.files.internal("sounds/gas.wav")));
             _soundEffects.put("search",Gdx.audio.newSound(Gdx.files.internal("sounds/search.wav")));
             _soundEffects.put("surprise",Gdx.audio.newSound(Gdx.files.internal("sounds/surprise.wav")));
+            _soundEffects.put("levelUp",Gdx.audio.newSound(Gdx.files.internal("sounds/levelUp.wav")));
         }
     }
 
     private static void initializeTextures()
     {
-        backgroundMenu = new Texture(Gdx.files.internal("art/art_big_workInProgress.png"));
-        _assets.put("player", new Texture(Gdx.files.internal("art/player.png")));
-        _assets.put("mainHeroes",new Texture(Gdx.files.internal("art/mainHeroes.png")));
-        _assets.put("mainHeroesWithBorder",new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
-        _assets.put("misc",new Texture(Gdx.files.internal("art/misc.png")));
-        _assets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
-        _assets.put("tile", new Texture(Gdx.files.internal("art/tilesetNew.png")));
-        _assets.put("armors", new Texture(Gdx.files.internal("art/armorTileSet.png")));
-        _assets.put("weapons", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
-        _assets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
-        _assets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
-        _assets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
-        for (Texture t : _assets.values())
+        _guiAssets.put("levelUp",new Texture(Gdx.files.internal("art/levelUp.png")));
+        _guiAssets.put("background",new Texture(Gdx.files.internal("art/art_big_workInProgress.png")));
+
+        _gameAssets.put("player", new Texture(Gdx.files.internal("art/player.png")));
+        _gameAssets.put("mainHeroes", new Texture(Gdx.files.internal("art/mainHeroes.png")));
+        _gameAssets.put("mainHeroesWithBorder", new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
+        _gameAssets.put("misc", new Texture(Gdx.files.internal("art/misc.png")));
+        _gameAssets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
+        _gameAssets.put("tile", new Texture(Gdx.files.internal("art/tilesetNew.png")));
+        _gameAssets.put("armors", new Texture(Gdx.files.internal("art/armorTileSet.png")));
+        _gameAssets.put("weapons", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
+        _gameAssets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
+        _gameAssets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
+        _gameAssets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
+        for (Texture t : _gameAssets.values())
         {
             t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         }
@@ -209,6 +211,11 @@ public class AssetManager
         return _fonts.get(string);
     }
 
+    public static Texture getGuiTexture(String name)
+    {
+        return _guiAssets.get(name);
+    }
+
     public static TextureRegion getTextureRegion(String path, String tileSetPositionKey, int width, int height)
     {
         TileSetCoordinate tile = getTileSetPosition(tileSetPositionKey);
@@ -222,7 +229,7 @@ public class AssetManager
 
     public static TextureRegion getTextureRegion(String path, int xIndex, int yIndex, int width, int height)
     {
-        TextureRegion newRegion = new TextureRegion(_assets.get(path), xIndex * width, yIndex * height, width, height);
+        TextureRegion newRegion = new TextureRegion(_gameAssets.get(path), xIndex * width, yIndex * height, width, height);
         newRegion.flip(false,true);
         return newRegion;
     }
@@ -235,7 +242,7 @@ public class AssetManager
     public static void disposeAll()
     {
         _isInitialized = false;
-        for (Texture t : _assets.values())
+        for (Texture t : _gameAssets.values())
         {
             t.dispose();
         }

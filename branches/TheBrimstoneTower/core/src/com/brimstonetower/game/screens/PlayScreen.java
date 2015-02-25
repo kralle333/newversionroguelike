@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
@@ -13,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gameobjects.scrolls.Scroll;
 import com.brimstonetower.game.gamestateupdating.GameAction;
 import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
@@ -37,7 +40,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private final ShapeRenderer shapeRenderer;
 
     //Game Info
-    private static int _depth = 1;
+    private int _depth = 1;
     private DungeonMap _currentDungeonMap;
     private Player _player;
     private Vector2 _previousPlayerPosition;
@@ -55,6 +58,11 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private PlayerInfoWindowFrame _playerInfoWindowFrame;
     private Window _gameOverWindow;
     private Window _goToMainMenuPrompt;
+
+    private final float levelUpFadeTime = 1f;
+    private final float levelUpDisplayTime = 1.5f;
+    private float _levelUpTimer = 0;
+    private Sprite _levelUpDisplay;
 
     private enum ScreenState
     {
@@ -87,7 +95,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _font = AssetManager.getFont("description");
         setupGuiElements();
         repositionGuiElements((int) w, (int) h);
-
+        GameConsole.reset();
 
         InputMultiplexer im = new InputMultiplexer();
         GestureDetector gd = new GestureDetector(this);
@@ -126,6 +134,12 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _playerInfoWindowFrame = new PlayerInfoWindowFrame(0,0,10,10, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));
         _playerInfoWindowFrame.show();
 
+        TextureRegion levelUpRegion = new TextureRegion(AssetManager.getGuiTexture("levelUp"),387,124);
+        levelUpRegion.flip(false,true);
+        _levelUpDisplay = new Sprite(levelUpRegion);
+        _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*2,_levelUpDisplay.getHeight()*2);
+        _levelUpDisplay.setX(Gdx.graphics.getWidth()/2-(_levelUpDisplay.getWidth()/2));
+        _levelUpDisplay.setY(Gdx.graphics.getHeight()/2-(_levelUpDisplay.getHeight()/2));
 
     }
 
@@ -206,6 +220,26 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
         batch.begin();
         _playerInfoWindowFrame.draw(batch,_player,_depth);
+        if(_player.justLeveledUp())
+        {
+
+            _levelUpTimer+=Gdx.graphics.getDeltaTime();
+            if(_levelUpTimer<levelUpDisplayTime)
+            {
+                _levelUpDisplay.draw(batch);
+
+            }
+            else if(_levelUpTimer<levelUpDisplayTime+levelUpFadeTime)
+            {
+                _levelUpDisplay.draw(batch,MathUtils.lerp(1,0,_levelUpTimer/(levelUpDisplayTime+levelUpFadeTime)));
+            }
+            else
+            {
+                _player.setLevelUpAsOver();
+            }
+
+        }
+
         if (_currentScreenState == ScreenState.GameOver)
         {
             _font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2 - _font.getBounds("Game Over").width/2, Gdx.graphics.getHeight() / 4 + 10);
@@ -353,7 +387,15 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         {
             if(newTile.getCharacter() != null)
             {
-                _player.setAttackAction(newTile.getCharacter());
+                if(_player.getEquippedWeapon()!= null && _player.getEquippedWeapon().getRangeType() == Weapon.RangeType.Throwable)
+                {
+                    _player.setThrowAction(_player.getEquippedWeapon(),newTile);
+                }
+                else
+                {
+                    _player.setAttackAction(newTile.getCharacter());
+                }
+
             }
             else
             {
@@ -463,7 +505,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                 if (_itemToThrow != null)
                 {
                     _player.setThrowAction(_itemToThrow, touchedTile);
-                    _inventory.removeThrownItem(_itemToThrow);
                 }
                 else if (touchedTile == _player.getCurrentTile())
                 {
@@ -485,9 +526,18 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                         createNewDungeon();
                     }
                 }
-                else if (touchedTile.getCharacter() != null && touchedTile.isAdjacent(_player.getCurrentTile()))
+                else if (touchedTile.getCharacter() != null)
                 {
-                    _player.setAttackAction(touchedTile.getCharacter());
+                    if(touchedTile.isAdjacent(_player.getCurrentTile()))
+                    {
+                        _player.setAttackAction(touchedTile.getCharacter());
+
+                    }
+                    else if(_player.getEquippedWeapon()!= null &&
+                            _player.getEquippedWeapon().getRangeType() == Weapon.RangeType.Throwable)
+                    {
+                        _player.setThrowAction(_player.getEquippedWeapon(),touchedTile);
+                    }
                 }
                 else
                 {

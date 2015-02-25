@@ -32,7 +32,7 @@ public class Tile
     {
         Non, Shadow,DarkShadow, Light
     }
-
+    private Color _lightColor = Color.BLACK;
     private LightAmount _lightToChangeTo;
     private float _lightTimer = 0;
     private final float lightChangeTime = 0.15f;
@@ -201,6 +201,7 @@ public class Tile
         {
             _lightToChangeTo= LightAmount.DarkShadow;
         }
+
     }
 
     public void setLight(LightAmount light, int strength, int currentStrength)
