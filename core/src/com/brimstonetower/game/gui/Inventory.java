@@ -106,7 +106,7 @@ public class Inventory extends Window
     public void removeItem(Item item)
     {
         _items.remove(item);
-        _itemButtonMap.remove(getButton(String.valueOf(item.getUniqueId())),item);
+        _itemButtonMap.remove(getButton(String.valueOf(item.getUniqueId())));
         removeButton(String.valueOf(item.getUniqueId()));
 
         arrangeButtons(0, 0, 8, 8, 4);
