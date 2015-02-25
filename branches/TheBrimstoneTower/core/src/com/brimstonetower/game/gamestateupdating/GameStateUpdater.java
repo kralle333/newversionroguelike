@@ -428,7 +428,7 @@ public class GameStateUpdater
             {
                 damage = thrownWeapon.getRandomDamage();
             }
-            else if (RandomGen.getRandomInt(1, 100) > 50 + targetTile.getCharacter().getDodgeRate())//Get damage from a sword etc being thrown
+            else if (!targetTile.isEmpty() && RandomGen.getRandomInt(1, 100) > 50 + targetTile.getCharacter().getDodgeRate())//Get damage from a sword etc being thrown
             {
                 damage = thrownWeapon.getRandomDamage() / 2;
             }

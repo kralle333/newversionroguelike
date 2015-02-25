@@ -145,8 +145,6 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
     private void repositionGuiElements(int width, int height)
     {
-        int buttonWidth = (height / 5);
-        int buttonHeight = (height / 5);
 
         _playerInfoWindowFrame.reposition(2, 2, width - 4, (int) (_font.getBounds("Sample").height * 2.5f));
 
@@ -159,9 +157,13 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
         _goToMainMenuPrompt.reposition(width / 2 - width / 4, height / 2 - height / 4, width / 2, height / 2);
         _goToMainMenuPrompt.arrangeButtons(0.1f, 0.7f, 0.1f, 0, 2);
+        GameConsole.setup(4, (height - Gdx.graphics.getHeight() / 8),Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8);
+        int buttonWidth = (height / 5);
+        int buttonHeight = GameConsole.getHeight();
+
         if(width<height)
         {
-            GameConsole.setup(4, (height - Gdx.graphics.getHeight() / 8),Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8);
+
             int buttonY = (int) (GameConsole.getPosition().y - ((buttonHeight / 2) * 1.1f));
             _waitActionButton.reposition(width / 2 - buttonWidth / 2, buttonY, buttonWidth, buttonHeight / 2);
             _openInventoryButton.reposition(_waitActionButton.getX()+buttonWidth,buttonY, buttonWidth, buttonHeight/2);

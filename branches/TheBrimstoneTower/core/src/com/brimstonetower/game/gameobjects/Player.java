@@ -100,7 +100,7 @@ public class Player extends GameCharacter
         GameConsole.addMessage("Strength is: " + getMaxStr());
         GameConsole.addMessage("Max hp is: " + getMaxHitPoints());
         _justLeveledUp=true;
-        AssetManager.getSound("levelUp").play();
+        AssetManager.getSound("levelup").play();
     }
 
     private float calculateNewStat(float startStat, float maxStat, float currentLevel, float maxLevel)

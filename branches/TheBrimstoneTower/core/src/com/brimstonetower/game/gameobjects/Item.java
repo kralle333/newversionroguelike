@@ -53,7 +53,7 @@ public class Item
         return _stackable;
     }
 
-    private int _typeId;
+    protected int _typeId;
     public int getTypeId()
     {
         return _typeId;

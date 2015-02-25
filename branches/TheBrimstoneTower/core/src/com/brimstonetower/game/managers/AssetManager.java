@@ -38,7 +38,7 @@ public class AssetManager
             _soundEffects.put("gas",Gdx.audio.newSound(Gdx.files.internal("sounds/gas.wav")));
             _soundEffects.put("search",Gdx.audio.newSound(Gdx.files.internal("sounds/search.wav")));
             _soundEffects.put("surprise",Gdx.audio.newSound(Gdx.files.internal("sounds/surprise.wav")));
-            _soundEffects.put("levelUp",Gdx.audio.newSound(Gdx.files.internal("sounds/levelUp.wav")));
+            _soundEffects.put("levelup",Gdx.audio.newSound(Gdx.files.internal("sounds/levelup.wav")));
         }
     }
 

@@ -33,7 +33,7 @@ public class GameConsole
         _linesToShow = (int)((height)/(_textOffset.y+(_fontHeight*1.5f)));
 
         _position = new Vector2(x, Gdx.graphics.getHeight()-(_textOffset.y + (_fontHeight*1.5f* (_linesToShow))));
-        _frame = new Window(x, (int)_position.y, width,height, new Color(0.3f, 0.3f, 0.3f, 0.2f), 2, new Color(0.4f, 0.4f, 0.4f, 0.2f));
+        _frame = new Window(x, (int)_position.y, width,(int)(Gdx.graphics.getHeight()-_position.y), new Color(0.3f, 0.3f, 0.3f, 0.2f), 2, new Color(0.4f, 0.4f, 0.4f, 0.2f));
         _frame.show();
 
     }

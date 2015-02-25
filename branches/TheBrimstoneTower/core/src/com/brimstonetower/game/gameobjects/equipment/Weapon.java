@@ -88,6 +88,7 @@ public class Weapon extends Item
     {
         this(toCopy.getNameWithoutBonus(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getMinDamage(),
                 toCopy.getMaxDamage(), bonusAttack,toCopy.getMinRange(),toCopy.getMaxRange(), toCopy.getAttackSpeed(), toCopy.getRangeType());
+        _typeId = toCopy.getTypeId();
     }
 
     public int getRandomDamage()
