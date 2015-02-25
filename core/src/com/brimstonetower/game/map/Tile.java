@@ -262,7 +262,7 @@ public class Tile
         Color usedColor =getColorFromLight(_lightAmount);
         if(_lightToChangeTo!=_lightAmount && _lightTimer<lightChangeTime)
         {
-            Color newColor =getColorFromLight(_lightToChangeTo);;
+            Color newColor =getColorFromLight(_lightToChangeTo);
             float progress = MathUtils.clamp(_lightTimer/lightChangeTime,0,1);
             Color toDraw = new Color();
             toDraw.r = MathUtils.lerp(usedColor.r,newColor.r,progress);
