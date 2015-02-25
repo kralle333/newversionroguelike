@@ -111,10 +111,10 @@ public class Player extends GameCharacter
     @Override
     public void moveTo(Tile tile)
     {
-        currentTile.setLight(Tile.LightAmount.Shadow, _lanternStrength, _lanternStrength);
+        currentTile.setLight(Tile.LightAmount.Shadow, _lanternStrength,currentTile);
         super.moveTo(tile);
-        tile.setLight(Tile.LightAmount.Shadow, _lanternStrength*2, _lanternStrength*2);
-        tile.setLight(Tile.LightAmount.Light, _lanternStrength, _lanternStrength);
+        tile.setLight(Tile.LightAmount.Shadow, _lanternStrength*2 ,currentTile);
+        tile.setLight(Tile.LightAmount.Light, _lanternStrength,currentTile);
     }
 
     @Override
