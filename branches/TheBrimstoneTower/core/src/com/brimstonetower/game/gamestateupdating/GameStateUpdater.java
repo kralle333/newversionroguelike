@@ -79,8 +79,8 @@ public class GameStateUpdater
         _chests = playedMap.getChests();
         _traps = playedMap.getTraps();
         _gasClouds.clear();
-        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getLanternStrength()*2);
-        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getLanternStrength());
+        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getCurrentTile());
+        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getCurrentTile());
         _monsterTime.clear();
         for (Monster monster : _monsters)
         {
@@ -312,8 +312,8 @@ public class GameStateUpdater
         }
         else
         {
-            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getLanternStrength()*2);
-            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getLanternStrength());
+            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow,  GameStateUpdater.player.getLanternStrength() * 2, GameStateUpdater.player.getCurrentTile());
+            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(),  GameStateUpdater.player.getCurrentTile());
         }
 
     }

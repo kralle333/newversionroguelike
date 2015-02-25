@@ -14,6 +14,7 @@ import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
+import javafx.scene.effect.Light;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ public class Tile
         Non, Shadow,DarkShadow, Light
     }
     private Color _lightColor = Color.BLACK;
+    private Color _lightChangeToColor = Color.BLACK;
     private LightAmount _lightToChangeTo;
     private float _lightTimer = 0;
     private final float lightChangeTime = 0.15f;
@@ -203,10 +205,26 @@ public class Tile
         }
 
     }
-
-    public void setLight(LightAmount light, int strength, int currentStrength)
+    public void setLight(LightAmount light,int strength,Tile lightSource)
+    {
+        setLight(light,strength,strength,lightSource);
+    }
+    private void setLight(LightAmount light, int strength, int currentStrength,Tile lightSource)
     {
         changeLight(light);
+        if(_lightToChangeTo != _lightAmount || _lightToChangeTo == LightAmount.Light)
+        {
+            switch(_lightToChangeTo)
+            {
+                case Non: _lightChangeToColor= Color.BLACK;break;
+                case Shadow:_lightChangeToColor= Color.GRAY;break;
+                case DarkShadow:_lightChangeToColor= Color.DARK_GRAY;break;
+                case Light:
+                    float gray = MathUtils.lerp(1, 0.5f, lightSource.distanceTo(this) / strength);
+                    _lightChangeToColor = new Color(gray, gray, gray, 1);
+                    break;
+            }
+        }
         if (currentStrength > 0)
         {
             if ((_type != Types.Door && _type != Types.SubWall) || (_type == Types.Door && strength == currentStrength))
@@ -216,12 +234,12 @@ public class Tile
                     {
                         if ((n.getTileX() == _x || n.getTileY() == _y))
                         {
-                            n.setLight(light, strength, currentStrength - 1);
+                            n.setLight(light, strength, currentStrength - 1,lightSource);
                         }
                     }
                     for (Tile n : nonWalkableNeighbours)
                     {
-                        n.setLight(light, strength, 0);
+                        n.setLight(light, strength, 0,lightSource);
                     }
                 }
             }
@@ -259,15 +277,14 @@ public class Tile
     public void draw(SpriteBatch batch)
     {
 
-        Color usedColor =getColorFromLight(_lightAmount);
-        if(_lightToChangeTo!=_lightAmount && _lightTimer<lightChangeTime)
+        if(_lightChangeToColor!=_lightColor && _lightTimer<lightChangeTime)
         {
-            Color newColor =getColorFromLight(_lightToChangeTo);
+            Color newColor =_lightChangeToColor;
             float progress = MathUtils.clamp(_lightTimer/lightChangeTime,0,1);
             Color toDraw = new Color();
-            toDraw.r = MathUtils.lerp(usedColor.r,newColor.r,progress);
-            toDraw.g = MathUtils.lerp(usedColor.g,newColor.g,progress);
-            toDraw.b = MathUtils.lerp(usedColor.b,newColor.b,progress);
+            toDraw.r = MathUtils.lerp(_lightColor.r,newColor.r,progress);
+            toDraw.g = MathUtils.lerp(_lightColor.g,newColor.g,progress);
+            toDraw.b = MathUtils.lerp(_lightColor.b,newColor.b,progress);
             toDraw.a = 1;
 
             batch.setColor(toDraw);
@@ -281,11 +298,12 @@ public class Tile
             {
                 _lightTimer=0;
                 _lightAmount=_lightToChangeTo;
+                _lightColor=_lightChangeToColor;
             }
         }
         else
         {
-            batch.setColor(usedColor);
+            batch.setColor(_lightColor);
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
             if(_type == Types.Door)
             {

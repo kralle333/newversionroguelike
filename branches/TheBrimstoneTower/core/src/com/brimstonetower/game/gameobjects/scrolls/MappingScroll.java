@@ -23,6 +23,6 @@ public class MappingScroll extends Scroll
 
         Tile playerTile = GameStateUpdater.player.getCurrentTile();
         int lanternStr =GameStateUpdater.player.getLanternStrength();
-        playerTile.setLight(Tile.LightAmount.Light, lanternStr, lanternStr);
+        playerTile.setLight(Tile.LightAmount.Light, lanternStr,playerTile);
     }
 }
