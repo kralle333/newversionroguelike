@@ -1,9 +1,12 @@
 package com.brimstonetower.game.gameobjects;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.managers.AssetManager;
@@ -38,12 +41,16 @@ public class Player extends GameCharacter
     }
     private static Color _attackRangeColor = new Color(0,1,0,0.2f);
     private TextureRegion _waypointRegion;
+    private boolean _justLeveledUp = false;
+    public boolean justLeveledUp(){return _justLeveledUp;}
+    public void setLevelUpAsOver(){_justLeveledUp=false;}
+
 
 
     public Player(String name)
     {
         super(name, _startStr, 5, _startHp, AssetManager.getTextureRegion("mainHeroesWithBorder", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
-        super.equip(ItemManager.getWeapon("Steel Short Sword"));//Player starts with sword
+        super.equip(ItemManager.getWeapon("Steel Throwing axe"));//Player starts with sword
         super.equip(ItemManager.getArmor("Noble Clothes"));//Player starts with some clothes
         _equippedWeapon.identify();
         _equippedArmor.identify();
@@ -92,6 +99,8 @@ public class Player extends GameCharacter
         GameConsole.addMessage("Player leveled up! - Welcome to level " + level);
         GameConsole.addMessage("Strength is: " + getMaxStr());
         GameConsole.addMessage("Max hp is: " + getMaxHitPoints());
+        _justLeveledUp=true;
+        AssetManager.getSound("levelUp").play();
     }
 
     private float calculateNewStat(float startStat, float maxStat, float currentLevel, float maxLevel)

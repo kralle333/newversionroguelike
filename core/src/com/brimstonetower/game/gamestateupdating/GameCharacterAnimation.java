@@ -4,6 +4,7 @@ package com.brimstonetower.game.gamestateupdating;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -57,6 +58,9 @@ public class GameCharacterAnimation
     }
 
     private ArrayList<DamageIndicator> _damageIndicators = new ArrayList<DamageIndicator>();
+    private float _damageIndicactorTimer=0;
+    private boolean _isShowingDamageIndicator = false;
+    public boolean isShowingDamageIndicator(){return _isShowingDamageIndicator;}
     private float _timer;
     private float _playTime;
     public boolean isPlaying(){return _timer <_playTime;}
@@ -110,6 +114,7 @@ public class GameCharacterAnimation
 
         if(gameAction.getType() == GameAction.Type.Attack)
         {
+            _isShowingDamageIndicator=true;
             lungeTime = _playTime/3;
             retractTime = _playTime*2/3;
             defender = _gameActionToPlay.getTargetCharacter();
@@ -170,85 +175,94 @@ public class GameCharacterAnimation
     }
     public void playDamageIndication(int damage, Vector2 position, Color color,float playTime)
     {
-        _damageIndicators.clear();
-        _timer = 0;
         _damageIndicators.add(new DamageIndicator(2,0,position,String.valueOf(damage),color,playTime));
+        _isShowingDamageIndicator=true;
     }
 
-
-    public void draw(SpriteBatch batch)
+    final ArrayList<DamageIndicator> damageIndicatorsToRemove = new ArrayList<DamageIndicator>();
+    public void drawAnimation(SpriteBatch batch)
     {
-        switch (_gameActionToPlay.getType())
-        {
-            case Attack:
-                final ArrayList<DamageIndicator> damageIndicatorsToRemove = new ArrayList<DamageIndicator>();
-                damageIndicatorsToRemove.clear();
-                if(isLunging)
-                {
-                    attacker.setPosition(
-                            moveTowards(attacker.getCurrentTile().getWorldPosition(),
-                                    attackedPosition,
-                                    (_timer-lungeTime)/retractTime));
-                    if(_timer>=lungeTime)
+
+
+            switch(_gameActionToPlay.getType())
+            {
+                case Attack:
+                    if(isLunging)
                     {
-                        isLunging = false;
-                    }
-                }
-                else
-                {
-                    attacker.setPosition(
-                            moveTowards(attackedPosition,
-                                    attacker.getCurrentTile().getWorldPosition(),(_timer-lungeTime)/retractTime));
-                }
-                for (DamageIndicator damageIndicator : _damageIndicators)
-                {
-                    damageIndicator.update();
-                    if (damageIndicator.isVisible())
-                    {
-                        damageIndicator.draw(AssetManager.getFont("description"),batch);
+                        attacker.setPosition(
+                                moveTowards(attacker.getCurrentTile().getWorldPosition(),
+                                        attackedPosition,
+                                        (_timer - lungeTime) / retractTime));
+                        if(_timer >= lungeTime)
+                        {
+                            isLunging = false;
+                        }
                     }
                     else
                     {
-                        damageIndicatorsToRemove.add(damageIndicator);
+                        attacker.setPosition(
+                                moveTowards(attackedPosition,
+                                        attacker.getCurrentTile().getWorldPosition(), (_timer - lungeTime) / retractTime));
                     }
-                }
-                for(DamageIndicator toRemove : damageIndicatorsToRemove)
-                {
-                    _damageIndicators.remove(toRemove);
-                }
-                break;
-            case Move:
-                Vector2 oldPosition = _gameActionToPlay.getOwner().getCurrentTile().getWorldPosition();
-                Vector2 goalPosition = _gameActionToPlay.getTargetTile().getWorldPosition();
-                Vector2 newPosition = moveTowards(oldPosition, goalPosition, _timer / _playTime);
+                    break;
+                case Move:
+                    Vector2 oldPosition = _gameActionToPlay.getOwner().getCurrentTile().getWorldPosition();
+                    Vector2 goalPosition = _gameActionToPlay.getTargetTile().getWorldPosition();
+                    Vector2 newPosition = moveTowards(oldPosition, goalPosition, _timer / _playTime);
 
-                _gameActionToPlay.getOwner().setPosition(newPosition);
-                break;
-            case Search:
-                batch.setColor(1,1,1,1-(_timer/_playTime));
-                for(Tile neighbour : _gameActionToPlay.getTargetTile().getWalkableNeighbours())
-                {
-                    float x = neighbour.getWorldPosition().x;
-                    float y = neighbour.getWorldPosition().y;
-                    float scale =  scaleOfSearchIcons.get(neighbour);
-                    batch.draw(
-                            _searchIconRegion,x,y,DungeonMap.TileSize/2,DungeonMap.TileSize/2, //Position
-                            DungeonMap.TileSize,DungeonMap.TileSize,    //Dimensions
-                            scale,scale, //Scale
-                            0);//Rotation
+                    _gameActionToPlay.getOwner().setPosition(newPosition);
+                    break;
+                case Search:
+                    batch.setColor(1, 1, 1, 1 - (_timer / _playTime));
+                    for(Tile neighbour : _gameActionToPlay.getTargetTile().getWalkableNeighbours())
+                    {
+                        float x = neighbour.getWorldPosition().x;
+                        float y = neighbour.getWorldPosition().y;
+                        float scale = scaleOfSearchIcons.get(neighbour);
+                        batch.draw(
+                                _searchIconRegion, x, y, DungeonMap.TileSize / 2, DungeonMap.TileSize / 2, //Position
+                                DungeonMap.TileSize, DungeonMap.TileSize,    //Dimensions
+                                scale, scale, //Scale
+                                0);//Rotation
 
-                    scaleOfSearchIcons.put(neighbour,scale-0.01f);
-                }
-                batch.setColor(Color.WHITE);
+                        scaleOfSearchIcons.put(neighbour, scale - 0.01f);
+                    }
+                    batch.setColor(Color.WHITE);
 
-                break;
-            case Throw:
-                _thrownItemCurrentPosition = moveTowards(_thrownItemFromPosition, _thrownItemTarget, _timer / _playTime);
-                _thrownItem.draw(batch, _thrownItemCurrentPosition.x, _thrownItemCurrentPosition.y);
-                break;
-        }
-
+                    break;
+                case Throw:
+                    _thrownItemCurrentPosition = moveTowards(_thrownItemFromPosition, _thrownItemTarget, _timer / _playTime);
+                    _thrownItem.draw(batch, _thrownItemCurrentPosition.x, _thrownItemCurrentPosition.y);
+                    break;
+            }
         _timer += Gdx.graphics.getDeltaTime();
+    }
+    public void drawDamageIndicators(SpriteBatch batch)
+    {
+        if(_isShowingDamageIndicator)
+        {
+            damageIndicatorsToRemove.clear();
+            for (DamageIndicator damageIndicator : _damageIndicators)
+            {
+                damageIndicator.update();
+                if (damageIndicator.isVisible())
+                {
+                    damageIndicator.draw(AssetManager.getFont("description"),batch);
+                }
+                else
+                {
+                    damageIndicatorsToRemove.add(damageIndicator);
+                }
+            }
+            for(DamageIndicator toRemove : damageIndicatorsToRemove)
+            {
+                _damageIndicators.remove(toRemove);
+            }
+            if(_damageIndicators.isEmpty())
+            {
+                _isShowingDamageIndicator=false;
+            }
+        }
     }
 
 

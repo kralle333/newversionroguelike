@@ -63,7 +63,6 @@ public class Room
     {
         return _y + _height - 1;
     }
-    private Tile.LightAmount _lighting;
 
     public boolean isLeftOf(Room otherRoom)
     {
@@ -80,7 +79,6 @@ public class Room
         _y = y;
         _width = width;
         _height = height;
-        _lighting = Tile.LightAmount.Non;
         _tiles = new Tile[_width][_height];
     }
 
@@ -142,7 +140,7 @@ public class Room
 
     }
 
-    private void makeSubRooms(int x,int y,int width, int height, int previousSplit,boolean previousWasHor)
+    private void makeSubRooms(int x,int y,int width, int height, int previousDoorPos,boolean previousWasHor)
     {
         //Make some smaller rooms:
         int minSplitX = x + Room.minSubRoomWidth;
@@ -150,12 +148,17 @@ public class Room
         int minSplitY = y + Room.minSubRoomHeight;
         int maxSplitY = y + height - Room.minSubRoomHeight;
 
-        int split = 0;
+        int split;
         int door;
-        if(minSplitY<maxSplitY && !previousWasHor )//Horizontal
+        if(maxSplitY-minSplitY>3 && !previousWasHor)//Horizontal
         {
-            split = RandomGen.getRandomInt(minSplitY, maxSplitY-1);
-            door =RandomGen.getRandomInt(0,1)==0?RandomGen.getRandomInt(x+1,previousSplit-1): RandomGen.getRandomInt(previousSplit+1,x+width-2);
+            do
+            {
+                split = RandomGen.getRandomInt(minSplitY, maxSplitY - 1);
+            }while(split==previousDoorPos);
+
+            door =RandomGen.getRandomInt(x+1,x+width-2);
+
 
             for(int wX = 1;wX<width-1;wX++)
             {
@@ -182,15 +185,18 @@ public class Room
                 }
             }
 
-            makeSubRooms(x, y, width, split - y+1,split,true);
-            makeSubRooms(x, split, width, height- (split - y),split,true);
+            makeSubRooms(x, y, width, split - y+1,door,true);
+            makeSubRooms(x, split, width, height- (split - y),door,true);
             _usedWallsY.add(split);
         }
-        else if(minSplitX<maxSplitX&& previousWasHor)//Vertical
+        else if(maxSplitX-minSplitX>3&& previousWasHor)//Vertical
         {
-            split = RandomGen.getRandomInt(minSplitX, maxSplitX-1);
-            door =RandomGen.getRandomInt(0,1)==0?RandomGen.getRandomInt(y+1,previousSplit-1): RandomGen.getRandomInt(previousSplit+1,y+height-2);
-            TileSetCoordinate usedRegion;
+            do
+            {
+                split = RandomGen.getRandomInt(minSplitX,maxSplitX-1);
+            }while(split==previousDoorPos);
+
+            door =RandomGen.getRandomInt(y+1,y+height-2);
 
             //Make the wall
             for(int wY = 1;wY<height-1;wY++)
@@ -233,16 +239,34 @@ public class Room
             }
 
             //Recursively make smaller subrooms
-            makeSubRooms(x, y, split - x+1, height,split,false);
-            makeSubRooms(split, y, width - (split - x), height,split,false);
+            makeSubRooms(x, y, split - x+1, height,door,false);
+            makeSubRooms(split, y, width - (split - x), height,door,false);
             _usedWallsX.add(split);
         }
-        else return;
+        else
+        {
+            decorateSubRoom(x,y,width,height);
+        }
 
 
 
     }
 
+    enum SubRoomSize {Small,Medium,Large};
+    private void decorateSubRoom(int x,int y,int width, int height)
+    {
+        SubRoomSize size;
+        if((width+height/2)<=minSubRoomWidth*3/2){size = SubRoomSize.Small;}
+        else if((width+height/2)<=minSubRoomWidth*3){size = SubRoomSize.Medium;}
+        else{size = SubRoomSize.Large;}
+
+        switch(size)
+        {
+            case Small:break;
+            case Medium:break;
+            case Large:break;
+        }
+    }
 
     private Vector2[] directions = new Vector2[]{new Vector2(-1, 0), new Vector2(0, -1),
             new Vector2(1, 0), new Vector2(0, 1),
@@ -293,28 +317,28 @@ public class Room
                 {
                     randomTile = RandomGen.getRandomInt(1, _height - 2);
                     returnedTile = _tiles[0][randomTile];
-                } while (returnedTile.getType() != Tile.Types.Wall && _usedWallsY.contains(randomTile));
+                } while (returnedTile.getType() != Tile.Types.Wall || _usedWallsY.contains(randomTile));
                 break;
             case East:
                 do
                 {
                     randomTile=RandomGen.getRandomInt(1, _height - 2);
                     returnedTile = _tiles[_width - 1][randomTile];
-                } while (returnedTile.getType() != Tile.Types.Wall&& _usedWallsY.contains(randomTile));
+                } while (returnedTile.getType() != Tile.Types.Wall|| _usedWallsY.contains(randomTile));
                 break;
             case South:
                 do
                 {
                     randomTile=RandomGen.getRandomInt(1, _width - 2);
                     returnedTile = _tiles[randomTile][_height - 1];
-                } while (returnedTile.getType() != Tile.Types.Wall&& _usedWallsX.contains(randomTile));
+                } while (returnedTile.getType() != Tile.Types.Wall|| _usedWallsX.contains(randomTile));
                 break;
             case North:
                 do
                 {
                     randomTile=RandomGen.getRandomInt(1, _width - 2);
                     returnedTile = _tiles[randomTile][0];
-                } while (returnedTile.getType() != Tile.Types.Wall&& _usedWallsX.contains(randomTile));
+                } while (returnedTile.getType() != Tile.Types.Wall|| _usedWallsX.contains(randomTile));
                 break;
         }
         return returnedTile;
