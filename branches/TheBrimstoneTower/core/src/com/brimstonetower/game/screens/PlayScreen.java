@@ -109,7 +109,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
     private void setupGuiElements()
     {
-        _openInventoryButton = new Button(0,0,10,10, "Inventory", new Color(0.6f, 0.2f, 0, 1));
+        _openInventoryButton = new Button(0,0,10,10, "Inventory",new Color(121f/255f, 82f/255f, 39f/255f,1));
         _waitActionButton = new Button(0,0,10,10, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
         _searchFloorButton = new Button(0,0,10,10,"Search",new Color(0, 0.6f, 0.2f, 1));
 
@@ -128,7 +128,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         _selectedItemWindow = new SelectedItemWindow(0,0,10,10,Color.GRAY, 2, Color.GRAY);
 
         //Inventory
-        _inventory = new Inventory(0,0,10,10, Color.GRAY, 2, Color.BLUE);
+        _inventory = new Inventory(0,0,10,10, new Color(121f/255f, 82f/255f, 39f/255f,1), Gdx.graphics.getHeight()/40, new Color(100f/255f, 59f/255f, 15f/255f,1));
 
         //Info about the player
         _playerInfoWindowFrame = new PlayerInfoWindowFrame(0,0,10,10, new Color(0.3f, 0.3f, 0.3f, 0.5f), 2, new Color(0.4f, 0.4f, 0.4f, 0.5f));

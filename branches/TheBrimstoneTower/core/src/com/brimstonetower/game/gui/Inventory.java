@@ -16,6 +16,7 @@ import com.brimstonetower.game.managers.ItemManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Inventory extends Window
 {
@@ -52,12 +53,7 @@ public class Inventory extends Window
     {
         return _items.size() == maxItems;
     }
-
     private HashMap<Button, Item> _itemButtonMap = new HashMap<Button, Item>();
-    private Armor _equippedArmor;
-    private Vector2 _armorPosition = new Vector2();
-    private Weapon _equippedWeapon;
-    private Vector2 _weaponPosition = new Vector2();
 
     public Inventory(int x, int y, int width, int height, Color color, int frameSize, Color frameColor)
     {
@@ -72,17 +68,13 @@ public class Inventory extends Window
         _items.clear();
         _itemButtonMap.clear();
         _player = player;
-        _equippedWeapon = null;
-        _equippedArmor = null;
         if (_player.getEquippedWeapon() != null)
         {
             addItem(_player.getEquippedWeapon());
-            equip(_player.getEquippedWeapon());
         }
         if (_player.getEquippedArmor() != null)
         {
             addItem(_player.getEquippedArmor());
-            equip(_player.getEquippedArmor());
         }
     }
 
@@ -109,20 +101,19 @@ public class Inventory extends Window
         Button itemButton = addButton(itemId, item.getTextureRegion());
         _itemButtonMap.put(itemButton, item);
         arrangeButtons(0, 0, 8, 8, 4);
-        repositionESigns();
     }
 
     public void removeItem(Item item)
     {
         _items.remove(item);
+        _itemButtonMap.remove(getButton(String.valueOf(item.getUniqueId())),item);
         removeButton(String.valueOf(item.getUniqueId()));
-        _itemButtonMap.remove(item);
+
         arrangeButtons(0, 0, 8, 8, 4);
-        if (item == _equippedArmor || item == _equippedWeapon)
+        if (item == _player.getEquippedArmor() || item == _player.getEquippedWeapon())
         {
             unequip(item);
         }
-        repositionESigns();
     }
 
     public void removeThrownItem(Item item)
@@ -142,34 +133,20 @@ public class Inventory extends Window
         }
     }
 
-    public void repositionESigns()
-    {
-        if (_equippedWeapon != null)
-        {
-            Button itemButton = getButton(String.valueOf(_equippedWeapon.getUniqueId()));
-            _weaponPosition.x=itemButton.getX();
-            _weaponPosition.y=itemButton.getY()+itemButton.getHeight()-_descriptionFont.getBounds("E").height;
-        }
-        if (_equippedArmor != null)
-        {
-            Button itemButton = getButton(String.valueOf(_equippedArmor.getUniqueId()));
-            _armorPosition.x=itemButton.getX();
-            _armorPosition.y = itemButton.getY()+itemButton.getHeight()-_descriptionFont.getBounds("E").height;
-        }
-    }
-
     public void equip(Item item)
     {
+
         if (item instanceof Armor)
         {
-            if(_equippedArmor == null || (_equippedArmor!=null &&!_equippedArmor.hasCurse()))
+            Armor equippedArmor =_player.getEquippedArmor();
+            if(equippedArmor == null || (equippedArmor!=null &&!equippedArmor.hasCurse()))
             {
-                _equippedArmor = (Armor) item;
-                if(_equippedArmor.hasCurse())
+                _player.equip(item);
+                if(item.hasCurse())
                 {
                     GameConsole.addMessage("The armor tightens uncomfortably to your body");
                     GameConsole.addMessage("The armor is cursed!");
-                    _equippedArmor.showCurse();
+                    item.showCurse();
                     getButton(String.valueOf(item.getUniqueId())).setColor(Color.PINK);
                 }
             }
@@ -180,14 +157,15 @@ public class Inventory extends Window
         }
         else
         {
-            if(_equippedWeapon == null || (_equippedWeapon!=null &&!_equippedWeapon.hasCurse()))
+            Weapon equippedWeapon =_player.getEquippedWeapon();
+            if(equippedWeapon == null || (equippedWeapon!=null &&!equippedWeapon.hasCurse()))
             {
-                _equippedWeapon = (Weapon) item;
-                if (_equippedWeapon.hasCurse())
+                _player.equip(item);
+                if (item.hasCurse())
                 {
                     GameConsole.addMessage("An invisible force makes you unable let go of the weapon");
                     GameConsole.addMessage("The weapon is cursed!");
-                    _equippedWeapon.showCurse();
+                    item.showCurse();
                     getButton(String.valueOf(item.getUniqueId())).setColor(Color.PINK);
                 }
             }
@@ -196,23 +174,11 @@ public class Inventory extends Window
                 GameConsole.addMessage("You are unable to let go of your weapon");
             }
         }
-        repositionESigns();
     }
 
     public void unequip(Item item)
     {
-        if (_equippedArmor == item)
-        {
-            _equippedArmor = null;
-        }
-        else if (_equippedWeapon == item)
-        {
-            _equippedWeapon = null;
-        }
-        else
-        {
-            Gdx.app.log("Inventory", "Item was not equipped");
-        }
+        _player.unequip(item);
     }
 
     public void identifyItems(Item item)
@@ -246,13 +212,13 @@ public class Inventory extends Window
 
     public void step()
     {
-        if (_equippedArmor != null)
+        if (_player.getEquippedArmor() != null)
         {
-            _equippedArmor.step();
+            _player.getEquippedArmor().step();
         }
-        if (_equippedWeapon != null)
+        if (_player.getEquippedWeapon() != null)
         {
-            _equippedWeapon.step();
+            _player.getEquippedWeapon().step();
         }
     }
 
@@ -278,34 +244,48 @@ public class Inventory extends Window
     @Override
     public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer)
     {
-        super.draw(batch, shapeRenderer);
-        batch.begin();
+
         if (_isOpen)
         {
-            batch.setColor(Color.GREEN);
-            if (_equippedWeapon != null)
+            super.drawFrame(shapeRenderer);
+            for(Map.Entry<Button,Item> buttonItemEntry : _itemButtonMap.entrySet() )
             {
-                _descriptionFont.draw(batch, "E", _weaponPosition.x, _weaponPosition.y);
+                Button button = buttonItemEntry.getKey();
+                button.draw(batch,shapeRenderer);
+
+
+                batch.begin();
+                Item item = buttonItemEntry.getValue();
+                if(_player.getEquippedWeapon() == item || _player.getEquippedArmor() == item)
+                {
+                    batch.setColor(Color.GREEN);
+                    _descriptionFont.draw(batch, "E",button.getX(), button.getY()+button.getHeight()-_descriptionFont.getBounds("E").height);
+                    batch.setColor(Color.WHITE);
+                }
+                if(item.isStackable() && item instanceof Weapon)
+                {
+                    batch.setColor(Color.BLUE);
+                    _descriptionFont.draw(batch, String.valueOf(((Weapon) item).getAmmoCount()), button.getX()+button.getWidth()-_descriptionFont.getBounds("10").width, button.getY() + button.getHeight()-_descriptionFont.getBounds("10").height);
+                    batch.setColor(Color.WHITE);
+                }
+                batch.end();
             }
-            if (_equippedArmor != null)
-            {
-                _descriptionFont.draw(batch, "E", _armorPosition.x, _armorPosition.y);
-            }
-            batch.setColor(Color.WHITE);
         }
         if(_showEquippedItems)
         {
+            batch.begin();
             float width = Gdx.graphics.getWidth();
             float height = Gdx.graphics.getHeight();
-            if (_equippedWeapon != null)
+            if (_player.getEquippedWeapon() != null)
             {
-                _equippedWeapon.draw(batch, width - (height / 4) - 4, 4, height / 400);
+                _player.getEquippedWeapon().draw(batch, width - (height / 4) - 4, 4, height / 400);
             }
-            if (_equippedArmor != null)
+            if (_player.getEquippedArmor() != null)
             {
-                _equippedArmor.draw(batch, width - (height / 8) - 4, 4, height / 400);
+                _player.getEquippedArmor().draw(batch, width - (height / 8) - 4, 4, height / 400);
             }
+            batch.end();
         }
-        batch.end();
+
     }
 }

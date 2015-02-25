@@ -58,7 +58,6 @@ public class GameCharacterAnimation
     }
 
     private ArrayList<DamageIndicator> _damageIndicators = new ArrayList<DamageIndicator>();
-    private float _damageIndicactorTimer=0;
     private boolean _isShowingDamageIndicator = false;
     public boolean isShowingDamageIndicator(){return _isShowingDamageIndicator;}
     private float _timer;
@@ -107,7 +106,6 @@ public class GameCharacterAnimation
     }
     public void playGameAction(GameAction gameAction, float playTime)
     {
-        _damageIndicators.clear();
         _gameActionToPlay.setAction(gameAction);
         _timer = 0f;
         _playTime = playTime;
@@ -173,9 +171,9 @@ public class GameCharacterAnimation
             AssetManager.getSound("search").play();
         }
     }
-    public void playDamageIndication(int damage, Vector2 position, Color color,float playTime)
+    public void playDamageIndication(int damage, Vector2 position, Color color)
     {
-        _damageIndicators.add(new DamageIndicator(2,0,position,String.valueOf(damage),color,playTime));
+        _damageIndicators.add(new DamageIndicator(0,0.8f,new Vector2(position.x,position.y),String.valueOf(damage),color,0.5f));
         _isShowingDamageIndicator=true;
     }
 

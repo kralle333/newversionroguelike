@@ -22,7 +22,7 @@ public class Window
     protected int _frameSize;
     protected Color _frameColor;
 
-    private HashMap<String, Button> _nameButtonMap = new HashMap<String, Button>();
+    protected HashMap<String, Button> _nameButtonMap = new HashMap<String, Button>();
     protected boolean _isOpen;
     public boolean isOpen()
     {
@@ -186,19 +186,26 @@ public class Window
     {
         if (_isOpen)
         {
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setColor(_frameColor);
-            shapeRenderer.rect(_windowRectangle.x - _frameSize, _windowRectangle.y - _frameSize, _windowRectangle.width + (_frameSize * 2), _windowRectangle.height + (_frameSize * 2));
-            shapeRenderer.setColor(_windowColor);
-            shapeRenderer.rect(_windowRectangle.x, _windowRectangle.y, _windowRectangle.width, _windowRectangle.height);
-            shapeRenderer.end();
-            Gdx.gl.glDisable(GL20.GL_BLEND);
-            for (Button button : _nameButtonMap.values())
-            {
-                button.draw(batch, shapeRenderer);
-            }
-
+            drawFrame(shapeRenderer);
+            drawButtons(batch,shapeRenderer);
+        }
+    }
+    protected void drawFrame(ShapeRenderer shapeRenderer)
+    {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(_frameColor);
+        shapeRenderer.rect(_windowRectangle.x - _frameSize, _windowRectangle.y - _frameSize, _windowRectangle.width + (_frameSize * 2), _windowRectangle.height + (_frameSize * 2));
+        shapeRenderer.setColor(_windowColor);
+        shapeRenderer.rect(_windowRectangle.x, _windowRectangle.y, _windowRectangle.width, _windowRectangle.height);
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+    protected void drawButtons(SpriteBatch batch,ShapeRenderer shapeRenderer)
+    {
+        for (Button button : _nameButtonMap.values())
+        {
+            button.draw(batch, shapeRenderer);
         }
     }
 }

@@ -32,6 +32,7 @@ public class Weapon extends Item
         return _maxDamage;
     }
     private int _bonusDamage;
+    public int getBonusDamage(){return _bonusDamage;}
     public int getIdentifiedMaxDamage()
     {
         return _maxDamage + _bonusDamage;
@@ -158,6 +159,10 @@ public class Weapon extends Item
             Gdx.app.log("Weapon", "Decreasing ammo on a non ranged weapon!");
         }
         _ammoCount--;
+    }
+    public void setAmmoCount(int newCount)
+    {
+        _ammoCount = newCount;
     }
 
     @Override
