@@ -176,6 +176,9 @@ public class AssetManager
 
     private static void initializeFonts()
     {
+        final int devWidth = 960;
+        final int devHeight = 540;
+        final int devFontSize = 21;
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/mono.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -183,22 +186,9 @@ public class AssetManager
         parameters.characters = FreeTypeFontGenerator.DEFAULT_CHARS;
         parameters.minFilter= Texture.TextureFilter.Nearest;
         parameters.magFilter= Texture.TextureFilter.Nearest;
-        int maxSize = 200;
-        BitmapFont font;
-        int widthToFit = Gdx.graphics.getWidth()*5/8-(Gdx.graphics.getWidth()/128);
-        int heightToFit = Gdx.graphics.getHeight()/20;
-        String testString = "Your sight is blocked by gray blobs moving on your eyes";
+        parameters.size=devFontSize*Gdx.graphics.getWidth()/devWidth;
 
-        do
-        {
-            font=generator.generateFont(parameters);
-            BitmapFont.TextBounds textDimensions = font.getBounds(testString);
-            if(textDimensions.width>widthToFit || textDimensions.height>heightToFit)
-            {
-                break;
-            }
-            parameters.size++;
-        }while(parameters.size<maxSize);
+        BitmapFont font=generator.generateFont(parameters);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         _fonts.put("description",font);
         generator.dispose();

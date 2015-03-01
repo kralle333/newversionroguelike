@@ -68,6 +68,7 @@ public class GameAction
         _type = Type.Empty;
         _owner = null;
         _targetCharacter = null;
+        _targetObject=null;
         _targetTile = null;
         _targetItem = null;
     }

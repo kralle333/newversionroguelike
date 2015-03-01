@@ -546,8 +546,17 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                         _player.setThrowAction(_player.getEquippedWeapon(),touchedTile);
                     }
                 }
-                else if(touchedTile.getObject() != null&&touchedTile.isAdjacent(_player.getCurrentTile()))
+                else if(touchedTile.getObject() != null)
                 {
+                    if(!touchedTile.isAdjacent(_player.getCurrentTile()))
+                    {
+                        ArrayList<Tile> playerPath = PathFinder.getPath(_player.getCurrentTile(), touchedTile);
+
+                        if (playerPath != null)
+                        {
+                            _player.setMovementActions(playerPath);
+                        }
+                    }
                     _player.setDestroyAction(touchedTile.getObject());
                 }
                 else

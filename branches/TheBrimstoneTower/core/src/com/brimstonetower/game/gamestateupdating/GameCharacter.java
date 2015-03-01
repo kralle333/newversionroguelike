@@ -264,7 +264,10 @@ public class GameCharacter
             }
             else
             {
-                clearNextActions();
+                if(nextAction!=null && nextAction.getTargetTile() == newAction.getTargetTile())
+                {
+                    return nextAction;
+                }
                 return null;
             }
         }

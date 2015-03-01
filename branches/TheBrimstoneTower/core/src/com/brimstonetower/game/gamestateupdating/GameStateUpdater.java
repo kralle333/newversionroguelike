@@ -289,9 +289,12 @@ public class GameStateUpdater
                 }
                 break;
         }
+        if(action.getType()!= GameAction.Type.Move)
+        {
+            //Remove the action as being the next action
+            action.getOwner().clearCurrentAction();
+        }
 
-        //Remove the action as being the next action
-        action.getOwner().clearCurrentAction();
     }
 
     private void executeAttack(GameAction action)
