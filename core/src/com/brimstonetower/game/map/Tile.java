@@ -198,6 +198,8 @@ public class Tile
         Door door = new Door(type);
         door.placeOnTile(this);
         _object=door;
+        setType(Tile.Types.Door);
+        setTextureRegion( AssetManager.getTileSetPosition("floor-shiny-1"));
     }
     public void setType(Types type)
     {

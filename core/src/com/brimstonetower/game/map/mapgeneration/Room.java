@@ -174,9 +174,7 @@ public class Room
                 }
                 else if(x+wX==door)
                 {
-                    _tiles[door][split].setTextureRegion( AssetManager.getTileSetPosition("floor-shiny-1"));
                     _tiles[door][split].placeDoor("nDoor-1");
-                    _tiles[door][split].setType(Tile.Types.Door);
                 }
                 else
                 {
@@ -215,8 +213,6 @@ public class Room
                 {
                     //Place a door in the wall
                     _tiles[split][door].placeDoor("wDoor");
-                    _tiles[door][split].setType(Tile.Types.Door);
-                    _tiles[split][door].setTextureRegion(AssetManager.getTileSetPosition("floor-shiny-1"));
                 }
                 else
                 {

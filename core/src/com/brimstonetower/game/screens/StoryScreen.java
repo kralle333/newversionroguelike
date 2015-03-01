@@ -82,7 +82,7 @@ public class StoryScreen implements Screen, GestureDetector.GestureListener
 
         _spriteBatch.setProjectionMatrix(_camera.combined);
         _spriteBatch.begin();
-        _font.drawWrapped(_spriteBatch, _storyToBeShown, Gdx.graphics.getWidth() * 0.2f, Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.6f);
+        _font.drawWrapped(_spriteBatch, _storyToBeShown, Gdx.graphics.getWidth() * 0.05f, Gdx.graphics.getHeight() * 0.05f, Gdx.graphics.getWidth() * 0.9f);
         _spriteBatch.end();
 
         _shapeRenderer.setProjectionMatrix(_camera.combined);
