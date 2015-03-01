@@ -264,7 +264,7 @@ public class GameCharacter
             }
             else
             {
-                if(nextAction!=null && nextAction.getTargetTile() == newAction.getTargetTile())
+                if(nextAction!=null && nextAction.getTargetTile() == newAction.getTargetTile() && nextAction.getType() == GameAction.Type.Destroy)
                 {
                     return nextAction;
                 }
