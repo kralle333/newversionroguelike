@@ -145,6 +145,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private void repositionGuiElements(int width, int height)
     {
 
+        _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*(width/960),_levelUpDisplay.getHeight()*(height/540));
         _playerInfoWindowFrame.reposition(2, 2, width - 4, (int) (_font.getBounds("Sample").height * 2.5f));
 
         _inventory.reposition(width/2 - (2 * height / 3)/2, height - (2 * height / 3) - (height / 5) - 4, 2 * height / 3, 2 * height / 3);
