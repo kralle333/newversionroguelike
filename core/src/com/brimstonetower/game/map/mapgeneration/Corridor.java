@@ -77,7 +77,26 @@ public class Corridor
             ArrayList<Tile> junction = new ArrayList<Tile>();
             for (int y = smallestY; y <= biggestY; y++)
             {
-                junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("floor-shiny-"+RandomGen.getRandomInt(1,2))));
+                if (y == smallestY && smallestY == y0)
+                {
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("neCorridor")));
+                }
+                else if (y == smallestY && smallestY == y1)
+                {
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("nwCorridor")));
+                }
+                else if (y == biggestY && biggestY == y1)
+                {
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("swCorridor")));
+                }
+                else if (y == biggestY && biggestY == y0)
+                {
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("seCorridor")));
+                }
+                else
+                {
+                    junction.add(new Tile(Tile.Types.Floor, junctionPoint, y, AssetManager.getTileSetPosition("wCorridor")));
+                }
             }
             //To ensure that the path is in the correct order
             if (smallestY == y1)
@@ -88,12 +107,12 @@ public class Corridor
         }
         else//Only one in junction
         {
-            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0, AssetManager.getTileSetPosition("floor-shiny-"+RandomGen.getRandomInt(1,2))));
+            _tiles.add(new Tile(Tile.Types.Floor, junctionPoint, y0, AssetManager.getTileSetPosition("nCorridor")));
         }
 
         for (int b = junctionPoint + 1; b < x1; b++)
         {
-            _tiles.add(new Tile(Tile.Types.Floor, b, y1, AssetManager.getTileSetPosition("floor-shiny-"+RandomGen.getRandomInt(1,2))));
+            _tiles.add(new Tile(Tile.Types.Floor, b, y1, AssetManager.getTileSetPosition("nCorridor")));
         }
     }
 
