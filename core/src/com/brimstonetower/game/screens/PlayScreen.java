@@ -15,17 +15,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gameobjects.scrolls.Scroll;
 import com.brimstonetower.game.gamestateupdating.GameAction;
 import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
+import com.brimstonetower.game.gui.*;
+import com.brimstonetower.game.helpers.HighScoreIO;
+import com.brimstonetower.game.helpers.PathFinder;
 import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
-import com.brimstonetower.game.gameobjects.Player;
-import com.brimstonetower.game.gui.*;
-import com.brimstonetower.game.helpers.*;
+import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
 
 import java.util.ArrayList;
 
@@ -136,7 +137,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         TextureRegion levelUpRegion = new TextureRegion(AssetManager.getGuiTexture("levelUp"),387,124);
         levelUpRegion.flip(false,true);
         _levelUpDisplay = new Sprite(levelUpRegion);
-        _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*2,_levelUpDisplay.getHeight()*2);
+        _levelUpDisplay.setSize(_levelUpDisplay.getWidth(),_levelUpDisplay.getHeight());
         _levelUpDisplay.setX(Gdx.graphics.getWidth()/2-(_levelUpDisplay.getWidth()/2));
         _levelUpDisplay.setY(Gdx.graphics.getHeight()/2-(_levelUpDisplay.getHeight()/2));
 

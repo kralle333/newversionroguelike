@@ -4,10 +4,10 @@ package com.brimstonetower.game.gameobjects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
-import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.helpers.RandomGen;
+import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
 
 import java.util.HashMap;

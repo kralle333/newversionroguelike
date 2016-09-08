@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.gameobjects.equipment.Armor;

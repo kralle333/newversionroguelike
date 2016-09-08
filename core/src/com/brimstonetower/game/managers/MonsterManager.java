@@ -2,12 +2,12 @@ package com.brimstonetower.game.managers;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.gameobjects.Item;
-import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gameobjects.Monster;
-import com.brimstonetower.game.map.DungeonMap;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.helpers.RandomGen;
+import com.brimstonetower.game.helpers.TileSetCoordinate;
+import com.brimstonetower.game.map.DungeonMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +17,6 @@ public class MonsterManager
 {
     private static ArrayList<MonsterPrototype> monsterPrototypes = new ArrayList<MonsterPrototype>();
     private static int numberOfPrototypes;
-    private static int[] maxMonsters = new int[]{6, 10, 10, 8, 8, 8};
 
     private static class MonsterPrototype
     {
@@ -66,14 +65,14 @@ public class MonsterManager
             rat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 4, 0, 1,1,10, Weapon.RangeType.Melee);
 
             MonsterPrototype skeleton = new MonsterPrototype("Skeleton Soldier", 10, 20, 2, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(1, 0),new TileSetCoordinate(1, 1));
-            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 6, 0, 1,1, 10, Weapon.RangeType.Melee);
+            skeleton.attack = new Weapon("Sword", "Sword", true, null, 10, 10, 0, 1,1, 10, Weapon.RangeType.Melee);
             skeleton.addProbabilityOfAppearing(0.33f, 3);
             skeleton.addProbabilityOfAppearing(0.66f, 5);
             skeleton.addProbabilityOfAppearing(0.99f, 7);
             skeleton.addProbabilityOfAppearing(0, 10);
 
             MonsterPrototype skeletonArcher = new MonsterPrototype("Skeleton Archer", 10, 10, 0, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(2, 0),new TileSetCoordinate(2, 1));
-            skeletonArcher.attack = new Weapon("Bow", "Bow", true, null, 1, 4, 0,2,4,  10,Weapon.RangeType.AmmoThrower);
+            skeletonArcher.attack = new Weapon("Bow", "Bow", true, null, 4, 7, 0,2,4,  10,Weapon.RangeType.AmmoThrower);
             skeletonArcher.addProbabilityOfAppearing(0.33f, 4);
             skeletonArcher.addProbabilityOfAppearing(0.66f, 6);
             skeletonArcher.addProbabilityOfAppearing(0.99f, 8);
@@ -88,9 +87,8 @@ public class MonsterManager
     }
 
 
-    public static ArrayList<Monster> generateMonsters(int depth)
+    public static ArrayList<Monster> generateMonsters(int numberOfMonsters,int depth)
     {
-        int numberOfMonsters = maxMonsters[depth];
         int monstersAdded = 0;
         ArrayList<Monster> returnedMonsters = new ArrayList<Monster>();
 

@@ -15,6 +15,7 @@ import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
+import com.brimstonetower.game.map.mapgeneration.rooms.Room;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,11 +28,10 @@ public class GameStateUpdater
     public static Player player;
     public static Inventory inventory;
     public static  DungeonMap playedMap;
-    private ArrayList<Monster> _monsters;
+    private ArrayList<Monster> _monsters = new ArrayList<>();
     private ArrayList<Gas> _gasClouds = new ArrayList<Gas>();
     private ArrayList<Chest> _chests = new ArrayList<Chest>();
     private ArrayList<Trap> _traps = new ArrayList<Trap>();
-
 
     //Turn handling
     private HashMap<Monster, Integer> _monsterTime = new HashMap<Monster, Integer>();
@@ -72,12 +72,19 @@ public class GameStateUpdater
     {
         _turn = 1;
         GameStateUpdater.player = player;
-        _monsters = playedMap.getMonsters();
 
         GameStateUpdater.inventory = inventory;
         GameStateUpdater.playedMap = playedMap;
-        _chests = playedMap.getChests();
-        _traps = playedMap.getTraps();
+        _traps.clear();
+        _chests.clear();
+        _monsters.clear();
+
+        for(Room room : playedMap.getRooms())
+        {
+            _traps.addAll(room.getTraps());
+            _chests.addAll(room.getChests());
+            _monsters.addAll(room.getMonsters());
+        }
         _gasClouds.clear();
         GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getCurrentTile());
         GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getCurrentTile());

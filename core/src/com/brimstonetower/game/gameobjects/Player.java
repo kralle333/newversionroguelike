@@ -1,16 +1,13 @@
 package com.brimstonetower.game.gameobjects;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.helpers.Effect;
+import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;

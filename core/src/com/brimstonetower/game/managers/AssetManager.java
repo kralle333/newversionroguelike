@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
+import com.brimstonetower.game.map.DungeonMap;
+
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 public class AssetManager
@@ -55,12 +58,13 @@ public class AssetManager
         _gameAssets.put("mainHeroesWithBorder", new Texture(Gdx.files.internal("art/mainHeroesWithBorder.png")));
         _gameAssets.put("misc", new Texture(Gdx.files.internal("art/misc.png")));
         _gameAssets.put("monster", new Texture(Gdx.files.internal("art/monsterTileSet.png")));
-        _gameAssets.put("tile", new Texture(Gdx.files.internal("art/tilesetNew.png")));
+        _gameAssets.put("tile", new Texture(Gdx.files.internal("art/tilesetBrown.png")));
         _gameAssets.put("armors", new Texture(Gdx.files.internal("art/armorTileSet.png")));
         _gameAssets.put("weapons", new Texture(Gdx.files.internal("art/weaponTileSet.png")));
         _gameAssets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
         _gameAssets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
         _gameAssets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
+        _gameAssets.put("interior", new Texture(Gdx.files.internal("art/interior.png")));
         for (Texture t : _gameAssets.values())
         {
             t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -79,6 +83,8 @@ public class AssetManager
         //Floor tiles
         tileSetCoordinateMap.put("floor-shiny-1", new TileSetCoordinate(3, 3));
         tileSetCoordinateMap.put("floor-shiny-2", new TileSetCoordinate(4, 3));
+        tileSetCoordinateMap.put("floor-shiny-3", new TileSetCoordinate(3, 4));
+        tileSetCoordinateMap.put("floor-shiny-4", new TileSetCoordinate(4, 4));
 
 
         //Corridors - n=north,w=west,s=south,e=east
@@ -172,6 +178,13 @@ public class AssetManager
         tileSetCoordinateMap.put("type4.1Gas", new TileSetCoordinate(0, 3));
         tileSetCoordinateMap.put("type4.2Gas", new TileSetCoordinate(1, 3));
         tileSetCoordinateMap.put("type4.3Gas", new TileSetCoordinate(2, 3));
+
+        tileSetCoordinateMap.put("barrel1",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("barrel2",new TileSetCoordinate(1,0));
+        tileSetCoordinateMap.put("box1",new TileSetCoordinate(2,0));
+        tileSetCoordinateMap.put("box2",new TileSetCoordinate(3,0));
+        tileSetCoordinateMap.put("box3",new TileSetCoordinate(4,0));
+        tileSetCoordinateMap.put("bucket",new TileSetCoordinate(0,1));
     }
 
     private static void initializeFonts()
@@ -209,22 +222,60 @@ public class AssetManager
         return _guiAssets.get(name);
     }
 
-    public static TextureRegion getTextureRegion(String path, String tileSetPositionKey, int width, int height)
+    /**
+     * For variable size texture region
+     */
+    public static TextureRegion getTextureRegion(String imageHandle, int xIndex, int yIndex, int width, int height)
+    {
+        try
+        {
+            TextureRegion newRegion = new TextureRegion(_gameAssets.get(imageHandle), xIndex * width, yIndex * height, width, height);
+            newRegion.flip(false,true);
+            return newRegion;
+        }
+        catch(Exception e)
+        {
+            System.out.println("Image handle:"+imageHandle+" not found in _gameAssets - Add before use");
+            throw e;
+        }
+    }
+    /**
+     * For variable size texture region
+     */
+    public static TextureRegion getTextureRegion(String imageHandle, String tileSetPositionKey, int width, int height)
     {
         TileSetCoordinate tile = getTileSetPosition(tileSetPositionKey);
-        return getTextureRegion(path, tile.x , tile.y , width, height);
+        return getTextureRegion(imageHandle, tile.x , tile.y , width, height);
+    }
+    /**
+     * For variable size texture region
+     */
+    public static TextureRegion getTextureRegion(String imageHandle, TileSetCoordinate tileSetCoordinate, int width, int height)
+    {
+        return getTextureRegion(imageHandle, tileSetCoordinate.x, tileSetCoordinate.y, width, height);
     }
 
-    public static TextureRegion getTextureRegion(String path, TileSetCoordinate tileSetCoordinate, int width, int height)
+    /**
+     * For tile sized textures
+     */
+    public static TextureRegion getTileTextureRegion(String imageHandle, int xIndex, int yIndex)
     {
-        return getTextureRegion(path, tileSetCoordinate.x, tileSetCoordinate.y, width, height);
+        return getTextureRegion(imageHandle,xIndex,yIndex, DungeonMap.TileSize,DungeonMap.TileSize);
     }
-
-    public static TextureRegion getTextureRegion(String path, int xIndex, int yIndex, int width, int height)
+    /**
+     * For tile sized textures
+     */
+    public static TextureRegion getTileTextureRegion(String imageHandle, String tileSetPositionKey)
     {
-        TextureRegion newRegion = new TextureRegion(_gameAssets.get(path), xIndex * width, yIndex * height, width, height);
-        newRegion.flip(false,true);
-        return newRegion;
+        TileSetCoordinate tile = getTileSetPosition(tileSetPositionKey);
+        return getTextureRegion(imageHandle, tile.x , tile.y , DungeonMap.TileSize,DungeonMap.TileSize);
+    }
+    /**
+     * For tile sized textures
+     */
+    public static TextureRegion getTileTextureRegion(String imageHandle, TileSetCoordinate tileSetCoordinate)
+    {
+        return getTextureRegion(imageHandle, tileSetCoordinate.x, tileSetCoordinate.y, DungeonMap.TileSize,DungeonMap.TileSize);
     }
 
     public static TileSetCoordinate getTileSetPosition(String key)

@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.brimstonetower.game.gameobjects.Player;
-import com.brimstonetower.game.managers.AssetManager;
-import com.brimstonetower.game.gamestateupdating.GameAction;
-import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gameobjects.Player;
+import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
+import com.brimstonetower.game.gamestateupdating.GameAction;
+import com.brimstonetower.game.managers.AssetManager;
 
 public class SelectedItemWindow extends Window
 {

@@ -4,14 +4,14 @@ package com.brimstonetower.game.gameobjects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.brimstonetower.game.gameobjects.equipment.Weapon;
+import com.brimstonetower.game.gameobjects.equipment.Armor;
+import com.brimstonetower.game.gamestateupdating.GameAction;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.gui.GameConsole;
-import com.brimstonetower.game.gamestateupdating.GameAction;
-import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
+
 import java.util.ArrayList;
 
 

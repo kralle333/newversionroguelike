@@ -11,8 +11,8 @@ import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gameobjects.scrolls.*;
 import com.brimstonetower.game.helpers.Effect;
-import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.helpers.RandomGen;
+import com.brimstonetower.game.helpers.TileSetCoordinate;
 import com.brimstonetower.game.map.DungeonMap;
 
 import java.util.ArrayList;

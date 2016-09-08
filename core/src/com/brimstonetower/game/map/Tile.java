@@ -8,13 +8,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.gameobjects.BreakableObject;
+import com.brimstonetower.game.gameobjects.Door;
+import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gameobjects.Trap;
+import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.helpers.PathFinder;
 import com.brimstonetower.game.helpers.TileSetCoordinate;
-import com.brimstonetower.game.gameobjects.Item;
-import com.brimstonetower.game.gameobjects.*;
-import com.brimstonetower.game.gamestateupdating.GameCharacter;
-import javafx.scene.effect.Light;
+import com.brimstonetower.game.managers.AssetManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,7 +28,11 @@ public class Tile
     {
         Wall,SubWall, Floor, Door, StairCase, Empty
     }
-    public boolean isWalkable(){return _type==Types.Floor || _type == Types.Door || _type == Types.StairCase;}
+    public boolean isWalkable()
+    {
+        boolean hasCorrectType = _type == Types.Floor || _type == Types.Door || _type == Types.StairCase;
+        return hasCorrectType;
+    }
 
     public enum LightAmount
     {
@@ -131,22 +136,26 @@ public class Tile
     }
 
     //Breakable Object
-    private BreakableObject _object;
-    public BreakableObject getObject(){return _object;}
-    public void setObject(BreakableObject object){_object=object;}
+    private BreakableObject _breakableObject;
+    public BreakableObject getObject(){return _breakableObject;}
+    public void setObject(BreakableObject breakableObject){_breakableObject=breakableObject;}
     public void removeObject()
     {
         if(_type == Types.Door)
         {
             _type = Types.Floor;
         }
-        _object=null;
+        _breakableObject=null;
     }
 
 
     public boolean isEmpty()
     {
-        return _character == null && _object==null;
+        if(_character==null && _breakableObject == null && _trap==null)
+        {
+            return true;
+        }
+        return false;
     }
 
     private Trap _trap;
@@ -197,7 +206,7 @@ public class Tile
     {
         Door door = new Door(type);
         door.placeOnTile(this);
-        _object=door;
+        _breakableObject=door;
         setType(Tile.Types.Door);
         setTextureRegion( AssetManager.getTileSetPosition("floor-shiny-1"));
     }
@@ -248,7 +257,7 @@ public class Tile
                     {
                         if ((n.getTileX() == _x || n.getTileY() == _y))
                         {
-                            if(n.isEmpty())
+                            if(n.getCharacter()==null)
                             {
                                 n.setLight(light, strength, currentStrength - 1, lightSource);
                             }
@@ -312,7 +321,7 @@ public class Tile
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
             if(_type == Types.Door)
             {
-                _object.draw(batch);
+                _breakableObject.draw(batch);
             }
             _lightTimer+=Gdx.graphics.getDeltaTime();
             if(_lightTimer>lightChangeTime)
@@ -328,7 +337,7 @@ public class Tile
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
             if(_type == Types.Door)
             {
-                _object.draw(batch);
+                _breakableObject.draw(batch);
             }
         }
 
@@ -337,6 +346,10 @@ public class Tile
             for (Item item : _items)
             {
                 item.draw(batch, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
+            }
+            if(_breakableObject != null)
+            {
+                _breakableObject.draw(batch);
             }
         }
         batch.setColor(Color.WHITE);
