@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.map.Tile;
-import com.brimstonetower.game.map.mapgeneration.rooms.Room;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,11 +46,11 @@ public class BSPMapNode
         return _x + "," + _y + "," + _width + "," + _height;
     }
 
-    public Room room;
+    private Room _room;
 
     public Room getRoom()
     {
-        return room;
+        return _room;
     }
 
     private ArrayList<Corridor> _corridors = new ArrayList<Corridor>();
@@ -133,9 +132,12 @@ public class BSPMapNode
                 {
                     for(int y =0;y<currentNode.getRoom().getHeight();y++)
                     {
-                        int tileX = roomTiles[x][y].getTileX();
-                        int tileY = roomTiles[x][y].getTileY();
-                        tiles[tileX][tileY] = roomTiles[x][y];
+                        if(roomTiles[x][y] != null && roomTiles[x][y] != null)
+                        {
+                            int tileX = roomTiles[x][y].getTileX();
+                            int tileY = roomTiles[x][y].getTileY();
+                            tiles[tileX][tileY] = roomTiles[x][y];
+                        }
                     }
                 }
             }
@@ -159,25 +161,6 @@ public class BSPMapNode
         }
 
         return tiles;
-    }
-
-    public ArrayList<Room> getRooms()
-    {
-        ArrayList<Room> allRooms = new ArrayList<>();
-        if(room != null)
-        {
-            allRooms.add(room);
-        }
-        if(_leftNode != null)
-        {
-            allRooms.addAll(_leftNode.getRooms());
-        }
-        if(_rightNode != null)
-        {
-            allRooms.addAll(_rightNode.getRooms());
-        }
-
-        return allRooms;
     }
 
     public boolean canSplit()
@@ -227,8 +210,18 @@ public class BSPMapNode
 
     }
 
+    public void createRoom()
+    {
+        int roomWidth = RandomGen.getRandomInt(MapGenerator.minWidth, _width);
+        int roomHeight = RandomGen.getRandomInt(MapGenerator.minHeight, _height);
+        int roomX = _x + RandomGen.getRandomInt(0, _width - roomWidth);
+        int roomY = _y + RandomGen.getRandomInt(0, _height - roomHeight);
 
-    public void connectChildren(Tile[][] map)
+        _room = new RectangularRoom(roomX, roomY, roomWidth, roomHeight);
+        _room.setWallsAndFloor();
+    }
+
+    public void connectChildren()
     {
         if (isDebugging)
         {
@@ -236,11 +229,11 @@ public class BSPMapNode
         }
         if (!getLeftNode().hasBeenConnected())
         {
-            getLeftNode().connectChildren(map);
+            getLeftNode().connectChildren();
         }
         if (!getRightNode().hasBeenConnected())
         {
-            getRightNode().connectChildren(map);
+            getRightNode().connectChildren();
         }
 
 
@@ -268,11 +261,11 @@ public class BSPMapNode
 
         if (doVerticalSplit)
         {
-            corridor.connectRoomsHorizontal(split,map);
+            corridor.connectRoomsHorizontal(split);
         }
         else
         {
-            corridor.connectRoomsVertical(split,map);
+            corridor.connectRoomsVertical(split);
         }
         _corridors.add(corridor);
     }
@@ -349,7 +342,7 @@ public class BSPMapNode
         if (_isLeaf)
         {
             //Gdx.app.log("Draw", "Rect: "+_roomDimensions.toString());
-            room.draw(batch);
+            _room.draw(batch);
         }
         else
         {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.brimstonetower.game.managers.AssetManager;
 
 import java.util.HashMap;
 
@@ -38,6 +39,7 @@ public class Window
         _isOpen = false;
     }
 
+    private TextureRegion _buttonRegion;
 
 
     public Window(int x, int y, int width, int height, Color color, int frameSize, Color frameColor)
@@ -47,6 +49,7 @@ public class Window
         _frameSize = frameSize;
         _frameColor = frameColor;
         reposition(x,y,width,height);
+        _buttonRegion=new TextureRegion(AssetManager.getGuiTexture("menuButton"),0,48,128,64);
     }
 
     public void reposition(int x, int y, int width, int height)
@@ -140,8 +143,8 @@ public class Window
         int buttonY = (int)(_windowRectangle.y + (_windowRectangle.height * percentY));
         int width = (int)(_windowRectangle.width * percentWidth);
         int height= (int)( _windowRectangle.height * percentHeight);
-
-        _nameButtonMap.put(buttonText, new Button(buttonX, buttonY,width, height, buttonText, color));
+        Gdx.app.log("Window","Button with size: "+width+","+height);
+        _nameButtonMap.put(buttonText, new Button(buttonX, buttonY,_buttonRegion,width, height, buttonText));
         return _nameButtonMap.get(buttonText);
     }
 

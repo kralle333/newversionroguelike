@@ -9,13 +9,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gui.Button;
-import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.helpers.RandomGen;
 
 public class StoryScreen implements Screen, GestureDetector.GestureListener
 {
@@ -40,6 +41,7 @@ public class StoryScreen implements Screen, GestureDetector.GestureListener
 
     public StoryScreen()
     {
+        TextureRegion buttonRegion = new TextureRegion(AssetManager.getGuiTexture("menuButton"),0,48,128,64);
         _spriteBatch = new SpriteBatch();
         _shapeRenderer = new ShapeRenderer();
         _nameOfPlayer = randomNames[RandomGen.getRandomInt(0, randomNames.length - 1)];
@@ -47,11 +49,11 @@ public class StoryScreen implements Screen, GestureDetector.GestureListener
         _camera = new OrthographicCamera();
         _camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        int buttonWidth = (int)(Gdx.graphics.getWidth() * 0.2f);
+        int buttonWidth = (int)(Gdx.graphics.getWidth() * 0.16f);
         int buttonHeight = (int)(Gdx.graphics.getHeight() * 0.12f);
-        _nameButton = new Button(Gdx.graphics.getWidth() / 2 - (buttonWidth / 2),(int)( Gdx.graphics.getHeight() * 0.85f), buttonWidth, buttonHeight, "Name: " + _nameOfPlayer, _buttonColor);
-        _goBackButton = new Button((_nameButton.getX() - buttonWidth * 3/2), (int)(Gdx.graphics.getHeight() * 0.85f), buttonWidth, buttonHeight, "Go back", _buttonColor);
-        _playGameButton = new Button((_nameButton.getX() + buttonWidth * 3/2), (int)(Gdx.graphics.getHeight() * 0.85f), buttonWidth, buttonHeight, "Play", _buttonColor);
+        _nameButton = new Button(Gdx.graphics.getWidth() / 2 - (buttonWidth / 2),(int)( Gdx.graphics.getHeight() * 0.85f),buttonRegion, buttonWidth, buttonHeight, "Name: " + _nameOfPlayer);
+        _goBackButton = new Button((_nameButton.getX() - buttonWidth * 3/2), (int)(Gdx.graphics.getHeight() * 0.85f), buttonRegion,buttonWidth, buttonHeight, "Go back");
+        _playGameButton = new Button((_nameButton.getX() + buttonWidth * 3/2), (int)(Gdx.graphics.getHeight() * 0.85f),buttonRegion, buttonWidth, buttonHeight, "Play");
 
         Gdx.input.setInputProcessor(new GestureDetector(this));
 
@@ -82,7 +84,7 @@ public class StoryScreen implements Screen, GestureDetector.GestureListener
 
         _spriteBatch.setProjectionMatrix(_camera.combined);
         _spriteBatch.begin();
-        _font.drawWrapped(_spriteBatch, _storyToBeShown, Gdx.graphics.getWidth() * 0.05f, Gdx.graphics.getHeight() * 0.05f, Gdx.graphics.getWidth() * 0.9f);
+        _font.draw(_spriteBatch, _storyToBeShown, Gdx.graphics.getWidth() * 0.05f, Gdx.graphics.getHeight() * 0.05f,Gdx.graphics.getWidth() * 0.9f,10,true);
         _spriteBatch.end();
 
         _shapeRenderer.setProjectionMatrix(_camera.combined);
@@ -188,5 +190,10 @@ public class StoryScreen implements Screen, GestureDetector.GestureListener
     public boolean pinch(Vector2 vector2, Vector2 vector21, Vector2 vector22, Vector2 vector23)
     {
         return false;
+    }
+
+    @Override
+    public void pinchStop() {
+
     }
 }

@@ -4,8 +4,10 @@ package com.brimstonetower.game.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.managers.AssetManager;
 
@@ -23,12 +25,13 @@ public class GameConsole
     private static float _fontHeight;
     private static Window _frame;
     private static Vector2 _textOffset;
-
     public static void setup(int x, int y, int width, int height)
     {
         _textOffset=new Vector2(Gdx.graphics.getWidth()/128,Gdx.graphics.getWidth()/128);
         _font = AssetManager.getFont("description");
-        _fontHeight=_font.getBounds("Test console message").height;
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(_font,"Test console message");
+        _fontHeight=layout.height;
         _linesToShow = (int)((height)/(_textOffset.y+(_fontHeight*1.5f)));
 
         _position = new Vector2(x, Gdx.graphics.getHeight()-(_textOffset.y + (_fontHeight*1.5f* (_linesToShow))));
@@ -38,9 +41,11 @@ public class GameConsole
     }
     public static void reposition(int x, int y, int width, int height)
     {
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(_font,"Test console message");
         _textOffset.x = Gdx.graphics.getWidth()/128;
         _textOffset.y = Gdx.graphics.getWidth()/128;
-        _fontHeight=_font.getBounds("Test console message").height;
+        _fontHeight=layout.height;
         _linesToShow = (int)((height)/(_textOffset.y+(_fontHeight*1.5f)));
 
         _position.x = x;

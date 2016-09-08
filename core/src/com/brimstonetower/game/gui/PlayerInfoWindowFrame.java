@@ -4,6 +4,7 @@ package com.brimstonetower.game.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -40,25 +41,32 @@ public class PlayerInfoWindowFrame extends Window
     {
         if(_isInitialized)
         {
+            GlyphLayout layout = new GlyphLayout();
+            layout.setText(_font,"Name: VeryLongName");
+
             super.reposition(x, y, width, height);
             namePos = new Vector2(x + (Gdx.graphics.getWidth() / 128), y + (Gdx.graphics.getWidth() / 128));
-            levelPos = new Vector2(namePos.x+_font.getBounds("Name: VeryLongName").width, namePos.y);
-            hpPos = new Vector2(namePos.x, namePos.y + height*1.2f - _font.getBounds("Height").height);
-            expPos = new Vector2(hpPos.x + _font.getBounds("Hp: 1000/1000   ").width, hpPos.y);
-
-            strPos = new Vector2(hpPos.x + _font.getBounds("Hp: 1000/1000   ").width, hpPos.y);
-
-            hpRect.x = hpPos.x+_font.getBounds("Hp: ").width;
+            levelPos = new Vector2(namePos.x+layout.width, namePos.y);
+            layout.setText(_font,"Height");
+            hpPos = new Vector2(namePos.x, namePos.y + height*1.3f +layout.height);
+            layout.setText(_font,"Hp: 1000/1000   ");
+            expPos = new Vector2(hpPos.x + layout.width, hpPos.y);
+            strPos = new Vector2(hpPos.x + layout.width, hpPos.y);
+            layout.setText(_font,"Hp: ");
+            hpRect.x = hpPos.x+layout.width;
             hpRect.y= hpPos.y*0.9f;
             hpRect.width =Gdx.graphics.getWidth()*0.1f;
-            hpRect.height= _font.getBounds("height").height*1.2f;
+            layout.setText(_font,"height");
+            hpRect.height= layout.height*1.2f;
 
-            strRect.x = strPos.x+_font.getBounds("Str: ").width;
+            layout.setText(_font,"Str: ");
+            strRect.x = strPos.x+layout.width;
             strRect.y= strPos.y*0.9f;
             strRect.width =Gdx.graphics.getWidth()*0.1f;
             strRect.height= hpRect.height;
 
-            expRect.x = expPos.x+_font.getBounds("Exp: ").width;
+            layout.setText(_font,"Exp: ");
+            expRect.x = expPos.x+layout.width;
             expRect.y= expPos.y*0.9f;
             expRect.width =Gdx.graphics.getWidth()*0.1f;
             expRect.height=hpRect.height;

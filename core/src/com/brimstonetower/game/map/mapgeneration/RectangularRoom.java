@@ -1,13 +1,74 @@
-package com.brimstonetower.game.map.mapgeneration.rooms;
+package com.brimstonetower.game.map.mapgeneration;
+
+import com.badlogic.gdx.Gdx;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.Tile;
-public class SuiteRoom extends Room
+
+
+public class RectangularRoom extends Room
 {
 
-    public SuiteRoom(int x, int y, int width, int height)
+    public RectangularRoom(int x, int y, int width, int height)
     {
-        super(x,y,width,height);
+        super(x, y, width, height);
+    }
+
+    public void setWallsAndFloor()
+    {
+        //Top wall
+        _tiles[0][0] = new Tile(Tile.Types.Wall, _x, _y, AssetManager.getTileSetPosition("nwWall"));
+        _tiles[1][0] = new Tile(Tile.Types.Wall, 1+_x, _y, AssetManager.getTileSetPosition("nwRoomWall"));
+        _tiles[_width - 1][0] = new Tile(Tile.Types.Wall,_width - 1+ _x, _y, AssetManager.getTileSetPosition("neWall"));
+        _tiles[_width - 2][0] = new Tile(Tile.Types.Wall, _width - 2+ _x, _y, AssetManager.getTileSetPosition("neRoomWall"));
+        for(int x = 2;x<_width-2;x++)
+        {
+            _tiles[x][0] = new Tile(Tile.Types.Wall, x + _x,  _y, AssetManager.getTileSetPosition("nRoomWall"));
+        }
+
+        //Bottom wall
+        _tiles[0][_height - 1] = new Tile(Tile.Types.Wall, _x, _height - 1+ _y, AssetManager.getTileSetPosition("swWall"));
+        _tiles[_width - 1][_height - 1] = new Tile(Tile.Types.Wall, _width - 1 + _x, _height - 1 + _y, AssetManager.getTileSetPosition("seWall"));
+        for(int x = 1;x<_width-1;x++)
+        {
+            _tiles[x][_height - 1] = new Tile(Tile.Types.Wall, x + _x, _height - 1 + _y, AssetManager.getTileSetPosition("sWall"));
+        }
+
+        //West Wall
+        for(int y = 1;y<_height-1;y++)
+        {
+            _tiles[0][y] = new Tile(Tile.Types.Wall, _x, y + _y, AssetManager.getTileSetPosition("wWall"));
+        }
+
+        //East wall
+        for(int y = 1;y<_height-1;y++)
+        {
+            _tiles[_width-1][y] = new Tile(Tile.Types.Wall, _width-1+_x, y + _y, AssetManager.getTileSetPosition("eWall"));
+        }
+
+        //Floor
+        String floorType = "shiny";
+        for(int x =1;x<_width-1;x++)
+        {
+            for(int y=1;y<_height-1;y++)
+            {
+                //Random floor
+                _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, AssetManager.getTileSetPosition("floor-"+floorType+"-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
+            }
+        }
+
+        makeSubRooms(0,0,_width,_height,_width/2,false);
+
+        for (int x = 0; x < getWidth(); x++)
+        {
+            for (int y = 0; y < getHeight(); y++)
+            {
+                setNeighbours(_tiles[x][y]);
+            }
+        }
+
+
+
     }
 
     private void makeSubRooms(int x,int y,int width, int height, int previousDoorPos,boolean previousWasHor)
@@ -117,6 +178,45 @@ public class SuiteRoom extends Room
 
 
     }
+    public Tile getRandomEmptyWall(WallSide side)
+    {
+        Tile returnedTile = null;
+        int randomTile=0;
+        switch (side)
+        {
+            case West:
+                do
+                {
+                    randomTile = RandomGen.getRandomInt(1, _height - 2);
+                    returnedTile = _tiles[0][randomTile];
+                } while (returnedTile == null ||returnedTile.getType() != Tile.Types.Wall || _usedWallsY.contains(randomTile));
+                break;
+            case East:
+                do
+                {
+                    randomTile=RandomGen.getRandomInt(1, _height - 2);
+                    returnedTile = _tiles[_width - 1][randomTile];
+                } while (returnedTile == null ||returnedTile.getType() != Tile.Types.Wall|| _usedWallsY.contains(randomTile));
+                break;
+            case South:
+                do
+                {
+                    randomTile=RandomGen.getRandomInt(1, _width - 2);
+                    returnedTile = _tiles[randomTile][_height - 1];
+                } while (returnedTile == null ||returnedTile.getType() != Tile.Types.Wall|| _usedWallsX.contains(randomTile));
+                break;
+            case North:
+                do
+                {
+                    randomTile=RandomGen.getRandomInt(1, _width - 2);
+                    returnedTile = _tiles[randomTile][0];
+                } while (returnedTile == null ||returnedTile.getType() != Tile.Types.Wall|| _usedWallsX.contains(randomTile));
+                break;
+        }
+        return returnedTile;
+    }
+
+
     enum SubRoomSize {Small,Medium,Large};
     private void decorateSubRoom(int x,int y,int width, int height)
     {
@@ -133,9 +233,4 @@ public class SuiteRoom extends Room
         }
     }
 
-    @Override
-    protected void finalize()
-    {
-        makeSubRooms(0,0,getWidth(),getHeight(),getWidth()/2,false);
-    }
 }

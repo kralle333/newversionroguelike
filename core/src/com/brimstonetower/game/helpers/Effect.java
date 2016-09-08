@@ -2,6 +2,7 @@ package com.brimstonetower.game.helpers;
 
 
 import com.badlogic.gdx.graphics.Color;
+import com.brimstonetower.game.gui.GameConsole;
 
 public class Effect
 {

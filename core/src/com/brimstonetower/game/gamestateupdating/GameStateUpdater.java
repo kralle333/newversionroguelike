@@ -15,7 +15,6 @@ import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
-import com.brimstonetower.game.map.mapgeneration.rooms.Room;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,10 +27,11 @@ public class GameStateUpdater
     public static Player player;
     public static Inventory inventory;
     public static  DungeonMap playedMap;
-    private ArrayList<Monster> _monsters = new ArrayList<>();
+    private ArrayList<Monster> _monsters;
     private ArrayList<Gas> _gasClouds = new ArrayList<Gas>();
     private ArrayList<Chest> _chests = new ArrayList<Chest>();
     private ArrayList<Trap> _traps = new ArrayList<Trap>();
+
 
     //Turn handling
     private HashMap<Monster, Integer> _monsterTime = new HashMap<Monster, Integer>();
@@ -72,20 +72,14 @@ public class GameStateUpdater
     {
         _turn = 1;
         GameStateUpdater.player = player;
+        _monsters = playedMap.getMonsters();
 
         GameStateUpdater.inventory = inventory;
         GameStateUpdater.playedMap = playedMap;
-        _traps.clear();
-        _chests.clear();
-        _monsters.clear();
-
-        for(Room room : playedMap.getRooms())
-        {
-            _traps.addAll(room.getTraps());
-            _chests.addAll(room.getChests());
-            _monsters.addAll(room.getMonsters());
-        }
+        _chests = playedMap.getChests();
+        _traps = playedMap.getTraps();
         _gasClouds.clear();
+
         GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getCurrentTile());
         GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getCurrentTile());
         _monsterTime.clear();
@@ -252,8 +246,7 @@ public class GameStateUpdater
             case Destroy:
                 action.getOwner().setPosition(action.getOwner().getCurrentTile().getWorldPosition());
                 action.getTargetObject().destroy();
-                GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow,  GameStateUpdater.player.getLanternStrength() * 2, GameStateUpdater.player.getCurrentTile());
-                GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(),  GameStateUpdater.player.getCurrentTile());
+                player.getCurrentTile().updateLight(player);
                 break;
             case Equip:
                 Item equipment = action.getTargetItem();
@@ -275,6 +268,7 @@ public class GameStateUpdater
             case Drop:
                 Item droppedItem = action.getTargetItem();
                 inventory.removeItem(droppedItem);
+                action.getOwner().currentTile.addItem(droppedItem);
                 break;
             case Throw:
                 //The animation for throwing has just ended, resolve the result of the throw:
@@ -317,6 +311,7 @@ public class GameStateUpdater
             if (defender.isDead())
             {
                 player.retrieveExperience((Monster) (defender));
+                player.getCurrentTile().updateLight(player);
             }
         }
         else if (defender instanceof Player)
@@ -328,8 +323,7 @@ public class GameStateUpdater
         }
         else
         {
-            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow,  GameStateUpdater.player.getLanternStrength() * 2, GameStateUpdater.player.getCurrentTile());
-            GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(),  GameStateUpdater.player.getCurrentTile());
+            player.getCurrentTile().updateLight(player);
         }
 
     }
@@ -384,8 +378,13 @@ public class GameStateUpdater
                     GameConsole.addMessage(trapMessage);
                 }
             }
+
+
             inventory.step();
+            playedMap.setLighting(player.getCurrentTile(),player.getLanternStrength(), Tile.LightAmount.DarkShadow);
             player.moveTo(newTile);
+            player.getCurrentTile().updateLight(player);
+
         }
         else
         {

@@ -4,8 +4,11 @@ package com.brimstonetower.game.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.gameobjects.equipment.Armor;
@@ -21,6 +24,7 @@ public class Inventory extends Window
 {
     private final ArrayList<Item> _items = new ArrayList<Item>();
     private Item _selectedItem;
+    private TextureRegion _equippedItemSlotRegion;
 
     public boolean hasItemBeenSelected()
     {
@@ -58,6 +62,7 @@ public class Inventory extends Window
     {
         super(x, y, width, height, color, frameSize, frameColor);
         _descriptionFont = AssetManager.getFont("description");
+        _equippedItemSlotRegion = new TextureRegion(AssetManager.getGuiTexture("equipmentSlot"),0,0,128,128);
 
     }
 
@@ -138,7 +143,7 @@ public class Inventory extends Window
         if (item instanceof Armor)
         {
             Armor equippedArmor =_player.getEquippedArmor();
-            if(equippedArmor == null || (equippedArmor!=null &&!equippedArmor.hasCurse()))
+            if(equippedArmor == null || !equippedArmor.hasCurse())
             {
                 _player.equip(item);
                 if(item.hasCurse())
@@ -157,7 +162,7 @@ public class Inventory extends Window
         else
         {
             Weapon equippedWeapon =_player.getEquippedWeapon();
-            if(equippedWeapon == null || (equippedWeapon!=null &&!equippedWeapon.hasCurse()))
+            if(equippedWeapon == null ||!equippedWeapon.hasCurse())
             {
                 _player.equip(item);
                 if (item.hasCurse())
@@ -209,6 +214,8 @@ public class Inventory extends Window
         }
     }
 
+
+
     public void step()
     {
         if (_player.getEquippedArmor() != null)
@@ -257,14 +264,19 @@ public class Inventory extends Window
                 Item item = buttonItemEntry.getValue();
                 if(_player.getEquippedWeapon() == item || _player.getEquippedArmor() == item)
                 {
+
+                    GlyphLayout layout = new GlyphLayout();
+                    layout.setText(_descriptionFont,"E");
                     batch.setColor(Color.GREEN);
-                    _descriptionFont.draw(batch, "E",button.getX(), button.getY()+button.getHeight()-_descriptionFont.getBounds("E").height);
+                    _descriptionFont.draw(batch,layout,button.getX(), button.getY()+button.getHeight()-layout.height);
                     batch.setColor(Color.WHITE);
                 }
                 if(item.isStackable() && item instanceof Weapon)
                 {
+                    GlyphLayout layout = new GlyphLayout();
+                    layout.setText(_descriptionFont,"10");
                     batch.setColor(Color.BLUE);
-                    _descriptionFont.draw(batch, String.valueOf(((Weapon) item).getAmmoCount()), button.getX()+button.getWidth()-_descriptionFont.getBounds("10").width, button.getY() + button.getHeight()-_descriptionFont.getBounds("10").height);
+                    _descriptionFont.draw(batch, String.valueOf(((Weapon) item).getAmmoCount()), button.getX()+button.getWidth()-layout.width, button.getY() + button.getHeight()-layout.height);
                     batch.setColor(Color.WHITE);
                 }
                 batch.end();
@@ -275,13 +287,24 @@ public class Inventory extends Window
             batch.begin();
             float width = Gdx.graphics.getWidth();
             float height = Gdx.graphics.getHeight();
+            float scaleToShow =  height / 400;
+
+            float weaponSlotX =  width- 160;
+            float weaponSlotY =48;
+
+            float armorSlotX =  width -64;
+            float armorSlotY =48;
+
+            batch.draw(_equippedItemSlotRegion,weaponSlotX-64,weaponSlotY-64,64,64,128,128,scaleToShow/3,scaleToShow/3,0);
             if (_player.getEquippedWeapon() != null)
             {
-                _player.getEquippedWeapon().draw(batch, width - (height / 4) - 4, 4, height / 400);
+                _player.getEquippedWeapon().draw(batch, weaponSlotX-16, weaponSlotY-16, scaleToShow);
             }
+
+            batch.draw(_equippedItemSlotRegion, armorSlotX-64, armorSlotY-64,64,64,128,128,scaleToShow/3,scaleToShow/3,0);
             if (_player.getEquippedArmor() != null)
             {
-                _player.getEquippedArmor().draw(batch, width - (height / 8) - 4, 4, height / 400);
+                _player.getEquippedArmor().draw(batch, armorSlotX-16 , armorSlotY-16,scaleToShow);
             }
             batch.end();
         }

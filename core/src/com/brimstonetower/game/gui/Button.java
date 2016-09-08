@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -64,16 +65,17 @@ public class Button
     private TextureRegion _textureRegion = null;
     private boolean _isHidden = false;
     private Rectangle _hitRectangle;
-    private float _scale = 1;
+    private float _scaleX = 1;
+    private float _scaleY = 1;
 
     public float getScale()
     {
-        return _scale;
+        return _scaleX;
     }
 
     public void setScale(float newScale)
     {
-        _scale = newScale;
+        _scaleX = newScale;
     }
 
     public Button(int x,int y,int width,int height, String text, Color color)
@@ -99,7 +101,19 @@ public class Button
         _font = AssetManager.getFont("description");
         _hitRectangle = new Rectangle(x, y, _width, _height);
     }
-
+    public Button(int x,int y, TextureRegion region,int width,int height,String text)
+    {
+        _x = x;
+        _y = y;
+        _scaleX = (width/region.getRegionWidth());
+        _scaleY = (height/region.getRegionHeight());
+        _width =width;
+        _height = height;
+        _textureRegion = region;
+        _text = text;
+        _font = AssetManager.getFont("description");
+        _hitRectangle = new Rectangle(x, y, _width, _height);
+    }
     public void reposition(int x, int y,int width, int height)
     {
         _x=x;
@@ -134,8 +148,8 @@ public class Button
         _hitRectangle.y = y;
         if (_textureRegion != null)
         {
-            _hitRectangle.width = _textureRegion.getRegionWidth() * _scale;
-            _hitRectangle.height = _textureRegion.getRegionHeight() * _scale;
+            _hitRectangle.width = _textureRegion.getRegionWidth() * _scaleX;
+            _hitRectangle.height = _textureRegion.getRegionHeight() * _scaleX;
         }
     }
 
@@ -156,8 +170,11 @@ public class Button
                 shapeRenderer.rect(_x, _y, _width, _height);
                 shapeRenderer.end();
                 Gdx.gl.glDisable(GL20.GL_BLEND);
+
+                GlyphLayout layout = new GlyphLayout();
+                layout.setText(_font,_text);
                 batch.begin();
-                _font.draw(batch, _text, _x + (_width / 2) - (_font.getBounds(_text).width / 2), _y + (_height / 2) - (_font.getBounds(_text).height / 2));
+                _font.draw(batch,layout, _x + (_width / 2) - (layout.width / 2), _y + (_height / 2) - (layout.height / 2));
                 batch.end();
             }
             else
@@ -168,8 +185,11 @@ public class Button
                 {
                     batch.setColor(_color);
                 }
-                batch.draw(_textureRegion, _x, _y, 0, 0, _width, _height, _scale, _scale, 0);
+                GlyphLayout layout = new GlyphLayout();
+                layout.setText(_font,_text);
+                batch.draw(_textureRegion, _x, _y, _width/2, _height/2, _width, _height, _scaleX, _scaleY, 0);
                 batch.setColor(Color.WHITE);
+                _font.draw(batch,layout, _x + (_width / 2) - (layout.width / 2), _y + (_height / 2) );// (layout.height / 2) );
                 batch.end();
             }
         }

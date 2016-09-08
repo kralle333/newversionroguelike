@@ -3,14 +3,15 @@ package com.brimstonetower.game.gui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.Player;
-import com.brimstonetower.game.gameobjects.equipment.Armor;
-import com.brimstonetower.game.gameobjects.equipment.Weapon;
-import com.brimstonetower.game.gamestateupdating.GameAction;
 import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.gamestateupdating.GameAction;
+import com.brimstonetower.game.gameobjects.equipment.Armor;
+import com.brimstonetower.game.gameobjects.Item;
+import com.brimstonetower.game.gameobjects.equipment.Weapon;
 
 public class SelectedItemWindow extends Window
 {
@@ -115,11 +116,28 @@ public class SelectedItemWindow extends Window
         if (item instanceof Armor)
         {
             showButton("Equip");
+
+            if(_player.getEquippedArmor() == item)
+            {
+                getButton("Equip").setText("Unequip");
+            }
+            else
+            {
+                getButton("Equip").setText("Equip");
+            }
             hideButton("Use");
         }
         else if (item instanceof Weapon)
         {
             showButton("Equip");
+            if(_player.getEquippedWeapon() == item)
+            {
+                getButton("Equip").setText("Unequip");
+            }
+            else
+            {
+                getButton("Equip").setText("Equip");
+            }
             hideButton("Use");
         }
         else
@@ -136,10 +154,12 @@ public class SelectedItemWindow extends Window
         if (_isOpen)
         {
             super.draw(batch, shapeRenderer);
+            GlyphLayout layout = new GlyphLayout();
+            layout.setText(_descriptionFont,"Height");
             batch.begin();
             _descriptionFont.draw(batch, _selectedItem.getName(), _windowRectangle.x + 5, _windowRectangle.y + 5);
-            _selectedItem.draw(batch, _windowRectangle.x + (_windowRectangle.width / 2) - 32, _windowRectangle.y + _descriptionFont.getBounds("Height").height*2f,2);
-            _descriptionFont.drawWrapped(batch, _selectedItem.getDescription(), _windowRectangle.x + 5,  _windowRectangle.y + _descriptionFont.getBounds("Height").height*10f, _windowRectangle.width - 10);
+            _selectedItem.draw(batch, _windowRectangle.x + (_windowRectangle.width / 2) - 32, _windowRectangle.y + layout.height*2f,2);
+            _descriptionFont.draw(batch, _selectedItem.getDescription(), _windowRectangle.x + 5,  _windowRectangle.y + layout.height*10f,_windowRectangle.width - 10,10,true);
             batch.end();
         }
     }

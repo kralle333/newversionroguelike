@@ -4,10 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
@@ -15,18 +12,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gameobjects.Item;
-import com.brimstonetower.game.gameobjects.Player;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gameobjects.scrolls.Scroll;
 import com.brimstonetower.game.gamestateupdating.GameAction;
 import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
-import com.brimstonetower.game.gui.*;
-import com.brimstonetower.game.helpers.HighScoreIO;
-import com.brimstonetower.game.helpers.PathFinder;
 import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
-import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
+import com.brimstonetower.game.gameobjects.Player;
+import com.brimstonetower.game.gui.*;
+import com.brimstonetower.game.helpers.*;
 
 import java.util.ArrayList;
 
@@ -137,7 +133,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         TextureRegion levelUpRegion = new TextureRegion(AssetManager.getGuiTexture("levelUp"),387,124);
         levelUpRegion.flip(false,true);
         _levelUpDisplay = new Sprite(levelUpRegion);
-        _levelUpDisplay.setSize(_levelUpDisplay.getWidth(),_levelUpDisplay.getHeight());
+        _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*2,_levelUpDisplay.getHeight()*2);
         _levelUpDisplay.setX(Gdx.graphics.getWidth()/2-(_levelUpDisplay.getWidth()/2));
         _levelUpDisplay.setY(Gdx.graphics.getHeight()/2-(_levelUpDisplay.getHeight()/2));
 
@@ -147,7 +143,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     {
 
         _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*(width/960),_levelUpDisplay.getHeight()*(height/540));
-        _playerInfoWindowFrame.reposition(2, 2, width - 4, (int) (_font.getBounds("Sample").height * 2.5f));
+        _playerInfoWindowFrame.reposition(2, 2, width - 4, 5);//(int) (_font.getBounds("Sample").height * 2.5f));
 
         _inventory.reposition(width/2 - (2 * height / 3)/2, height - (2 * height / 3) - (height / 5) - 4, 2 * height / 3, 2 * height / 3);
 
@@ -245,14 +241,17 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
         if (_currentScreenState == ScreenState.GameOver)
         {
-            _font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2 - _font.getBounds("Game Over").width/2, Gdx.graphics.getHeight() / 4 + 10);
+            GlyphLayout layout = new GlyphLayout();
+            layout.setText(_font,"Game Over");
+            _font.draw(batch, layout, Gdx.graphics.getWidth() / 2 -layout.width/2, Gdx.graphics.getHeight() / 4 + 10);
             _font.draw(batch, "Score: "+((int) _player.calculateScore() * _depth), Gdx.graphics.getWidth() / 2 - 40, Gdx.graphics.getHeight() / 2);
 
         }
         else if (_currentScreenState == ScreenState.GameWon)
         {
-            final String gameWonText = "Congratulations adventurer! - Your quest is over";
-            _font.draw(batch, gameWonText, Gdx.graphics.getWidth() / 2 - (_font.getBounds(gameWonText).width / 2), Gdx.graphics.getHeight() / 4 + 10);
+            GlyphLayout layout = new GlyphLayout();
+            layout.setText(_font,"Congratulations adventurer! - Your quest is over");
+            _font.draw(batch, layout, Gdx.graphics.getWidth() / 2 - (layout.width / 2), Gdx.graphics.getHeight() / 4 + 10);
         }
         batch.end();
     }
@@ -346,6 +345,8 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         Tile newTile = null;
         switch (keycode)
         {
+            case Input.Keys.HOME:
+                _currentDungeonMap.revealAll();
             case Input.Keys.LEFT:
             case Input.Keys.A:
                 newTile = _currentDungeonMap.getTouchedTile((int)(_player.getCurrentTile().getTilePosition().x-1),(int)(_player.getCurrentTile().getTilePosition().y));
@@ -660,7 +661,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     {
         Vector3 unprojectedPos = mainCamera.unproject(new Vector3(x,y,0));
         Tile pressedTile = _currentDungeonMap.getTouchedTile(unprojectedPos.x,unprojectedPos.y);
-        if(pressedTile!= null && !pressedTile.isEmpty())
+        if(pressedTile!= null && pressedTile.getCharacter() != null)
         {
             _gameStateUpdater.hideAttackRanges();
             pressedTile.getCharacter().displayAttackRange();
@@ -739,6 +740,11 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     public boolean pinch(Vector2 vector2, Vector2 vector22, Vector2 vector23, Vector2 vector24)
     {
         return false;
+    }
+
+    @Override
+    public void pinchStop() {
+
     }
 
     @Override

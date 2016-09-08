@@ -4,13 +4,14 @@ package com.brimstonetower.game.gamestateupdating;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.BreakableObject;
-import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.gameobjects.Player;
+import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.DungeonMap;
@@ -182,6 +183,7 @@ public class GameCharacterAnimation
             {
                 scaleOfSearchIcons.put(tile, RandomGen.getRandomFloat(0.45f, 0.5f));
             }
+            _playTime*=2;
             _searchIconRegion =AssetManager.getTextureRegion("misc", "searchEye", DungeonMap.TileSize, DungeonMap.TileSize);
             AssetManager.getSound("search").play();
         }
@@ -277,7 +279,7 @@ public class GameCharacterAnimation
                 damageIndicator.update();
                 if (damageIndicator.isVisible())
                 {
-                    damageIndicator.draw(AssetManager.getFont("description"),batch);
+                    damageIndicator.draw(AssetManager.getFont("damageIndicator"),batch);
                 }
                 else
                 {

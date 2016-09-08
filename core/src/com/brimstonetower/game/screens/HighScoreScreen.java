@@ -7,14 +7,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.TheBrimstoneTowerGame;
 import com.brimstonetower.game.gui.Button;
-import com.brimstonetower.game.helpers.HighScoreIO;
 import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.helpers.HighScoreIO;
 
 public class HighScoreScreen implements Screen, GestureDetector.GestureListener
 {
@@ -24,6 +26,7 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
     private OrthographicCamera guiCamera;
     private Button mainMenuButton;
     private Button clearScoresButton;
+    private TextureRegion _buttonRegion;
 
     @Override
     public boolean tap(float x, float y, int i, int i2)
@@ -41,16 +44,27 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
 
     public HighScoreScreen()
     {
+        _buttonRegion=new TextureRegion(AssetManager.getGuiTexture("menuButton"),0,48,128,64);
         _font = AssetManager.getFont("description");
         batch = new SpriteBatch();
-        int bW = Gdx.graphics.getWidth() / 4;
+        int bW = Gdx.graphics.getWidth() / 6;
         int bH = Gdx.graphics.getHeight() / 8;
-        mainMenuButton = new Button((Gdx.graphics.getWidth() / 2) -(bW*3/2), (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Main Menu", Color.BLUE);
-        clearScoresButton = new Button((Gdx.graphics.getWidth() / 2)+bW/2 , (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), bW, bH, "Clear Scores", Color.GRAY);
+        mainMenuButton = new Button((Gdx.graphics.getWidth() / 2) -(bW*3/2), (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)),_buttonRegion, bW, bH, "Main Menu");
+        clearScoresButton = new Button((Gdx.graphics.getWidth() / 2)+bW/2 , (Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() / 6) - (bH / 2)), _buttonRegion,bW, bH, "Clear Scores");
         renderer = new ShapeRenderer();
         guiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         guiCamera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.input.setInputProcessor(new GestureDetector(this));
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @Override
@@ -65,13 +79,16 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
         Vector2 pos = new Vector2(w *0.1f, h * 0.3f);
         batch.begin();
 
-        _font.draw(batch, "High Scores:", (w / 2) - (_font.getBounds("High Scores:").width / 2), h * 0.1f);
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(_font,"High Scores:");
+        _font.draw(batch, layout, (w / 2) - (layout.width / 2), h * 0.1f);
         _font.draw(batch, "Rank:", pos.x, pos.y);
         _font.draw(batch, "Name:", pos.x + w * 0.1f, pos.y);
         _font.draw(batch, "Score:", pos.x + w * 0.7f, pos.y);
+        layout.setText(_font,"2");
         for (int i = 0; i < 10; i++)
         {
-            float offSetY = (i + 1) * (_font.getBounds("2").height + (h / 100));
+            float offSetY = (i + 1) * (layout.height + (h / 100));
             _font.draw(batch, (i + 1) + "", pos.x, pos.y + offSetY);
             _font.draw(batch, HighScoreIO.getScoreText(i), pos.x + w * 0.1f, pos.y + offSetY);
             _font.draw(batch, HighScoreIO.getScoreValue(i) + "", pos.x + w * 0.7f, pos.y + offSetY);
@@ -121,6 +138,11 @@ public class HighScoreScreen implements Screen, GestureDetector.GestureListener
     public boolean pinch(Vector2 vector2, Vector2 vector22, Vector2 vector23, Vector2 vector24)
     {
         return false;
+    }
+
+    @Override
+    public void pinchStop() {
+
     }
 
     @Override

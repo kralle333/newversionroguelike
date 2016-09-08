@@ -103,6 +103,6 @@ public class Item
 
     public void draw(SpriteBatch batch, float x, float y, float scale)
     {
-        batch.draw(_textureRegion, x, y, 0, 0, _textureRegion.getRegionWidth(), _textureRegion.getRegionHeight(), scale, scale, 0);
+        batch.draw(_textureRegion, x, y, _textureRegion.getRegionWidth()/2,  _textureRegion.getRegionHeight()/2, _textureRegion.getRegionWidth(), _textureRegion.getRegionHeight(), scale, scale, 0);
     }
 }

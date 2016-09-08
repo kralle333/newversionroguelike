@@ -6,10 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
@@ -35,15 +32,16 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     Vector2 crop = new Vector2();
     public MenuScreen()
     {
+        TextureRegion buttonRegion = new TextureRegion(AssetManager.getGuiTexture("menuButton"),0,48,128,64);
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
-        int buttonWidth = (int)(w * 0.2f);
+        int buttonWidth = (int)(w * 0.18f);
         int buttonHeight = (int)(h * 0.12f);
         setupBackground(w,h);
 
-        startButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.55f - buttonHeight), buttonWidth, buttonHeight, "Start Game", _buttonColor);
-        highScoreButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.7f - buttonHeight), buttonWidth, buttonHeight, "High scores", _buttonColor);
-        exitGameButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.85f - buttonHeight), buttonWidth, buttonHeight, "Exit Game", _buttonColor);
+        startButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.55f - buttonHeight), buttonRegion,buttonWidth,buttonHeight, "Start Game");
+        highScoreButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.7f - buttonHeight), buttonRegion,buttonWidth,buttonHeight, "High scores");
+        exitGameButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.85f - buttonHeight), buttonRegion,buttonWidth,buttonHeight, "Exit Game");
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         guiCamera = new OrthographicCamera(w, h);
@@ -52,7 +50,10 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         _versionString=TheBrimstoneTowerGame.version + " " + TheBrimstoneTowerGame.versionState;
         _gameTitle = "The Brimstone Tower";
         _font = AssetManager.getFont("description");
-        _titlePosition = new Vector2(Gdx.graphics.getWidth() / 2 - _font.getBounds(_gameTitle).width/2, Gdx.graphics.getHeight() * 0.15f);
+
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(_font,_gameTitle);
+        _titlePosition = new Vector2(Gdx.graphics.getWidth() / 2 - layout.width/2, Gdx.graphics.getHeight() * 0.15f);
         Gdx.input.setInputProcessor(new GestureDetector(this));
     }
 
@@ -91,6 +92,8 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     @Override
     public void render(float v)
     {
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(_font,_versionString);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(guiCamera.combined);
@@ -100,8 +103,8 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         _font.draw(batch, _gameTitle, _titlePosition.x, _titlePosition.y);
         _font.draw(batch,
                 TheBrimstoneTowerGame.version + " " + TheBrimstoneTowerGame.versionState,
-                Gdx.graphics.getWidth() - (_font.getBounds(_versionString).width*1.1f),
-                Gdx.graphics.getHeight()-_font.getBounds(_versionString).height*1.1f);
+                Gdx.graphics.getWidth() - (layout.width*1.1f),
+                Gdx.graphics.getHeight()-layout.height*1.1f);
 
         batch.end();
         guiCamera.update();
@@ -173,6 +176,11 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
     public boolean pinch(Vector2 vector2, Vector2 vector22, Vector2 vector23, Vector2 vector24)
     {
         return false;
+    }
+
+    @Override
+    public void pinchStop() {
+
     }
 
 
