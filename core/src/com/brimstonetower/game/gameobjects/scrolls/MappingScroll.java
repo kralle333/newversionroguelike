@@ -22,7 +22,7 @@ public class MappingScroll extends Scroll
         GameConsole.addMessage("Map has been revealed");
 
         Tile playerTile = GameStateUpdater.player.getCurrentTile();
-        int lanternStr =GameStateUpdater.player.getLanternStrength();
+        int lanternStr =GameStateUpdater.player.getViewDistance();
         playerTile.setLight(Tile.LightAmount.Light, lanternStr,playerTile);
     }
 }

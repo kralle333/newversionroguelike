@@ -17,6 +17,7 @@ import com.brimstonetower.game.gameobjects.scrolls.Scroll;
 import com.brimstonetower.game.gamestateupdating.GameAction;
 import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
 import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.managers.ItemManager;
 import com.brimstonetower.game.map.mapgeneration.DungeonGenerator;
 import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
@@ -349,6 +350,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         {
             case Input.Keys.HOME:
                 _currentDungeonMap.revealAll();
+                break;
             case Input.Keys.LEFT:
             case Input.Keys.A:
                 newTile = _currentDungeonMap.getTouchedTile((int)(_player.getCurrentTile().getTilePosition().x-1),(int)(_player.getCurrentTile().getTilePosition().y));
@@ -389,6 +391,12 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
                 break;
             case Input.Keys.MINUS:
                 mainCamera.zoom=Math.min(maxZoom,mainCamera.zoom+0.1f);
+                break;
+            case Input.Keys.NUM_0:
+                _inventory.addItem(ItemManager.getRandomPotion());
+                break;
+            case Input.Keys.NUM_9:
+                _inventory.addItem(ItemManager.getRandomScroll());
                 break;
         }
         if(newTile != null && newTile.isWalkable())

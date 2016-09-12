@@ -31,7 +31,7 @@ public class Chest extends BreakableObject
 
     public void update(Player player)
     {
-        if(!_wasSeen && player.getCurrentTile().distanceTo(tile)<=player.getLanternStrength())
+        if(!_wasSeen && player.getCurrentTile().distanceTo(tile)<=player.getViewDistance())
         {
             _wasSeen=true;
         }

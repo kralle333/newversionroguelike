@@ -140,7 +140,11 @@ public class GameCharacter
     {
         return movementQueue.size() > 0 && movementQueue.get(0) != null && movementQueue.get(0).getType() == GameAction.Type.Move;
     }
-
+    protected  int _viewDistance;
+    public int getViewDistance()
+    {
+        return _viewDistance;
+    }
     protected TextureRegion _texture;
     private int _dealtDamage = 0;
     public int getDealtDamage(){return _dealtDamage;}
@@ -155,7 +159,7 @@ public class GameCharacter
     public void displayAttackRange(){_displayAttackRange=true;}
     public void hideAttackRange(){_displayAttackRange = false;}
 
-    public GameCharacter(String name, int str, int agility, int hp,TextureRegion texture)
+    public GameCharacter(String name, int str, int agility, int hp,int viewDistance,TextureRegion texture)
     {
         _name = name;
         currentStr = str;
@@ -164,6 +168,7 @@ public class GameCharacter
         maxHp = hp;
         currentAgility = agility;
         maxAgility = agility;
+        _viewDistance = viewDistance;
         _texture= texture;
         nextAction.setAction(this, GameAction.Type.Empty, null, null);
     }
@@ -307,9 +312,9 @@ public class GameCharacter
     {
         return _currentEffects;
     }
+    ArrayList<Effect> effectsToRemove = new ArrayList<Effect>();
     public void updateEffects()
     {
-        final ArrayList<Effect> effectsToRemove = new ArrayList<Effect>();
         for(Effect effect : _currentEffects)
         {
             if(!effect.isActive())
@@ -330,11 +335,14 @@ public class GameCharacter
         }
         for(Effect toRemove : effectsToRemove)
         {
+            Gdx.app.log("Remove effect:","F:"+toRemove.getName());
             removeEffect(toRemove);
         }
+        effectsToRemove.clear();
     }
     protected void applyEffect(Effect effect)
     {
+        Gdx.app.log("Remove effect:","af:"+effect.getName());
             effect.setACtive();
             //Hp manipulation
             if(effect.getHitPointsChange()>0) {heal(effect.getHitPointsChange());}
@@ -349,14 +357,18 @@ public class GameCharacter
             //Misc
             currentAgility +=effect.getAgilityChange();
             defense+=effect.getDefenseChange();
+            _viewDistance +=effect.getViewDistanceChange();
     }
     protected void removeEffect(Effect effect)
     {
+        Gdx.app.log("Remove effect:","af:"+effect.getName());
+        Gdx.app.log("RMOVE","FDA: "+effect.getType() );
         if(effect.getType() == Effect.Type.Temporary)
         {
-
             effect.reverseEffects();
             applyEffect(effect);
+
+            Gdx.app.log("Remove effect:","af:"+effect.getName());
         }
         _currentEffects.remove(effect);
     }
@@ -452,7 +464,6 @@ public class GameCharacter
         }
         _isDead = true;
         currentTile.removeCharacter();
-        //Inherit
     }
 
     //Drawing

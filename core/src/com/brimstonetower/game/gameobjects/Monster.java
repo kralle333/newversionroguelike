@@ -24,7 +24,6 @@ public class Monster extends GameCharacter
 
     private Nature _nature;
     private int _experienceGiven;
-    private float _pursueDistance = 5;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
     private final int turnsToBeHidden = 2;
     private int _turnsNotSeen = 0;
@@ -43,7 +42,7 @@ public class Monster extends GameCharacter
 
     public Monster(String name, int str, int hp, int def, int dodgeChance, int experienceGiven, Nature nature, TextureRegion aliveRegion,TextureRegion deadRegion)
     {
-        super(name, str, dodgeChance, hp,aliveRegion);
+        super(name, str, dodgeChance, hp,5,aliveRegion);
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
         _experienceGiven = experienceGiven;
         _nature = nature;
@@ -95,7 +94,7 @@ public class Monster extends GameCharacter
         {
             return null;
         }
-        else if (_nature == Nature.Aggressive && currentTile.distanceTo(player.getCurrentTile()) < _pursueDistance)
+        else if (_nature == Nature.Aggressive && currentTile.distanceTo(player.getCurrentTile()) < _viewDistance)
         {
             return pursuePlayer(player);
         }

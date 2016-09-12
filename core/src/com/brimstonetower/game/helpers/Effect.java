@@ -20,6 +20,7 @@ public class Effect
     private int _maxStrengthChange;
     private int _defenseChange;
     private int _agilityChange;
+    private int _viewDistanceChange;
 
     //Used for keeping track of the effects
     private boolean _areEffectsReversed = false;
@@ -72,21 +73,24 @@ public class Effect
     {
         return _agilityChange;
     }
+    public int getViewDistanceChange(){return _viewDistanceChange;}
 
     //Builder pattern to create effects as requested
     private Effect(String name, String description,
                    int hitPointsChange,int maxHitPointsChange,
                    int strengthChange,int maxStrengthChange,
-                   int defenseChange,int agilityChange, int turnsActive)
+                   int defenseChange,int agilityChange, int viewDistanceChange, int turnsActive)
     {
         _name = name;
         _effectDescription = description;
         _hitPointsChange = hitPointsChange;
         _maxHitPointsChange = maxHitPointsChange;
         _strengthChange = strengthChange;
+
         _maxStrengthChange = maxStrengthChange;
         _defenseChange = defenseChange;
         _agilityChange = agilityChange;
+        _viewDistanceChange = viewDistanceChange;
         _turnsLeft = turnsActive;
     }
 
@@ -95,23 +99,24 @@ public class Effect
         this(toCopy._name,toCopy._effectDescription,
                 toCopy._hitPointsChange,toCopy._maxHitPointsChange,
                 toCopy._strengthChange,toCopy._maxStrengthChange,
-                toCopy._defenseChange,toCopy.getAgilityChange(),toCopy._turnsLeft);
+                toCopy._defenseChange,toCopy.getAgilityChange(),toCopy.getViewDistanceChange(),toCopy._turnsLeft);
         _isGas = toCopy._isGas;
         _dispelDescription = toCopy._dispelDescription;
         _color = toCopy._color;
+        _type = toCopy.getType();
     }
 
 
     public static Effect createPermanentEffect(String name, String description,
                                                      int hitPointsChange, int maxHitPointsChange,
                                                      int strengthChange, int maxStrengthChange,
-                                                     int defenseChange, int agilityChange, int turnsActive,
+                                                     int defenseChange, int agilityChange, int viewDistanceChange,int turnsActive,
                                                      boolean isGas, Color color)
     {
         Effect permanentEffect = new Effect(
                 name,description,hitPointsChange,maxHitPointsChange,
                 strengthChange,maxStrengthChange,defenseChange,
-                agilityChange,turnsActive);
+                agilityChange,viewDistanceChange,turnsActive);
 
         permanentEffect._isGas = isGas;
         permanentEffect._type = Type.Permanent;
@@ -123,13 +128,13 @@ public class Effect
     public static Effect createTemporaryEffect(String name, String description,String dispelDescription,
                                                int hitPointsChange, int maxHitPointsChange,
                                                int strengthChange, int maxStrengthChange,
-                                               int defenseChange, int agilityChange, int turnsActive,
+                                               int defenseChange, int agilityChange,int viewDistanceChange, int turnsActive,
                                                boolean isGas, Color color)
     {
         Effect temporaryEffect = new Effect(
                 name,description,hitPointsChange,maxHitPointsChange,
                 strengthChange,maxStrengthChange,defenseChange,
-                agilityChange,turnsActive);
+                agilityChange, viewDistanceChange,turnsActive);
         temporaryEffect._dispelDescription = dispelDescription;
         temporaryEffect._isGas = isGas;
         temporaryEffect._type = Type.Temporary;
@@ -142,13 +147,13 @@ public class Effect
     //Used for removing temporary  effects
     public void reverseEffects()
     {
-        _hitPointsChange =-_hitPointsChange;
-        _maxHitPointsChange=-_maxHitPointsChange;
-        _strengthChange=-_strengthChange;
-        _maxStrengthChange=-_maxStrengthChange;
-        _defenseChange=-_defenseChange;
-         _agilityChange=-_agilityChange;
-
+        _hitPointsChange *=-1;
+        _maxHitPointsChange*=-1;
+        _strengthChange*=-1;
+        _maxStrengthChange*=-1;
+        _defenseChange*=-1;
+         _agilityChange*=-1;
+        _viewDistanceChange*=-1;
         _areEffectsReversed=!_areEffectsReversed;
     }
 }

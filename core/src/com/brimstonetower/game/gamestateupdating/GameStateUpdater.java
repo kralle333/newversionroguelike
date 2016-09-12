@@ -81,8 +81,8 @@ public class GameStateUpdater
         _traps = playedMap.getTraps();
         _gasClouds.clear();
 
-        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getLanternStrength()*2, GameStateUpdater.player.getCurrentTile());
-        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getLanternStrength(), GameStateUpdater.player.getCurrentTile());
+        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Shadow, GameStateUpdater.player.getViewDistance()*2, GameStateUpdater.player.getCurrentTile());
+        GameStateUpdater.player.getCurrentTile().setLight(Tile.LightAmount.Light, GameStateUpdater.player.getViewDistance(), GameStateUpdater.player.getCurrentTile());
         _monsterTime.clear();
         for (Monster monster : _monsters)
         {
@@ -380,7 +380,7 @@ public class GameStateUpdater
 
 
             inventory.step();
-            playedMap.setLighting(player.getCurrentTile(),player.getLanternStrength(), Tile.LightAmount.DarkShadow);
+            playedMap.setLighting(player.getCurrentTile(),player.getViewDistance(), Tile.LightAmount.DarkShadow);
             player.moveTo(newTile);
             player.getCurrentTile().updateLight(player);
 
@@ -417,7 +417,12 @@ public class GameStateUpdater
         }
         else if (action.getTargetItem() instanceof Potion)
         {
-            usePotion((Potion) action.getTargetItem(), action.getOwner(), action.getTargetTile());
+            Potion potion = (Potion) action.getTargetItem();
+            usePotion(potion, action.getOwner(), action.getTargetTile());
+            if(action.getOwner() == player && potion.getEffect().getViewDistanceChange() !=0)
+            {
+                player.currentTile.updateLight(player);
+            }
         }
     }
     private void executeThrowResults(GameAction throwAction)

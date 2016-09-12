@@ -117,6 +117,7 @@ public class SelectedItemWindow extends Window
 
     public void show(Item item)
     {
+        _selectedAction.setAsEmpty();
         _selectedItem = item;
         if (item instanceof Armor)
         {

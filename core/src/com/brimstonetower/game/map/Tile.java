@@ -226,6 +226,10 @@ public class Tile
         {
             _wasEverLight=true;
         }
+        else if(light == LightAmount.DarkShadow && _wasEverLight == true)
+        {
+            _lightToChangeTo = LightAmount.Shadow;
+        }
         else if(light == LightAmount.Shadow && _wasEverLight==false)
         {
             _lightToChangeTo= LightAmount.DarkShadow;
@@ -247,8 +251,8 @@ public class Tile
     }
     public void updateLight(Player player)
     {
-        setLight(LightAmount.Shadow, player.getLanternStrength()*2,  player.getCurrentTile());
-        setLight(Tile.LightAmount.Light, player.getLanternStrength(), player.getCurrentTile());
+        setLight(LightAmount.Shadow, player.getViewDistance()+2,  player.getCurrentTile());
+        setLight(Tile.LightAmount.Light, player.getViewDistance(), player.getCurrentTile());
     }
     public void setLight(LightAmount light,int strength,Tile lightSource)
     {

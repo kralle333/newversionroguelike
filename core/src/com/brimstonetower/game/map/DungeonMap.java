@@ -187,10 +187,6 @@ public class DungeonMap
         }
     }
 
-    public void lightArea(Player player)
-    {
-        lightArea(player.getCurrentTile(),player.getLanternStrength());
-    }
 
     final Vector2[] diagonals = {new Vector2(-1,-1),new Vector2(-1,1),new Vector2(1,-1),new Vector2(1,1)};
 

@@ -16,12 +16,7 @@ public class Player extends GameCharacter
 {
     private static final int _startHp = 48;
     private static final int _startStr = 2;
-    private final int _lanternStrength = 4;
-    public int getLanternStrength()
-    {
-        return _lanternStrength;
-    }
-    private final int _throwRange = 4;
+    private final int _throwRange = 3;
     public int getThrowRange(){return _throwRange;}
     private boolean _displayThrowRange = false;
     public void displayThrowRange(){_displayThrowRange=true;}
@@ -46,7 +41,7 @@ public class Player extends GameCharacter
 
     public Player(String name)
     {
-        super(name, _startStr, 5, _startHp, AssetManager.getTextureRegion("mainHeroesWithBorder", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
+        super(name, _startStr, 5, _startHp, 4,AssetManager.getTextureRegion("mainHeroesWithBorder", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
         super.equip(ItemManager.getWeapon("Steel Short Sword"));//Player starts with sword
         super.equip(ItemManager.getArmor("Noble Clothes"));//Player starts with some clothes
         _equippedWeapon.identify();
