@@ -129,7 +129,7 @@ public class GameCharacterAnimation
             attackedPosition.x=(attacker.getWorldPosition().x+defender.getWorldPosition().x)/2;
             attackedPosition.y=(attacker.getWorldPosition().y+defender.getWorldPosition().y)/2;
 
-            Color color = attacker instanceof Player?Color.GREEN:Color.RED;
+            Color color = Color.RED;
             Vector2 indicatorPosition = new Vector2(defender.getWorldPosition().x+(DungeonMap.TileSize/2),defender.getWorldPosition().y);
 
             String damageToShow = "Magenta";
