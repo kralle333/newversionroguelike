@@ -172,7 +172,7 @@ public class GameStateUpdater
         if(_monsterTurns.size()!=0)
         {
             Monster monster = _monsterTurns.peek();
-            if (_monsterTime.get(monster) > 0 && !monster.isDead())
+            if (_monsterTime.get(monster)- monster.getCostOfNextAction() >= 0 && !monster.isDead())
             {
                 monster.setNextAction(player);
                 _monsterTime.put(monster, _monsterTime.get(monster) - monster.getCostOfNextAction());
@@ -187,8 +187,7 @@ public class GameStateUpdater
                     executeAction(nextAction);
                 }
             }
-
-            if (_monsterTime.get(monster) <= 0 || monster.isDead())
+            else
             {
                 _monsterTurns.poll();
             }

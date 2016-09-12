@@ -1,12 +1,9 @@
 package com.brimstonetower.game.gameobjects;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gamestateupdating.GameCharacter;
 import com.brimstonetower.game.gui.GameConsole;
 import com.brimstonetower.game.managers.AssetManager;
@@ -17,14 +14,14 @@ import com.brimstonetower.game.map.Tile;
 
 public class Player extends GameCharacter
 {
-    private static int _startHp = 48;
-    private static int _startStr = 2;
-    private int _lanternStrength = 4;
+    private static final int _startHp = 48;
+    private static final int _startStr = 2;
+    private final int _lanternStrength = 4;
     public int getLanternStrength()
     {
         return _lanternStrength;
     }
-    private int _throwRange = 4;
+    private final int _throwRange = 4;
     public int getThrowRange(){return _throwRange;}
     private boolean _displayThrowRange = false;
     public void displayThrowRange(){_displayThrowRange=true;}
@@ -39,8 +36,8 @@ public class Player extends GameCharacter
     {
         _killedBy = killedBy;
     }
-    private static Color _attackRangeColor = new Color(0,1,0,0.2f);
-    private TextureRegion _waypointRegion;
+    private static final Color _attackRangeColor = new Color(0,1,0,0.2f);
+    private final TextureRegion _waypointRegion;
     private boolean _justLeveledUp = false;
     public boolean justLeveledUp(){return _justLeveledUp;}
     public void setLevelUpAsOver(){_justLeveledUp=false;}
@@ -84,7 +81,7 @@ public class Player extends GameCharacter
     }
 
 
-    public void levelUp()
+    private void levelUp()
     {
         experience = 0;
 
@@ -108,11 +105,7 @@ public class Player extends GameCharacter
         return startStat + (maxStat - startStat) * (float) Math.pow((currentLevel + 10) / (maxLevel + 10), 2);
     }
 
-    @Override
-    public void moveTo(Tile tile)
-    {
-        super.moveTo(tile);
-    }
+
 
     @Override
     protected void applyEffect(Effect effect)
@@ -143,12 +136,6 @@ public class Player extends GameCharacter
     {
         super.damage(damage);
         movementQueue.clear();
-    }
-
-    @Override
-    public void kill()
-    {
-        super.kill();
     }
 
     @Override

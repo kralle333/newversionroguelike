@@ -63,17 +63,17 @@ public class MonsterManager
             MonsterPrototype rat = new MonsterPrototype("Rat", 5, 10, 0, 5, 2, Monster.Nature.Aggressive, new TileSetCoordinate(0, 0),new TileSetCoordinate(0,1));
             rat.addProbabilityOfAppearing(1, 1);
             rat.addProbabilityOfAppearing(0, 5);
-            rat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 4, 0, 1,1,1,1, Weapon.RangeType.Melee);
+            rat.attack = new Weapon("Bite", "It's a bite", true, null, 1, 4, 0, 1,1,10,1, Weapon.RangeType.Melee);
 
             MonsterPrototype skeleton = new MonsterPrototype("Skeleton Soldier", 10, 20, 2, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(1, 0),new TileSetCoordinate(1, 1));
-            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 6, 0, 1,1, 1,1, Weapon.RangeType.Melee);
+            skeleton.attack = new Weapon("Sword", "Sword", true, null, 1, 6, 0, 1,1, 10,1, Weapon.RangeType.Melee);
             skeleton.addProbabilityOfAppearing(0.33f, 3);
             skeleton.addProbabilityOfAppearing(0.66f, 5);
             skeleton.addProbabilityOfAppearing(0.99f, 7);
             skeleton.addProbabilityOfAppearing(0, 10);
 
             MonsterPrototype skeletonArcher = new MonsterPrototype("Skeleton Archer", 10, 10, 0, 10, 10, Monster.Nature.Aggressive, new TileSetCoordinate(2, 0),new TileSetCoordinate(2, 1));
-            skeletonArcher.attack = new Weapon("Bow", "Bow", true, null, 1, 4, 0,2,4,  1,1,Weapon.RangeType.AmmoThrower);
+            skeletonArcher.attack = new Weapon("Bow", "Bow", true, null, 1, 4, 0,2,4,  10,1,Weapon.RangeType.AmmoThrower);
             skeletonArcher.addProbabilityOfAppearing(0.33f, 4);
             skeletonArcher.addProbabilityOfAppearing(0.66f, 6);
             skeletonArcher.addProbabilityOfAppearing(0.99f, 8);

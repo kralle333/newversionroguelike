@@ -105,7 +105,7 @@ public class GameAction
     {
         if (_type == Type.Attack)
         {
-            return _owner.getEquippedWeapon() == null ? 10 : _owner.getEquippedWeapon().getMissChance();
+            return _owner.getEquippedWeapon() == null ? 10 : _owner.getEquippedWeapon().getAttackSpeed();
         }
 
         return 10;

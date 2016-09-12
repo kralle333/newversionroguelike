@@ -135,7 +135,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
         TextureRegion levelUpRegion = new TextureRegion(AssetManager.getGuiTexture("levelUp"),387,124);
         levelUpRegion.flip(false,true);
         _levelUpDisplay = new Sprite(levelUpRegion);
-        _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*2,_levelUpDisplay.getHeight()*2);
+        //_levelUpDisplay.setSize(_levelUpDisplay.getWidth()*2,_levelUpDisplay.getHeight()*2);
         _levelUpDisplay.setX(Gdx.graphics.getWidth()/2-(_levelUpDisplay.getWidth()/2));
         _levelUpDisplay.setY(Gdx.graphics.getHeight()/2-(_levelUpDisplay.getHeight()/2));
 
