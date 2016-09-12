@@ -20,7 +20,7 @@ public class SelectedItemWindow extends Window
 
     public boolean hasAction()
     {
-        return _selectedAction != null;
+        return _selectedAction.getType() != GameAction.Type.Empty;
     }
 
     public GameAction retrieveAction()

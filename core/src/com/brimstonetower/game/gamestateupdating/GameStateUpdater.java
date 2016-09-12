@@ -137,8 +137,8 @@ public class GameStateUpdater
 
     private void startTurn()
     {
-        GameAction playerAction;
-        if ((playerAction = player.getNextAction()) != null)
+        GameAction playerAction= player.getNextAction();
+        if (playerAction != null)
         {
             _turn++;
             player.hideAttackRange();
@@ -154,7 +154,6 @@ public class GameStateUpdater
                     _monsterTurns.add(monster);
                 }
             }
-
             if(GameCharacterAnimation.typeIsAnimated(playerAction.getType()))
             {
                 _currentAnimation.playGameAction(playerAction, timePerAnimation);
@@ -351,7 +350,7 @@ public class GameStateUpdater
                     String trapMessage = player.getName() + " stepped on a trap";
 
                     chanceToBeat = RandomGen.getRandomInt(0, 100);
-                    if (player.getDodgeRate() >= chanceToBeat)
+                    if (player.getCurrentAgility() >= chanceToBeat)
                     {
                         trapMessage += ", but didn't activate it";
                         trapOnTile.reveal();
@@ -439,11 +438,11 @@ public class GameStateUpdater
         {
             Weapon thrownWeapon = (Weapon) thrownObject;
             int damage = 0;
-            if (!targetTile.isEmpty() && thrownWeapon.getRangeType() == Weapon.RangeType.Throwable && RandomGen.getRandomInt(1, 100) > 20 + targetTile.getCharacter().getDodgeRate())//Get ranged damage
+            if (!targetTile.isEmpty() && thrownWeapon.getRangeType() == Weapon.RangeType.Throwable && RandomGen.getRandomInt(1, 100) > 20 + targetTile.getCharacter().getCurrentAgility())//Get ranged damage
             {
                 damage = thrownWeapon.getRandomDamage();
             }
-            else if (!targetTile.isEmpty() && RandomGen.getRandomInt(1, 100) > 50 + targetTile.getCharacter().getDodgeRate())//Get damage from a sword etc being thrown
+            else if (!targetTile.isEmpty() && RandomGen.getRandomInt(1, 100) > 50 + targetTile.getCharacter().getCurrentAgility())//Get damage from a sword etc being thrown
             {
                 damage = thrownWeapon.getRandomDamage() / 2;
             }

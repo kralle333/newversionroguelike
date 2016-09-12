@@ -42,11 +42,14 @@ public class Weapon extends Item
         return _maxDamage;
     }
 
-    private int _attackSpeed;
-    public int getAttackSpeed()
+    private int _missChance;
+    public int getMissChance()
     {
-        return _attackSpeed;
+        return _missChance;
     }
+
+    private int _numberOfAttacks;
+    public int getNumberOfAttacks(){return _numberOfAttacks;}
 
     private int _minRange;
     public int getMinRange(){return _minRange;}
@@ -58,7 +61,7 @@ public class Weapon extends Item
 
 
     public Weapon(String name, String description, boolean isIdentified, TextureRegion textureRegion, int minDamage,
-                  int maxDamage, int bonusDamage,int minRange, int maxRange, int attackSpeed, RangeType rangeType)
+                  int maxDamage, int bonusDamage,int minRange, int maxRange, int missChance,int numberOfAttacks, RangeType rangeType)
     {
         super(name, description, isIdentified, textureRegion, rangeType==RangeType.Throwable ,weaponId++);
         _minDamage = minDamage;
@@ -67,7 +70,8 @@ public class Weapon extends Item
         _minRange = minRange;
         _maxRange = maxRange;
         _rangeType = rangeType;
-        _attackSpeed = attackSpeed;
+        _missChance = missChance;
+        _numberOfAttacks = numberOfAttacks;
         if (_rangeType==RangeType.Throwable)
         {
             _ammoCount = RandomGen.getRandomInt(3, 5) + _bonusDamage * 2;
@@ -87,7 +91,7 @@ public class Weapon extends Item
     public Weapon(Weapon toCopy, int bonusAttack)
     {
         this(toCopy.getNameWithoutBonus(), toCopy.getIdentifiedDescription(), toCopy.isIdentified(), toCopy.getTextureRegion(), toCopy.getMinDamage(),
-                toCopy.getMaxDamage(), bonusAttack,toCopy.getMinRange(),toCopy.getMaxRange(), toCopy.getAttackSpeed(), toCopy.getRangeType());
+                toCopy.getMaxDamage(), bonusAttack,toCopy.getMinRange(),toCopy.getMaxRange(), toCopy.getMissChance(),toCopy.getNumberOfAttacks(), toCopy.getRangeType());
         _typeId = toCopy.getTypeId();
     }
 

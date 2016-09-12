@@ -4,6 +4,8 @@ import com.brimstonetower.game.gameobjects.BreakableObject;
 import com.brimstonetower.game.gameobjects.Item;
 import com.brimstonetower.game.map.Tile;
 
+import static com.brimstonetower.game.gamestateupdating.GameAction.Type.Empty;
+
 public class GameAction
 {
     public enum Type
@@ -17,7 +19,7 @@ public class GameAction
         return _owner;
     }
 
-    private Type _type;
+    private Type _type=Empty;
     public Type getType()
     {
         return _type;
@@ -51,7 +53,7 @@ public class GameAction
 
     public boolean isEmpty()
     {
-        return _type == Type.Empty;
+        return _type == Empty;
     }
 
     public void setAction(GameCharacter owner, Type type, Tile tile, Item item)
@@ -65,7 +67,7 @@ public class GameAction
 
     public void setAsEmpty()
     {
-        _type = Type.Empty;
+        _type = Empty;
         _owner = null;
         _targetCharacter = null;
         _targetObject=null;
@@ -103,7 +105,7 @@ public class GameAction
     {
         if (_type == Type.Attack)
         {
-            return _owner.getEquippedWeapon() == null ? 10 : _owner.getEquippedWeapon().getAttackSpeed();
+            return _owner.getEquippedWeapon() == null ? 10 : _owner.getEquippedWeapon().getMissChance();
         }
 
         return 10;

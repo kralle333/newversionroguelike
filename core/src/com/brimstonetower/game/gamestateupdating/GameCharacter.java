@@ -3,7 +3,6 @@ package com.brimstonetower.game.gamestateupdating;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.BreakableObject;
 import com.brimstonetower.game.gameobjects.Item;
@@ -50,15 +49,16 @@ public class GameCharacter
         return currentStr;
     }
 
-    protected int dodgeRate;
-    public int getDodgeRate()
+    protected  int maxAgility;
+    protected int currentAgility;
+    public int getMaxAgility(){return maxAgility;}
+    public int getCurrentAgility()
     {
-        return dodgeRate;
+        return currentAgility;
     }
 
     //Only applied from effects, use armor or weapon otherwise!
     protected int defense = 0;
-    protected int attackSpeed = 0;
 
     protected int level = 1;
     public int getLevel()
@@ -155,14 +155,15 @@ public class GameCharacter
     public void displayAttackRange(){_displayAttackRange=true;}
     public void hideAttackRange(){_displayAttackRange = false;}
 
-    public GameCharacter(String name, int str, int dodgeChance, int hp,TextureRegion texture)
+    public GameCharacter(String name, int str, int agility, int hp,TextureRegion texture)
     {
         _name = name;
         currentStr = str;
         maxStr = str;
         currentHp = hp;
         maxHp = hp;
-        dodgeRate = dodgeChance;
+        currentAgility = agility;
+        maxAgility = agility;
         _texture= texture;
         nextAction.setAction(this, GameAction.Type.Empty, null, null);
     }
@@ -315,8 +316,7 @@ public class GameCharacter
             {
                 applyEffect(effect);
             }
-
-            if(effect.isActive())
+            else
             {
                 if(!effect.isThereTurnsLeft())
                 {
@@ -335,35 +335,26 @@ public class GameCharacter
     }
     protected void applyEffect(Effect effect)
     {
-        //Hp manipulation
-        if(effect.getHitPointsChange()>0) {heal(effect.getHitPointsChange());}
-        else{damage(-effect.getHitPointsChange());}
-        maxHp +=effect.getMaxHitPointsChange();
+            effect.setACtive();
+            //Hp manipulation
+            if(effect.getHitPointsChange()>0) {heal(effect.getHitPointsChange());}
+            else{damage(-effect.getHitPointsChange());}
+            maxHp +=effect.getMaxHitPointsChange();
 
-        //Strength
-        currentStr += Math.min(effect.getStrengthChange(),maxStr-currentStr);
-        maxStr +=effect.getMaxStrengthChange();
-        currentStr+=effect.getMaxStrengthChange();
+            //Strength
+            currentStr += Math.min(effect.getStrengthChange(),maxStr-currentStr);
+            maxStr +=effect.getMaxStrengthChange();
+            currentStr+=effect.getMaxStrengthChange();
 
-        //Misc
-        attackSpeed+=effect.getAttackSpeedChange();
-        defense+=effect.getDefenseChange();
-        dodgeRate+=effect.getDodgeRateChange();
-
-        if(!effect.isActive())
-        {
-            effect.activate();
-        }
-        else
-        {
-            effect.decreaseTurns();
-        }
-
+            //Misc
+            currentAgility +=effect.getAgilityChange();
+            defense+=effect.getDefenseChange();
     }
     protected void removeEffect(Effect effect)
     {
         if(effect.getType() == Effect.Type.Temporary)
         {
+
             effect.reverseEffects();
             applyEffect(effect);
         }
@@ -395,8 +386,8 @@ public class GameCharacter
 
     public void calculateAttackDamage(GameCharacter target)
     {
-        int hitChance = _equippedWeapon != null ? _equippedWeapon.getAttackSpeed() : 0;
-        int failChance = 5 + target.getDodgeRate();
+        int hitChance = _equippedWeapon != null ? _equippedWeapon.getMissChance() : 0;
+        int failChance = 5 + target.getCurrentAgility();
 
         int result = RandomGen.getRandomInt(0, 100);
         if (result >= 98)

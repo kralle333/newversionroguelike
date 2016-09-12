@@ -3,6 +3,7 @@ package com.brimstonetower.game.gameobjects.scrolls;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.brimstonetower.game.gamestateupdating.GameStateUpdater;
 import com.brimstonetower.game.gui.GameConsole;
+import com.brimstonetower.game.map.Tile;
 
 
 public class TeleportScroll extends Scroll
@@ -16,7 +17,9 @@ public class TeleportScroll extends Scroll
     @Override
     public void use()
     {
-        GameStateUpdater.player.moveTo(GameStateUpdater.playedMap.getRandomEmptyFloorTile());
+        Tile teleportedToTile = GameStateUpdater.playedMap.getRandomEmptyFloorTile();
+        GameStateUpdater.player.moveTo(teleportedToTile);
+        teleportedToTile.updateLight(GameStateUpdater.player);
         GameConsole.addMessage("Player was teleported to a random tile");
     }
 }

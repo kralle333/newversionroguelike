@@ -1,6 +1,7 @@
 package com.brimstonetower.game.helpers;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.brimstonetower.game.gui.GameConsole;
 
@@ -18,15 +19,14 @@ public class Effect
     private int _strengthChange;
     private int _maxStrengthChange;
     private int _defenseChange;
-    private int _attackSpeedChange;
-    private int _dodgeRateChange;
+    private int _agilityChange;
 
     //Used for keeping track of the effects
     private boolean _areEffectsReversed = false;
     public boolean areEffectsReversed(){return _areEffectsReversed;}
     private boolean _isActive = false;
     public boolean isActive(){return _isActive;}
-    public void activate(){_isActive =true;}
+    public void setACtive(){_isActive =true;}
     private int _turnsLeft;
     public void decreaseTurns()
     {
@@ -68,21 +68,16 @@ public class Effect
     {
         return _defenseChange;
     }
-    public int getAttackSpeedChange()
+    public int getAgilityChange()
     {
-        return _attackSpeedChange;
-    }
-    public int getDodgeRateChange()
-    {
-        return _dodgeRateChange;
+        return _agilityChange;
     }
 
     //Builder pattern to create effects as requested
     private Effect(String name, String description,
                    int hitPointsChange,int maxHitPointsChange,
                    int strengthChange,int maxStrengthChange,
-                   int defenseChange,int attackSpeedChange,
-                   int dodgeRateChange, int turnsActive)
+                   int defenseChange,int agilityChange, int turnsActive)
     {
         _name = name;
         _effectDescription = description;
@@ -91,8 +86,7 @@ public class Effect
         _strengthChange = strengthChange;
         _maxStrengthChange = maxStrengthChange;
         _defenseChange = defenseChange;
-        _attackSpeedChange = attackSpeedChange;
-        _dodgeRateChange = dodgeRateChange;
+        _agilityChange = agilityChange;
         _turnsLeft = turnsActive;
     }
 
@@ -101,8 +95,7 @@ public class Effect
         this(toCopy._name,toCopy._effectDescription,
                 toCopy._hitPointsChange,toCopy._maxHitPointsChange,
                 toCopy._strengthChange,toCopy._maxStrengthChange,
-                toCopy._defenseChange,toCopy._attackSpeedChange,
-                toCopy._dodgeRateChange,toCopy._turnsLeft);
+                toCopy._defenseChange,toCopy.getAgilityChange(),toCopy._turnsLeft);
         _isGas = toCopy._isGas;
         _dispelDescription = toCopy._dispelDescription;
         _color = toCopy._color;
@@ -112,14 +105,13 @@ public class Effect
     public static Effect createPermanentEffect(String name, String description,
                                                      int hitPointsChange, int maxHitPointsChange,
                                                      int strengthChange, int maxStrengthChange,
-                                                     int defenseChange, int attackSpeedChange,
-                                                     int dodgeRateChange, int turnsActive,
+                                                     int defenseChange, int agilityChange, int turnsActive,
                                                      boolean isGas, Color color)
     {
         Effect permanentEffect = new Effect(
                 name,description,hitPointsChange,maxHitPointsChange,
                 strengthChange,maxStrengthChange,defenseChange,
-                attackSpeedChange,dodgeRateChange,turnsActive);
+                agilityChange,turnsActive);
 
         permanentEffect._isGas = isGas;
         permanentEffect._type = Type.Permanent;
@@ -131,14 +123,13 @@ public class Effect
     public static Effect createTemporaryEffect(String name, String description,String dispelDescription,
                                                int hitPointsChange, int maxHitPointsChange,
                                                int strengthChange, int maxStrengthChange,
-                                               int defenseChange, int attackSpeedChange,
-                                               int dodgeRateChange, int turnsActive,
+                                               int defenseChange, int agilityChange, int turnsActive,
                                                boolean isGas, Color color)
     {
         Effect temporaryEffect = new Effect(
                 name,description,hitPointsChange,maxHitPointsChange,
                 strengthChange,maxStrengthChange,defenseChange,
-                attackSpeedChange,dodgeRateChange,turnsActive);
+                agilityChange,turnsActive);
         temporaryEffect._dispelDescription = dispelDescription;
         temporaryEffect._isGas = isGas;
         temporaryEffect._type = Type.Temporary;
@@ -156,8 +147,7 @@ public class Effect
         _strengthChange=-_strengthChange;
         _maxStrengthChange=-_maxStrengthChange;
         _defenseChange=-_defenseChange;
-         _attackSpeedChange=-_attackSpeedChange;
-        _dodgeRateChange =-_dodgeRateChange;
+         _agilityChange=-_agilityChange;
 
         _areEffectsReversed=!_areEffectsReversed;
     }

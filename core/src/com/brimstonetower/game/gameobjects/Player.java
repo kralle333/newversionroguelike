@@ -134,8 +134,8 @@ public class Player extends GameCharacter
         if(effect.getType() == Effect.Type.Temporary)
         {
             GameConsole.addMessage(effect.getDispelDescription());
-            super.removeEffect(effect);
         }
+        super.removeEffect(effect);
     }
 
     @Override
