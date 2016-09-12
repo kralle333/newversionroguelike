@@ -3,6 +3,7 @@ package com.brimstonetower.game.gamestateupdating;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
 import com.brimstonetower.game.gameobjects.scrolls.Scroll;
@@ -172,11 +173,11 @@ public class GameStateUpdater
         if(_monsterTurns.size()!=0)
         {
             Monster monster = _monsterTurns.peek();
-            if (_monsterTime.get(monster)- monster.getCostOfNextAction() >= 0 && !monster.isDead())
+            monster.setNextAction(player);
+            GameAction nextAction = monster.getNextAction();
+            if ( _monsterTime.get(monster) - monster.getCostOfNextAction() >=0&& !monster.isDead())
             {
-                monster.setNextAction(player);
                 _monsterTime.put(monster, _monsterTime.get(monster) - monster.getCostOfNextAction());
-                GameAction nextAction = monster.getNextAction();
                 if(GameCharacterAnimation.typeIsAnimated(nextAction.getType()))
                 {
                     _currentAnimation.playGameAction(nextAction, timePerAnimation);
@@ -450,7 +451,9 @@ public class GameStateUpdater
             {
                 GameConsole.addMessage(targetTile.getCharacter().getName() + " got " + damage + " damage from thrown " + thrownWeapon.getNameWithoutBonus());
                 targetTile.getCharacter().damage(damage);
-                _currentAnimation.playDamageIndication(damage,targetTile.getWorldPosition(), Color.GREEN);
+                Vector2 shownPosition = targetTile.getWorldPosition();
+                shownPosition.add(DungeonMap.TileSize/2,-DungeonMap.TileSize/2);
+                _currentAnimation.playDamageIndication(damage,shownPosition, Color.GREEN);
 
             }
             else

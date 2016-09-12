@@ -46,8 +46,8 @@ public class GameCharacterAnimation
 
         public void update()
         {
-            position.x+=fallSpeedX;
-            position.y+=fallSpeedY;
+            position.x-=fallSpeedX;
+            position.y-=fallSpeedY;
             timeLeft-=Gdx.app.getGraphics().getDeltaTime();
         }
         public void draw(BitmapFont font, SpriteBatch batch)
@@ -117,6 +117,7 @@ public class GameCharacterAnimation
 
         if(gameAction.getType() == GameAction.Type.Attack)
         {
+            _playTime=0.33f;
             _isShowingDamageIndicator=true;
             lungeTime = _playTime/3;
             retractTime = _playTime*2/3;
@@ -159,6 +160,7 @@ public class GameCharacterAnimation
         }
         else if(gameAction.getType() == GameAction.Type.Destroy)
         {
+            _playTime=0.3f;
             lungeTime = _playTime/3;
             retractTime = _playTime*2/3;
             attacker = gameAction.getOwner();
@@ -170,6 +172,7 @@ public class GameCharacterAnimation
         }
         else if(gameAction.getType() == GameAction.Type.Throw)
         {
+            _playTime=0.3f;
             _thrownItem = gameAction.getTargetItem();
             _thrownItemCurrentPosition = gameAction.getOwner().getWorldPosition();
             _thrownItemFromPosition=_thrownItemCurrentPosition;
@@ -183,9 +186,13 @@ public class GameCharacterAnimation
             {
                 scaleOfSearchIcons.put(tile, RandomGen.getRandomFloat(0.45f, 0.5f));
             }
-            _playTime*=2;
+            _playTime=1;
             _searchIconRegion =AssetManager.getTextureRegion("misc", "searchEye", DungeonMap.TileSize, DungeonMap.TileSize);
             AssetManager.getSound("search").play();
+        }
+        else if(gameAction.getType() == GameAction.Type.Move)
+        {
+            _playTime = 0.17f;
         }
     }
     public void playDamageIndication(int damage, Vector2 position, Color color)
@@ -296,7 +303,6 @@ public class GameCharacterAnimation
             }
         }
     }
-
 
     private Vector2 moveTowards(Vector2 oldPosition, Vector2 newPosition, float progress)
     {

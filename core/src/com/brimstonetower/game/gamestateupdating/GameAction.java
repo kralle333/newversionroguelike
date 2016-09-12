@@ -103,12 +103,12 @@ public class GameAction
 
     public int getCost()
     {
-        if (_type == Type.Attack)
+        if (_type == Type.Attack && _owner.getEquippedWeapon() != null )
         {
-            return _owner.getEquippedWeapon() == null ? 10 : _owner.getEquippedWeapon().getAttackSpeed();
+            return 100-(_owner.getCurrentAgility()+ _owner.getEquippedWeapon().getAttackSpeed());
         }
 
-        return 10;
+        return 100-_owner.getCurrentAgility();
     }
 
 }

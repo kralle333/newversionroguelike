@@ -44,7 +44,6 @@ public class Monster extends GameCharacter
     public Monster(String name, int str, int hp, int def, int dodgeChance, int experienceGiven, Nature nature, TextureRegion aliveRegion,TextureRegion deadRegion)
     {
         super(name, str, dodgeChance, hp,aliveRegion);
-        nextAction = new GameAction();
         _equippedArmor = new Armor("MonsterArmor", "Monsters use this", true, null, def, 0);
         _experienceGiven = experienceGiven;
         _nature = nature;

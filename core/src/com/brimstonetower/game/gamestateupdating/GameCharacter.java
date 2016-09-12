@@ -386,8 +386,10 @@ public class GameCharacter
 
     public void calculateAttackDamage(GameCharacter target)
     {
-        int hitChance = _equippedWeapon != null ? _equippedWeapon.getAttackSpeed() : 0;
-        int failChance = 5 + target.getCurrentAgility();
+        int weaponMissChance = _equippedWeapon== null?0:_equippedWeapon.getMissChance();
+
+        int hitChance = currentAgility;
+        int failChance = weaponMissChance+ target.getCurrentAgility();
 
         int result = RandomGen.getRandomInt(0, 100);
         if (result >= 98)
