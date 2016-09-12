@@ -1,6 +1,7 @@
 package com.brimstonetower.game.gui;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -37,10 +38,10 @@ public class SelectedItemWindow extends Window
     public SelectedItemWindow(int x, int y, int width, int height, Color color, int frameSize, Color frameColor)
     {
         super(x, y, width, height, color, frameSize, frameColor);
-        addButton("Use", 0.10f, 0.85f, 0.25f, 0.10f, Color.BLUE);
-        addButton("Equip", 0.10f, 0.85f, 0.25f, 0.10f, Color.BLUE);
-        addButton("Throw", 0.40f, 0.85f, 0.25f, 0.10f, Color.BLUE);
-        addButton("Drop", 0.70f, 0.85f, 0.25f, 0.10f, Color.BLUE);
+        addButton("Use", 0.10f, 0.85f, 0.25f, 0.10f);
+        addButton("Equip", 0.10f, 0.85f, 0.25f, 0.10f);
+        addButton("Throw", 0.40f, 0.85f, 0.25f, 0.10f);
+        addButton("Drop", 0.70f, 0.85f, 0.25f, 0.10f);
         hideButton("Equip");
         _selectedAction = new GameAction();
         _descriptionFont = AssetManager.getFont("description");
@@ -58,10 +59,14 @@ public class SelectedItemWindow extends Window
         if(_isInitialized)
         {
             super.reposition(x, y, width, height);
-            getButton("Use").reposition(x+(int) (width * 0.10f), y+(int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
-            getButton("Equip").reposition(x+(int) (width * 0.10f),y+ (int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
-            getButton("Throw").reposition(x+(int) (width * 0.40f),y+ (int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
-            getButton("Drop").reposition(x+(int) (width * 0.7f),y+ (int) (height * 0.85f), (int) (width * 0.25f), (int) (height * 0.10f));
+            int buttonY = y+(int) (0.85f*height);
+            int buttonW = (int) ( 0.25f*width);
+            int buttonH = (int) (0.14f*height);
+
+            getButton("Use").reposition(x+(int) ( 0.10f*width), buttonY,buttonW ,buttonH );
+            getButton("Equip").reposition(x+(int) (0.10f*width),buttonY, buttonW, buttonH);
+            getButton("Throw").reposition(x+(int) (0.40f*width),buttonY, buttonW, buttonH);
+            getButton("Drop").reposition(x+(int) (0.7f*width),buttonY, buttonW, buttonH);
         }
     }
 

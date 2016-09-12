@@ -10,7 +10,7 @@ public class RemoveCurseScroll extends Scroll
 
     public RemoveCurseScroll(TextureRegion region, String unidentifiedName)
     {
-        super("Remove Curse","Removes all curses from the backpack",false,region,unidentifiedName,Type.Instant,0,0,3);
+        super("Remove Curse","Removes all curses from the backpack",false,region,unidentifiedName,Type.Instant,0,0);
     }
 
     @Override

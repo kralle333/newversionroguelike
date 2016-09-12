@@ -8,6 +8,7 @@ import com.brimstonetower.game.gameobjects.*;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
 import com.brimstonetower.game.map.mapgeneration.BSPMapNode;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.ArrayList;
 
@@ -62,7 +63,7 @@ public class DungeonMap
                 if(_tiles[x][y]!=null && _tiles[x][y].getLightAmount() == Tile.LightAmount.Non)
                 {
                     _tiles[x][y].changeLight(Tile.LightAmount.DarkShadow);
-                    if(!_tiles[x][y].isEmpty())
+                    if(_tiles[x][y].getCharacter() != null)
                     {
                         _tiles[x][y].getCharacter().reveal();
                     }
@@ -209,6 +210,12 @@ public class DungeonMap
             castLight(amount,1,tile.getTileX(),tile.getTileY(),radius, 1.0f, 0.0f, (int)d.x, 0, 0,(int) d.y);
         }
     }
+    private Boolean DoesTileTypeBlockLight(Tile.Types type)
+    {
+        return  type == Tile.Types.Wall ||
+                type== Tile.Types.SubWall ||
+                type == Tile.Types.Door;
+    }
 
     private void castLight(Tile.LightAmount amount, int row, int startX, int startY,float radius, float start, float end, int xx, int xy, int yx, int yy) {
         float newStart = 0.0f;
@@ -216,9 +223,11 @@ public class DungeonMap
             return;
         }
         boolean blocked = false;
-        for (int distance = row; distance <= radius && !blocked; distance++) {
+        for (int distance = row; distance <= radius && !blocked; distance++)
+        {
             int deltaY = -distance;
-            for (int deltaX = -distance; deltaX <= 0; deltaX++) {
+            for (int deltaX = -distance; deltaX <= 0; deltaX++)
+            {
                 int currentX = (int)(startX + deltaX * xx + deltaY * xy);
                 int currentY = (int)(startY + deltaX * yx + deltaY * yy);
                 float leftSlope = (deltaX - 0.5f) / (deltaY + 0.5f);
@@ -237,15 +246,21 @@ public class DungeonMap
                 }
 
                 if (blocked) { //previous cell was a blocking one
-                    if (!_tiles[currentX][currentY].isWalkable()) {//hit a wall
+                    if (DoesTileTypeBlockLight(_tiles[currentX][currentY].getType()))
+                    {//hit a wall
                         newStart = rightSlope;
                         continue;
                     } else {
                         blocked = false;
                         start = newStart;
                     }
-                } else {
-                    if (!_tiles[currentX][currentY].isWalkable() && distance < radius) {//hit a wall within sight line
+                }
+                else
+                {
+                    //if (DoesTileTypeBlockLight(_tiles[currentX][currentY].getType()) && distance < radius)
+                    //Currently no blocking of light in sight range
+                    if(distance < radius)
+                    {//hit a wall within sight line
                         blocked = true;
                         castLight(amount, distance + 1,startX,startY,radius, start, leftSlope, xx, xy, yx, yy);
                         newStart = rightSlope;

@@ -102,7 +102,7 @@ public class Inventory extends Window
         }
         _items.add(item);
         String itemId = String.valueOf(item.getUniqueId());
-        Button itemButton = addButton(itemId, item.getTextureRegion());
+        Button itemButton = addButton(itemId,"", item.getTextureRegion());
         _itemButtonMap.put(itemButton, item);
         arrangeButtons(0, 0, 8, 8, 4);
     }

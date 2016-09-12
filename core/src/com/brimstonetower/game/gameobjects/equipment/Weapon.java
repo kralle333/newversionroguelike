@@ -54,7 +54,7 @@ public class Weapon extends Item
     public int getMaxRange(){return _maxRange;}
 
     private int _stepsTillIdentified;
-    private static int weaponId=1;
+    private static int weaponId=1000;
 
 
     public Weapon(String name, String description, boolean isIdentified, TextureRegion textureRegion, int minDamage,
@@ -174,6 +174,7 @@ public class Weapon extends Item
             batch.setColor(Color.PINK);
         }
         super.draw(batch, x, y);
+        batch.setColor(Color.WHITE);
     }
 
     @Override
@@ -184,6 +185,7 @@ public class Weapon extends Item
             batch.setColor(Color.PINK);
         }
         super.draw(batch, x, y, scale);
+        batch.setColor(Color.WHITE);
     }
 
 

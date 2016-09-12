@@ -12,7 +12,7 @@ public class MappingScroll extends Scroll
     public MappingScroll(TextureRegion region, String unidentifiedName)
     {
         //Change to be upgradable
-        super("Mapping","Magically maps the whole dungeon",false,region,unidentifiedName,Type.Instant,0,0,1);
+        super("Mapping","Magically maps the whole dungeon",false,region,unidentifiedName,Type.Instant,0,0);
     }
 
     @Override

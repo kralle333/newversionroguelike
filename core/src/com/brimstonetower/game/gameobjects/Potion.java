@@ -21,9 +21,9 @@ public class Potion extends Item
         return _color;
     }
 
-    public Potion(Effect effect,boolean isIdentified,TextureRegion textureRegion,Color color,int typeId)
+    public Potion(String description,String identifiedName,Effect effect,boolean isIdentified,TextureRegion textureRegion,Color color,int typeId)
     {
-        super("Potion of "+effect.getName(), effect.getEffectDescription(), isIdentified, textureRegion,false,typeId);
+        super(identifiedName, description, isIdentified, textureRegion,false,typeId);
         _effect=effect;
         _color=color;
         _stringColor = ColorHelper.convertColorToString(color);
@@ -32,7 +32,7 @@ public class Potion extends Item
 
     public Potion(Potion toCopy)
     {
-        this(toCopy.getEffect(),toCopy.isIdentified(), toCopy.getTextureRegion(),toCopy.getColor(),toCopy.getTypeId());
+        this(toCopy.getDescription(),toCopy.getName(), toCopy.getEffect(),toCopy.isIdentified(), toCopy.getTextureRegion(),toCopy.getColor(),toCopy.getTypeId());
     }
 
     public String getName()

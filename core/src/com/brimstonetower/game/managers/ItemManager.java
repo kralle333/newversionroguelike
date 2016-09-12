@@ -415,13 +415,13 @@ public class ItemManager
     }
     //Remember to set it when adding new ones
     private static int potionId = 1;
-    private static Potion createPotion(Effect effect,ArrayList<TileSetCoordinate> availablePotionTypes)
+    private static Potion createPotion(String description,String identifiedName,Effect effect,ArrayList<TileSetCoordinate> availablePotionTypes)
     {
         if(availablePotionTypes.size()>0)
         {
             TileSetCoordinate randomType = availablePotionTypes.remove(RandomGen.getRandomInt(0, availablePotionTypes.size() - 1));
             TextureRegion potionRegion = AssetManager.getTextureRegion("potion",  randomType.x,  randomType.y, 32, 32);
-            return new Potion(effect,false,potionRegion,convertPotionTypeIndexToColor(randomType),potionId++);
+            return new Potion(description,identifiedName,effect,false,potionRegion,convertPotionTypeIndexToColor(randomType),potionId++);
         }
         Gdx.app.log("Item Manager","Cant create potion, no unused type left!");
         return null;
@@ -441,10 +441,10 @@ public class ItemManager
             }
         }
 
-        _potionPrototypes.add(createPotion(Effect.createPermanentEffect("Healing", "You feel refreshed", 20, 0, 0, 0, 0, 0, 0, 0, false, null),availablePotionTypes));
-        _potionPrototypes.add(createPotion(Effect.createPermanentEffect("Death", "Haunting cries rip your soul apart", -5, 0, 0, 0, 0, 0, 0, 0, true, Color.DARK_GRAY),availablePotionTypes));
-        _potionPrototypes.add(createPotion(Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down", "Time feels normal again", 0, 0, 0, 0, 0,10, 0, 5, false, null),availablePotionTypes));
-        _potionPrototypes.add(createPotion(Effect.createTemporaryEffect("Blindness", "Your sight is blocked by gray blobs moving on your eyes", "The gray blobs fall from your eyes", 0, 0, 0, 0, 0, -5, -5, 5, false, null),availablePotionTypes));
+        _potionPrototypes.add(createPotion("Potion of Healing","Heals 20 hitpoints", Effect.createPermanentEffect("Healing", "You feel refreshed", 20, 0, 0, 0, 0, 0, 0, 0, false, null),availablePotionTypes));
+        _potionPrototypes.add(createPotion("Potion of Death", "Damages 5 hitpoints",Effect.createPermanentEffect("Death", "Haunting cries rip your soul apart", -5, 0, 0, 0, 0, 0, 0,0, true, Color.DARK_GRAY),availablePotionTypes));
+        _potionPrototypes.add(createPotion("Potion of Swiftness", "Move with increased speed for 5 turns", Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down", "Time feels normal again", 0, 0, 0, 0, 0,10, 0, 5, false, null),availablePotionTypes));
+        _potionPrototypes.add(createPotion("Potion of Blindness", "Decreases attack and movement speed for 5 turns", Effect.createTemporaryEffect("Blindness", "Your vision is blurred", "Everything becomes clear again", 0, 0, 0, 0, 0, -5, -5, 5, false, null),availablePotionTypes));
 
     }
 

@@ -17,7 +17,7 @@ public class Chest extends BreakableObject
 
     public Chest(int type)
     {
-        super("Chest",AssetManager.getTextureRegion("tile","chest-"+String.valueOf(RandomGen.getRandomInt(1,3)), DungeonMap.TileSize,DungeonMap.TileSize));
+        super("Chest",AssetManager.getTextureRegion("tile","chest-"+String.valueOf(type), DungeonMap.TileSize,DungeonMap.TileSize));
     }
     public void addItemToDrop(Item item)
     {

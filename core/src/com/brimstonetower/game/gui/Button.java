@@ -105,8 +105,6 @@ public class Button
     {
         _x = x;
         _y = y;
-        _scaleX = (width/region.getRegionWidth());
-        _scaleY = (height/region.getRegionHeight());
         _width =width;
         _height = height;
         _textureRegion = region;
@@ -120,10 +118,7 @@ public class Button
         _y=y;
         _width=width;
         _height=height;
-        _hitRectangle.x = x;
-        _hitRectangle.y = y;
-        _hitRectangle.width=width;
-        _hitRectangle.height=height;
+        _hitRectangle = new Rectangle(x, y, _width, _height);
     }
     public void hide()
     {

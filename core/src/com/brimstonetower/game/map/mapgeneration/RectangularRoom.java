@@ -1,8 +1,11 @@
 package com.brimstonetower.game.map.mapgeneration;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.brimstonetower.game.gameobjects.BreakableObject;
 import com.brimstonetower.game.helpers.RandomGen;
 import com.brimstonetower.game.managers.AssetManager;
+import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
 
 
@@ -53,7 +56,7 @@ public class RectangularRoom extends Room
             for(int y=1;y<_height-1;y++)
             {
                 //Random floor
-                _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, AssetManager.getTileSetPosition("floor-"+floorType+"-"+String.valueOf(RandomGen.getRandomInt(1, 2))));
+                _tiles[x][y] = new Tile(Tile.Types.Floor, x + _x, y + _y, AssetManager.getTileSetPosition("floor-"+floorType+"-"+String.valueOf(RandomGen.getRandomInt(1, 4))));
             }
         }
 
@@ -220,17 +223,36 @@ public class RectangularRoom extends Room
     enum SubRoomSize {Small,Medium,Large};
     private void decorateSubRoom(int x,int y,int width, int height)
     {
+        final String[] interiorObjectKeys = new String[]{"box1","box2","box3","barrel1","barrel2","bucket"};
         SubRoomSize size;
         if((width+height/2)<=minSubRoomWidth*3/2){size = SubRoomSize.Small;}
-        else if((width+height/2)<=minSubRoomWidth*3){size = SubRoomSize.Medium;}
+        else if((width+height/2)<=minSubRoomWidth*4){size = SubRoomSize.Medium;}
         else{size = SubRoomSize.Large;}
+
+        int numberOfObjects = 0;
 
         switch(size)
         {
-            case Small:break;
-            case Medium:break;
-            case Large:break;
+            case Small:numberOfObjects = RandomGen.getRandomInt(0,1);break;
+            case Medium:numberOfObjects = RandomGen.getRandomInt(1,2);break;
+            case Large:numberOfObjects = RandomGen.getRandomInt(1,3);break;
         }
+
+        for(int i = 0;i<numberOfObjects;)
+        {
+            int randX = RandomGen.getRandomInt(x+1,width-1);
+            int randY = RandomGen.getRandomInt(y+1,height-1);
+
+            if(_tiles[randX][randY].isEmpty() && _tiles[randX][randY].getType() == Tile.Types.Floor)
+            {
+                int randomObject = RandomGen.getRandomInt(0,interiorObjectKeys.length-1);
+                TextureRegion randomObjectTextureRegion = AssetManager.getTextureRegion("interior",interiorObjectKeys[randomObject], DungeonMap.TileSize,DungeonMap.TileSize);
+                BreakableObject newObject = new BreakableObject("Object",randomObjectTextureRegion);
+                newObject.placeOnTile(_tiles[randX][randY]);
+                i++;
+            }
+        }
+
     }
 
 }

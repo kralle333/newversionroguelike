@@ -341,7 +341,7 @@ public class Tile
 
             batch.setColor(toDraw);
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
-            if(_type == Types.Door)
+            if(_object!=null)
             {
                 _object.draw(batch);
             }
@@ -357,7 +357,7 @@ public class Tile
         {
             batch.setColor(_lightColor);
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
-            if(_type == Types.Door)
+            if(_object!=null)
             {
                 _object.draw(batch);
             }
@@ -367,7 +367,7 @@ public class Tile
         {
             for (Item item : _items)
             {
-                item.draw(batch, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
+                item.draw(batch, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize,0.75f);
             }
         }
         batch.setColor(Color.WHITE);

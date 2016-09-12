@@ -63,6 +63,8 @@ public class AssetManager
         _gameAssets.put("potion", new Texture(Gdx.files.internal("art/potionTileSet.png")));
         _gameAssets.put("scroll", new Texture(Gdx.files.internal("art/scrollTileSet.png")));
         _gameAssets.put("gas", new Texture(Gdx.files.internal("art/gasCloud.png")));
+        _gameAssets.put("interior", new Texture(Gdx.files.internal("art/interior.png")));
+        _gameAssets.put("statusIcons",new Texture(Gdx.files.internal("art/statusicons.png")));
         for (Texture t : _gameAssets.values())
         {
             t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -81,6 +83,8 @@ public class AssetManager
         //Floor tiles
         tileSetCoordinateMap.put("floor-shiny-1", new TileSetCoordinate(3, 3));
         tileSetCoordinateMap.put("floor-shiny-2", new TileSetCoordinate(4, 3));
+        tileSetCoordinateMap.put("floor-shiny-3", new TileSetCoordinate(4, 4));
+        tileSetCoordinateMap.put("floor-shiny-4", new TileSetCoordinate(3,4));
 
 
         //Corridors - n=north,w=west,s=south,e=east
@@ -123,9 +127,9 @@ public class AssetManager
 
         //Misc
         tileSetCoordinateMap.put("stairs", new TileSetCoordinate(2, 3));
-        tileSetCoordinateMap.put("chest-1", new TileSetCoordinate(2, 5));
-        tileSetCoordinateMap.put("chest-2", new TileSetCoordinate(3, 5));
-        tileSetCoordinateMap.put("chest-3", new TileSetCoordinate(4, 5));
+        tileSetCoordinateMap.put("chest-1", new TileSetCoordinate(0, 7));
+        tileSetCoordinateMap.put("chest-2", new TileSetCoordinate(1, 7));
+        tileSetCoordinateMap.put("chest-3", new TileSetCoordinate(2, 7));
 
         //Misc file
         tileSetCoordinateMap.put("searchEye",new TileSetCoordinate(1,0));
@@ -174,6 +178,20 @@ public class AssetManager
         tileSetCoordinateMap.put("type4.1Gas", new TileSetCoordinate(0, 3));
         tileSetCoordinateMap.put("type4.2Gas", new TileSetCoordinate(1, 3));
         tileSetCoordinateMap.put("type4.3Gas", new TileSetCoordinate(2, 3));
+
+        //Interior objects
+        tileSetCoordinateMap.put("barrel1", new TileSetCoordinate(0, 0));
+        tileSetCoordinateMap.put("barrel2", new TileSetCoordinate(1, 0));
+        tileSetCoordinateMap.put("box1", new TileSetCoordinate(2, 0));
+        tileSetCoordinateMap.put("box2", new TileSetCoordinate(3, 0));
+        tileSetCoordinateMap.put("box3", new TileSetCoordinate(4, 0));
+        tileSetCoordinateMap.put("bucket", new TileSetCoordinate(0, 1));
+
+        //Status effect icons
+        tileSetCoordinateMap.put("blind",new TileSetCoordinate(0,0));
+        tileSetCoordinateMap.put("swift",new TileSetCoordinate(1,0));
+        tileSetCoordinateMap.put("poison",new TileSetCoordinate(2,0));
+
     }
 
     private static void initializeFonts()
@@ -199,6 +217,18 @@ public class AssetManager
         parameters.size/=4;
         BitmapFont damageIndicator=generator.generateFont(parameters);
         _fonts.put("damageIndicator",damageIndicator);
+
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/CastleFont.ttf"));
+        parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameters.flip = true;
+        parameters.genMipMaps = true;
+        parameters.characters = FreeTypeFontGenerator.DEFAULT_CHARS;
+        parameters.minFilter= Texture.TextureFilter.Nearest;
+        parameters.magFilter= Texture.TextureFilter.Nearest;
+        parameters.size=(30*Gdx.graphics.getWidth()/devWidth);
+
+        _fonts.put("titleScreen",generator.generateFont(parameters));
+
         generator.dispose();
 
     }

@@ -50,9 +50,10 @@ public class DungeonGenerator
 
     private static Chest generateChest(int depth)
     {
-        final int equipmentCurseRate = 50;
+        final int equipmentCurseRate = 33;
+        int chestSpriteType =   RandomGen.getRandomInt(1,RandomGen.getRandomInt(1,RandomGen.getRandomInt(1,3)));
 
-        Chest chest = new Chest(0);
+        Chest chest = new Chest(chestSpriteType);
         int itemType = RandomGen.getRandomInt(0, 7);//Chests more likely to spawn scrolls and potions
         switch (itemType)
         {

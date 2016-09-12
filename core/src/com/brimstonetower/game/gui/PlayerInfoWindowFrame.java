@@ -10,7 +10,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.brimstonetower.game.gameobjects.Player;
+import com.brimstonetower.game.helpers.Effect;
 import com.brimstonetower.game.managers.AssetManager;
+
+import java.util.ArrayList;
 
 public class PlayerInfoWindowFrame extends Window
 {
@@ -50,14 +53,14 @@ public class PlayerInfoWindowFrame extends Window
             layout.setText(_font,"Height");
             hpPos = new Vector2(namePos.x, namePos.y + height*1.3f +layout.height);
             layout.setText(_font,"Hp: 1000/1000   ");
-            expPos = new Vector2(hpPos.x + layout.width, hpPos.y);
+            expPos = new Vector2(levelPos.x, hpPos.y);
             strPos = new Vector2(hpPos.x + layout.width, hpPos.y);
             layout.setText(_font,"Hp: ");
             hpRect.x = hpPos.x+layout.width;
             hpRect.y= hpPos.y*0.9f;
             hpRect.width =Gdx.graphics.getWidth()*0.1f;
             layout.setText(_font,"height");
-            hpRect.height= layout.height*1.2f;
+            hpRect.height= layout.height*1.4f;
 
             layout.setText(_font,"Str: ");
             strRect.x = strPos.x+layout.width;
@@ -81,6 +84,17 @@ public class PlayerInfoWindowFrame extends Window
         //_font.drawAnimation(batch, "Str: ", strPos.x,strPos.y);
         _font.draw(batch, "Exp: "+player.getExperience()+"/"+player.getExperienceToNextLevel(),expPos.x, expPos.y);
         _font.draw(batch, "Floor: " + depth, Gdx.graphics.getWidth()/2, namePos.y);
+
+        Vector2 effectPos = new Vector2(Gdx.graphics.getWidth()/3,namePos.y);
+        ArrayList<Effect> currentEffects = player.getCurrentEffects();
+        for (Effect e : currentEffects)
+        {
+            switch (e.getName())
+            {
+                case "Swiftness":batch.draw(AssetManager.getTextureRegion("statusIcons","swift",32,32),effectPos.x+=32,effectPos.y);break;
+                case "Blindness":batch.draw(AssetManager.getTextureRegion("statusIcons","blind",32,32),effectPos.x+=32,effectPos.y);break;
+            }
+        }
     }
     public void drawProgressBars(ShapeRenderer shapeRenderer,Player player)
     {

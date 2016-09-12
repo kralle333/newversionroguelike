@@ -10,23 +10,23 @@ public class ColorHelper
     {
         if (color == Color.RED)
         {
-            return "red";
+            return "Red";
         }
         else if (color == Color.BLUE)
         {
-            return "blue";
+            return "Blue";
         }
         else if (color == Color.WHITE)
         {
-            return "white";
+            return "White";
         }
         else if (color == Color.GREEN)
         {
-            return "green";
+            return "Green";
         }
         else if(color == Color.BLACK)
         {
-            return "black";
+            return "Black";
         }
         return "unknown";
     }

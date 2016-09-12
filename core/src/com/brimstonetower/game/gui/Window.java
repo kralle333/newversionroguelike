@@ -126,24 +126,21 @@ public class Window
         }
     }
 
-    public Button addButton(String buttonText, Color color)
+
+
+    public Button addButton(String buttonKey, String buttonText, TextureRegion region)
     {
-        return addButton(buttonText, 0, 0, 0, 0, color);
+        _nameButtonMap.put(buttonKey, new Button(0, 0, region,region.getRegionWidth(),region.getRegionHeight(),buttonText));
+        return _nameButtonMap.get(buttonKey);
     }
 
-    public Button addButton(String buttonText, TextureRegion region)
-    {
-        _nameButtonMap.put(buttonText, new Button(0, 0, region, buttonText));
-        return _nameButtonMap.get(buttonText);
-    }
-
-    public Button addButton(String buttonText, float percentX, float percentY, float percentWidth, float percentHeight, Color color)
+    public Button addButton(String buttonText, float percentX, float percentY, float percentWidth, float percentHeight)
     {
         int buttonX = (int)(_windowRectangle.x + (_windowRectangle.width * percentX));
         int buttonY = (int)(_windowRectangle.y + (_windowRectangle.height * percentY));
         int width = (int)(_windowRectangle.width * percentWidth);
         int height= (int)( _windowRectangle.height * percentHeight);
-        Gdx.app.log("Window","Button with size: "+width+","+height);
+
         _nameButtonMap.put(buttonText, new Button(buttonX, buttonY,_buttonRegion,width, height, buttonText));
         return _nameButtonMap.get(buttonText);
     }

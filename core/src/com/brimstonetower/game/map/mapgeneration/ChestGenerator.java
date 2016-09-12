@@ -1,4 +1,5 @@
 package com.brimstonetower.game.map.mapgeneration;
+import com.badlogic.gdx.Gdx;
 import com.brimstonetower.game.gameobjects.Chest;
 import com.brimstonetower.game.gameobjects.equipment.Armor;
 import com.brimstonetower.game.gameobjects.equipment.Weapon;
@@ -10,7 +11,9 @@ public class ChestGenerator
     {
         final int equipmentCurseRate = 50;
 
-        Chest chest = new Chest(0);
+        int chestSpriteType =   RandomGen.getRandomInt(1,RandomGen.getRandomInt(1,RandomGen.getRandomInt(1,3)));
+
+        Chest chest = new Chest(chestSpriteType);
         int itemType = RandomGen.getRandomInt(0, 7);//Chests more likely to spawn scrolls and potions
         switch (itemType)
         {

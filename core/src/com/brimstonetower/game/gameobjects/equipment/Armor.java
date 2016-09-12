@@ -35,7 +35,7 @@ public class Armor extends Item
     {
         return _stepsTillIdentified;
     }
-    private static int armorId = 1;
+    private static int armorId = 100;
 
     public Armor(String name, String description, boolean isIdentified, TextureRegion textureRegion, int defense, int bonusDef)
     {

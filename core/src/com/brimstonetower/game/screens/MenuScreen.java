@@ -36,7 +36,7 @@ public class MenuScreen implements Screen, GestureDetector.GestureListener
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
         int buttonWidth = (int)(w * 0.18f);
-        int buttonHeight = (int)(h * 0.12f);
+        int buttonHeight = (int)(h * 0.14f);
         setupBackground(w,h);
 
         startButton = new Button((w/2 - (buttonWidth / 2)),(int) (h * 0.55f - buttonHeight), buttonRegion,buttonWidth,buttonHeight, "Start Game");

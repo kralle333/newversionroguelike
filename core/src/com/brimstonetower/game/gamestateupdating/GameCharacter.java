@@ -302,6 +302,10 @@ public class GameCharacter
     {
         _currentEffects.add(effect);
     }
+    public ArrayList<Effect> getCurrentEffects()
+    {
+        return _currentEffects;
+    }
     public void updateEffects()
     {
         final ArrayList<Effect> effectsToRemove = new ArrayList<Effect>();

@@ -105,20 +105,22 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
 
     private void setupGuiElements()
     {
-        _openInventoryButton = new Button(0,0,10,10, "Inventory",new Color(121f/255f, 82f/255f, 39f/255f,1));
-        _waitActionButton = new Button(0,0,10,10, "Wait", new Color(0.5f, 0.5f, 0.5f, 1));
-        _searchFloorButton = new Button(0,0,10,10,"Search",new Color(0, 0.6f, 0.2f, 1));
+        //Initialize buttons. Actual values get set in reposition method
+        TextureRegion buttonRegion = new TextureRegion(AssetManager.getGuiTexture("menuButton"),0,48,128,64);
+        _openInventoryButton = new Button(0,0,buttonRegion,10,10, "Inventory");
+        _waitActionButton = new Button(0,0,buttonRegion,10,10, "Wait");
+        _searchFloorButton = new Button(0,0,buttonRegion,10,10,"Search");
 
         //Shown when pressing back or escape
         _goToMainMenuPrompt = new Window(0,0,10,10,Color.GRAY,2,Color.BLUE);
-        _goToMainMenuPrompt.addButton("Cancel", 0, 0, 0.33f, 0.2f, Color.BLUE);
-        _goToMainMenuPrompt.addButton("Go to main menu", 0, 0, 0.33f, 0.2f, Color.RED);
+        _goToMainMenuPrompt.addButton("Cancel", 0, 0, 0.33f, 0.2f);
+        _goToMainMenuPrompt.addButton("Go to main menu", 0, 0, 0.33f, 0.2f);
 
         //Shown when you lose or win
         _gameOverWindow = new Window(0,0,10,10,Color.GRAY, 2, Color.BLACK);
-        _gameOverWindow.addButton("Main Menu", 0, 0, 0.33f, 0.2f, Color.RED);
-        _gameOverWindow.addButton("High Scores", 0, 0, 0.33f, 0.2f, Color.BLUE);
-        _gameOverWindow.addButton("Play Again", 0, 0, 0.33f, 0.2f, Color.GREEN);
+        _gameOverWindow.addButton("Main Menu", 0, 0, 0.33f, 0.2f);
+        _gameOverWindow.addButton("High Scores", 0, 0, 0.33f, 0.2f);
+        _gameOverWindow.addButton("Play Again", 0, 0, 0.33f, 0.2f);
 
         //Shows an item
         _selectedItemWindow = new SelectedItemWindow(0,0,10,10,Color.GRAY, 2, Color.GRAY);
@@ -142,7 +144,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
     private void repositionGuiElements(int width, int height)
     {
 
-        _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*(width/960),_levelUpDisplay.getHeight()*(height/540));
+        _levelUpDisplay.setSize(_levelUpDisplay.getWidth()*(width/1280),_levelUpDisplay.getHeight()*(height/720));
         _playerInfoWindowFrame.reposition(2, 2, width - 4, 5);//(int) (_font.getBounds("Sample").height * 2.5f));
 
         _inventory.reposition(width/2 - (2 * height / 3)/2, height - (2 * height / 3) - (height / 5) - 4, 2 * height / 3, 2 * height / 3);
