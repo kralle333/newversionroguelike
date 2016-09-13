@@ -249,10 +249,18 @@ public class Tile
         }
 
     }
-    public void updateLight(Player player)
+    public void removeLight(Player player)
     {
         setLight(LightAmount.Shadow, player.getViewDistance()+2,  player.getCurrentTile());
+    }
+    public void addLight(Player player)
+    {
         setLight(Tile.LightAmount.Light, player.getViewDistance(), player.getCurrentTile());
+    }
+    public void updateLight(Player player)
+    {
+        removeLight(player);
+        addLight(player);
     }
     public void setLight(LightAmount light,int strength,Tile lightSource)
     {

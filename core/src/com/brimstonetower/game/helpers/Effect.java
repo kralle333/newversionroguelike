@@ -20,6 +20,7 @@ public class Effect
     private int _maxStrengthChange;
     private int _defenseChange;
     private int _agilityChange;
+    private int _maxAgilityChange;
     private int _viewDistanceChange;
 
     //Used for keeping track of the effects
@@ -73,13 +74,14 @@ public class Effect
     {
         return _agilityChange;
     }
+    public int getMaxAgilityChange(){return _maxAgilityChange;}
     public int getViewDistanceChange(){return _viewDistanceChange;}
 
     //Builder pattern to create effects as requested
     private Effect(String name, String description,
                    int hitPointsChange,int maxHitPointsChange,
                    int strengthChange,int maxStrengthChange,
-                   int defenseChange,int agilityChange, int viewDistanceChange, int turnsActive)
+                   int defenseChange,int agilityChange,int maxAgilityChange, int viewDistanceChange, int turnsActive)
     {
         _name = name;
         _effectDescription = description;
@@ -90,6 +92,7 @@ public class Effect
         _maxStrengthChange = maxStrengthChange;
         _defenseChange = defenseChange;
         _agilityChange = agilityChange;
+        _maxAgilityChange = maxAgilityChange;
         _viewDistanceChange = viewDistanceChange;
         _turnsLeft = turnsActive;
     }
@@ -99,7 +102,8 @@ public class Effect
         this(toCopy._name,toCopy._effectDescription,
                 toCopy._hitPointsChange,toCopy._maxHitPointsChange,
                 toCopy._strengthChange,toCopy._maxStrengthChange,
-                toCopy._defenseChange,toCopy.getAgilityChange(),toCopy.getViewDistanceChange(),toCopy._turnsLeft);
+                toCopy._defenseChange,toCopy.getAgilityChange(),toCopy.getMaxAgilityChange(),
+                toCopy.getViewDistanceChange(),toCopy._turnsLeft);
         _isGas = toCopy._isGas;
         _dispelDescription = toCopy._dispelDescription;
         _color = toCopy._color;
@@ -110,13 +114,14 @@ public class Effect
     public static Effect createPermanentEffect(String name, String description,
                                                      int hitPointsChange, int maxHitPointsChange,
                                                      int strengthChange, int maxStrengthChange,
-                                                     int defenseChange, int agilityChange, int viewDistanceChange,int turnsActive,
+                                                     int defenseChange, int agilityChange,int maxAgilityChange,
+                                                     int viewDistanceChange,int turnsActive,
                                                      boolean isGas, Color color)
     {
         Effect permanentEffect = new Effect(
                 name,description,hitPointsChange,maxHitPointsChange,
                 strengthChange,maxStrengthChange,defenseChange,
-                agilityChange,viewDistanceChange,turnsActive);
+                agilityChange,maxAgilityChange,viewDistanceChange,turnsActive);
 
         permanentEffect._isGas = isGas;
         permanentEffect._type = Type.Permanent;
@@ -128,13 +133,13 @@ public class Effect
     public static Effect createTemporaryEffect(String name, String description,String dispelDescription,
                                                int hitPointsChange, int maxHitPointsChange,
                                                int strengthChange, int maxStrengthChange,
-                                               int defenseChange, int agilityChange,int viewDistanceChange, int turnsActive,
+                                               int defenseChange, int agilityChange,int maxAgilityChange,int viewDistanceChange, int turnsActive,
                                                boolean isGas, Color color)
     {
         Effect temporaryEffect = new Effect(
                 name,description,hitPointsChange,maxHitPointsChange,
                 strengthChange,maxStrengthChange,defenseChange,
-                agilityChange, viewDistanceChange,turnsActive);
+                agilityChange,maxAgilityChange, viewDistanceChange,turnsActive);
         temporaryEffect._dispelDescription = dispelDescription;
         temporaryEffect._isGas = isGas;
         temporaryEffect._type = Type.Temporary;
@@ -153,6 +158,7 @@ public class Effect
         _maxStrengthChange*=-1;
         _defenseChange*=-1;
          _agilityChange*=-1;
+        _maxAgilityChange*=-1;
         _viewDistanceChange*=-1;
         _areEffectsReversed=!_areEffectsReversed;
     }

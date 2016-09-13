@@ -16,11 +16,11 @@ public class TrapGenerator
         int randomEffect = RandomGen.getRandomInt(0,1);
         if(randomEffect == 0)
         {
-            effect=Effect.createPermanentEffect("Metal Spikes", "Metal spikes emerge from the ground", -5 * (depth), 0, 0, 0, 0, 0, 0,0,false, Color.PURPLE);
+            effect=Effect.createPermanentEffect("Metal Spikes", "Metal spikes emerge from the ground", -5 * (depth), 0, 0,0, 0, 0, 0, 0,0,false, Color.PURPLE);
         }
         else
         {
-            effect=Effect.createPermanentEffect("Poison", "Your lungs and nostrils hurt from breathing the gas", -2 * depth, 0, 0, 0, 0, 0, 0,0,true, Color.PURPLE);
+            effect=Effect.createPermanentEffect("Poison", "Your lungs and nostrils hurt from breathing the gas", -2 * depth, 0, 0,0, 0, 0, 0, 0,0,true, Color.PURPLE);
         }
 
 

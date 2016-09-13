@@ -18,8 +18,9 @@ public class TeleportScroll extends Scroll
     public void use()
     {
         Tile teleportedToTile = GameStateUpdater.playedMap.getRandomEmptyFloorTile();
+        GameStateUpdater.player.getCurrentTile().removeLight(GameStateUpdater.player);
         GameStateUpdater.player.moveTo(teleportedToTile);
-        teleportedToTile.updateLight(GameStateUpdater.player);
+        teleportedToTile.addLight(GameStateUpdater.player);
         GameConsole.addMessage("Player was teleported to a random tile");
     }
 }

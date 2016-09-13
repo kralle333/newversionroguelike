@@ -59,7 +59,7 @@ public class Item
         return _typeId;
     }
 
-    private static int itemIdCounter = 1;
+    private static int itemIdCounter = 1000;
     private int _uniqueId;
     public int getUniqueId(){return _uniqueId;}
 

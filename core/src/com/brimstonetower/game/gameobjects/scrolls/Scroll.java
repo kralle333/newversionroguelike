@@ -37,12 +37,10 @@ public class Scroll extends Item
         return _unidentifiedName;
     }
 
-    private static int _scrollID = 10000;
-
 
     protected Scroll(String name, String description, boolean isIdentified, TextureRegion textureRegion, String unIdentifiedName,Type type,int tokensToLearn, int tokensForUpgrading)
     {
-        super(name, description, isIdentified, textureRegion, true,_scrollID++);
+        super(name, description, isIdentified, textureRegion, true,0);
         this.type = type;
         _tokensToLearn = tokensToLearn;
         _tokensForUpgrading = tokensForUpgrading;
@@ -53,11 +51,11 @@ public class Scroll extends Item
     {
         if (_isIdentified)
         {
-            return super.getName();
+            return "Scroll of "+super.getName();
         }
         else
         {
-            return _unidentifiedName + "scroll";
+            return  _unidentifiedName+" scroll";
         }
     }
 

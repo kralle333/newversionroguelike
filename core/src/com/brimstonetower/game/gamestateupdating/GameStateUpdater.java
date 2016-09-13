@@ -378,7 +378,6 @@ public class GameStateUpdater
                 }
             }
 
-
             inventory.step();
             playedMap.setLighting(player.getCurrentTile(),player.getViewDistance(), Tile.LightAmount.DarkShadow);
             player.moveTo(newTile);
@@ -419,10 +418,6 @@ public class GameStateUpdater
         {
             Potion potion = (Potion) action.getTargetItem();
             usePotion(potion, action.getOwner(), action.getTargetTile());
-            if(action.getOwner() == player && potion.getEffect().getViewDistanceChange() !=0)
-            {
-                player.currentTile.updateLight(player);
-            }
         }
     }
     private void executeThrowResults(GameAction throwAction)
