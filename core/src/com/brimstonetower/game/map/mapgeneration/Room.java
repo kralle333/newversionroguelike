@@ -253,7 +253,6 @@ public class Room
         }
 
         doorTile.addWalkableNeighbour(corridorTile);
-        doorTile.setType(Tile.Types.Floor);
         corridorTile.addWalkableNeighbour(doorTile);
         _doors.add(doorTile);
 

@@ -11,7 +11,7 @@ public class IdentifyScroll extends Scroll
 {
     public IdentifyScroll(TextureRegion textureRegion,String unidentifiedName)
     {
-        super("Identify","Identifies a single item",false,textureRegion,unidentifiedName,Type.OnItem,0,0);
+        super("Scroll of Identification","Identifies a single item",false,textureRegion,unidentifiedName,Type.OnItem,0);
     }
 
     @Override

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class Chest extends BreakableObject
 {
-    private boolean _wasSeen =false;
     private ArrayList<Item> _droppedItems = new ArrayList<Item>();
 
     public Chest(int type)
@@ -24,29 +23,6 @@ public class Chest extends BreakableObject
         _droppedItems.add(item);
     }
 
-    public void reveal()
-    {
-        _wasSeen = true;
-    }
-
-    public void update(Player player)
-    {
-        if(!_wasSeen && player.getCurrentTile().distanceTo(tile)<=player.getViewDistance())
-        {
-            _wasSeen=true;
-        }
-    }
-    public void draw(SpriteBatch batch)
-    {
-        if (!isBroken)
-        {
-            if(tile.getLightAmount() == Tile.LightAmount.Light ||
-                    (tile.getLightAmount() == Tile.LightAmount.Shadow && _wasSeen))
-            {
-                super.draw(batch);
-            }
-        }
-    }
     @Override
     public void destroy()
     {

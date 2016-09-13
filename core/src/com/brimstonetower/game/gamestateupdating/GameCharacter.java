@@ -306,6 +306,18 @@ public class GameCharacter
     //Effects
     public void giveEffect(Effect effect)
     {
+        String effectName = effect.getName();
+        if(effectName == "Regeneration" || effectName == "Poison" || effectName == "Swiftness" || effectName == "Blindness")
+        {
+            for (Effect currentEffect: _currentEffects)
+            {
+                if(currentEffect.getName() == effectName)
+                {
+                    currentEffect.resetTurns();
+                    return;
+                }
+            }
+        }
         _currentEffects.add(effect);
     }
     public ArrayList<Effect> getCurrentEffects()
@@ -329,6 +341,10 @@ public class GameCharacter
                 }
                 else
                 {
+                    if(effect.getType() == Effect.Type.Permanent)
+                    {
+                        applyEffect(effect);
+                    }
                     effect.decreaseTurns();
                 }
             }
@@ -341,6 +357,7 @@ public class GameCharacter
     }
     protected void applyEffect(Effect effect)
     {
+        String effectName = effect.getName();
             effect.setACtive();
             //Hp manipulation
             if(effect.getHitPointsChange()>0) {heal(effect.getHitPointsChange());}

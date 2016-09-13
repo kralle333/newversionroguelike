@@ -15,18 +15,6 @@ public class Scroll extends Item
     protected Type type;
     public Type getType(){return type;}
 
-    public boolean canBeUsed(){return _tokensUsed>=_tokensToLearn;}
-
-    //Tokens used
-    private int _tokensUsed = 0;
-
-    //Tokens needed to learn how to use the scroll
-    private int _tokensToLearn;
-    protected int tokensForLearning(){return _tokensToLearn;}
-
-    //Number of times the scroll can be upgraded
-    private int _tokensForUpgrading;
-    protected int tokensForUpgrading(){return _tokensForUpgrading;}
 
     protected boolean _isUsed = false;
     public boolean isUsed(){return _isUsed;}
@@ -38,12 +26,11 @@ public class Scroll extends Item
     }
 
 
-    protected Scroll(String name, String description, boolean isIdentified, TextureRegion textureRegion, String unIdentifiedName,Type type,int tokensToLearn, int tokensForUpgrading)
+
+    protected Scroll(String name, String description, boolean isIdentified, TextureRegion textureRegion, String unIdentifiedName,Type type,int scrollID)
     {
-        super(name, description, isIdentified, textureRegion, true,0);
+        super(name, description, isIdentified, textureRegion, true,scrollID);
         this.type = type;
-        _tokensToLearn = tokensToLearn;
-        _tokensForUpgrading = tokensForUpgrading;
         _unidentifiedName = unIdentifiedName;
     }
 
@@ -51,11 +38,11 @@ public class Scroll extends Item
     {
         if (_isIdentified)
         {
-            return "Scroll of "+super.getName();
+            return super.getName();
         }
         else
         {
-            return  _unidentifiedName+" scroll";
+            return _unidentifiedName + "scroll";
         }
     }
 
@@ -82,18 +69,6 @@ public class Scroll extends Item
     public void useOnTile(Tile tile)
     {
 
-    }
-    public void useToken()
-    {
-        if(_tokensUsed<_tokensToLearn)
-        {
-            _tokensUsed++;
-        }
-        else if(_tokensUsed<_tokensForUpgrading+_tokensToLearn)
-        {
-            _tokensUsed++;
-            upgrade();
-        }
     }
     public void upgrade()
     {

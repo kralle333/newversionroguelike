@@ -29,11 +29,13 @@ public class Effect
     private boolean _isActive = false;
     public boolean isActive(){return _isActive;}
     public void setACtive(){_isActive =true;}
+    private int _turnsActive;
     private int _turnsLeft;
     public void decreaseTurns()
     {
         _turnsLeft--;
     }
+    public void resetTurns(){_turnsLeft = _turnsActive;}
     public boolean isThereTurnsLeft(){return _turnsLeft>0;}
 
     //Gas type
@@ -95,6 +97,7 @@ public class Effect
         _maxAgilityChange = maxAgilityChange;
         _viewDistanceChange = viewDistanceChange;
         _turnsLeft = turnsActive;
+        _turnsActive = turnsActive;
     }
 
     public Effect(Effect toCopy)

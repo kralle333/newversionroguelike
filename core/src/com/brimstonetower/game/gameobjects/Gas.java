@@ -25,9 +25,8 @@ public class Gas
     private HashMap<Tile, Integer> _toAdd = new HashMap<Tile, Integer>();
     private HashSet<Tile> _tilesToRemove = new HashSet<Tile>();
 
-    private final int _reductionAmount = 3;
-    private final int _getSmallerChance = 40;
-    private final int _spreadChance = 75;
+    private final int _reductionAmount = 2;
+    private final int _getSmallerChance = 80;
 
     public boolean hasDisappeared()
     {
@@ -37,7 +36,7 @@ public class Gas
     public Gas(Tile tile, Effect effect)
     {
         _effect = effect;
-        _gasDensityMap.put(tile, 10);
+        _gasDensityMap.put(tile, 18);
         _gasTextures.put(tile, AssetManager.getTextureRegion("gas", getGasDensityKey( 10), 32, 32));
         _color = effect.getColor();
     }
@@ -47,6 +46,22 @@ public class Gas
 
         for (Tile gasTile : _gasDensityMap.keySet())
         {
+            if (_gasDensityMap.get(gasTile) > 0)
+            {
+                //Chance of getting smaller
+                if (RandomGen.getRandomInt(0, 100) <= _getSmallerChance)
+                {
+                    _gasDensityMap.put(gasTile, _gasDensityMap.get(gasTile)-_reductionAmount);
+                    if (_gasDensityMap.get(gasTile) <= 0)
+                    {
+                        _tilesToRemove.add(gasTile);
+                    }
+                    else
+                    {
+                        _gasTextures.put(gasTile, AssetManager.getTextureRegion("gas", getGasDensityKey( _gasDensityMap.get(gasTile)), 32, 32));
+                    }
+                }
+            }
             if(!gasTile.isEmpty() && gasTile.getCharacter() != null)
             {
                 gasTile.getCharacter().giveEffect(new Effect(_effect));
@@ -55,25 +70,10 @@ public class Gas
             {
                 if (_gasDensityMap.get(neighbour) == null && !_previousGasTiles.contains(neighbour))
                 {
-                    if (_gasDensityMap.get(gasTile) > _reductionAmount && RandomGen.getRandomInt(0, 100) <= _spreadChance)
+                    int newGasStrength = (int)((float)_gasDensityMap.get(gasTile)/2);
+                    if(newGasStrength>=_reductionAmount)
                     {
-                        _toAdd.put(neighbour, (_gasDensityMap.get(gasTile) - _reductionAmount));
-                    }
-                }
-            }
-            if (_gasDensityMap.get(gasTile) > 0)
-            {
-                //Chance of getting smaller
-                if (RandomGen.getRandomInt(0, 100) <= _getSmallerChance)
-                {
-                    _gasDensityMap.put(gasTile, _gasDensityMap.get(gasTile) - _reductionAmount);
-                    if (_gasDensityMap.get(gasTile) <= 0)
-                    {
-                        _tilesToRemove.add(gasTile);
-                    }
-                    else
-                    {
-                        _gasTextures.put(gasTile, AssetManager.getTextureRegion("gas", getGasDensityKey( _gasDensityMap.get(gasTile)), 32, 32));
+                        _toAdd.put(neighbour,newGasStrength);
                     }
                 }
             }
@@ -114,7 +114,7 @@ public class Gas
         batch.setColor(_color);
         for (Tile tile : _gasDensityMap.keySet())
         {
-            if(tile.getLightAmount() != Tile.LightAmount.Non)
+            if(tile.getLightAmount() == Tile.LightAmount.Light)
             {
                 batch.draw(_gasTextures.get(tile), tile.getTileX() * DungeonMap.TileSize, tile.getTileY() * DungeonMap.TileSize, DungeonMap.TileSize, DungeonMap.TileSize);
             }

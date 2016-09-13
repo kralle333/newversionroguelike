@@ -442,12 +442,14 @@ public class ItemManager
         }
 
         _potionPrototypes.add(createPotion("Potion of Healing","Heals 20 hitpoints", Effect.createPermanentEffect("Healing", "You feel refreshed", 20, 0, 0, 0, 0, 0, 0, 0,0, false, null),availablePotionTypes));
-        _potionPrototypes.add(createPotion("Potion of Harmful Gas", "Releases a cloud of harmful gas",Effect.createPermanentEffect("Death", "Breathing the gas hurts your lungs", -5, 0, 0, 0, 0,0, 0,0,0, true, Color.DARK_GRAY),availablePotionTypes));
+        _potionPrototypes.add(createPotion("Potion of Harmful Gas", "Releases a cloud of harmful gas",Effect.createPermanentEffect("Death", "Breathing the gas hurts your lungs", -5, 0, 0, 0, 0,0, 0,0,0, true, Color.OLIVE),availablePotionTypes));
         _potionPrototypes.add(createPotion("Potion of Swiftness", "Move with increased speed for 5 turns", Effect.createTemporaryEffect("Swiftness", "You feel like time has slowed down", "Time feels normal again", 0, 0, 0, 0,0, 0,5,0,20, false, null),availablePotionTypes));
         _potionPrototypes.add(createPotion("Potion of Blindness", "Decreases attack and movement speed for 5 turns", Effect.createTemporaryEffect("Blindness", "Your vision is blurred", "Everything becomes clear again", 0, 0, 0, 0, 0, -5,0,-3, 5, false, null),availablePotionTypes));
         _potionPrototypes.add(createPotion("Potion of Strength","Gain 1 Strength", Effect.createPermanentEffect("Strength", "You feel stronger", 0, 0, 0,1, 0, 0,0,  0,0, false, null),availablePotionTypes));
         _potionPrototypes.add(createPotion("Potion of Agility", "Gain 1 Agility",Effect.createPermanentEffect("Agility", "You feel lighter", 0, 0, 0, 0, 0, 0,1,0,0, false,null),availablePotionTypes));
         _potionPrototypes.add(createPotion("Potion of Fire","Use to spread a fire cloud",Effect.createPermanentEffect("Fire", "You are burning", -2, 0, 0, 0, 0,0, 0,0,0, true, Color.RED),availablePotionTypes));
+        _potionPrototypes.add(createPotion("Potion of Poison","Lose hitpoints over time ",Effect.createPermanentEffect("Poison", "Poison hurts you", -5, 0, 0, 0, 0,0, 0,0,5, false, null),availablePotionTypes));
+        _potionPrototypes.add(createPotion("Potion of Regeneration","Heal over time ",Effect.createPermanentEffect("Regeneration", "Your wounds are healing", 5, 0, 0, 0, 0,0, 0,0,5, false, null),availablePotionTypes));
     }
 
     private static String getRandomScrollName(ArrayList<String> availableWords)

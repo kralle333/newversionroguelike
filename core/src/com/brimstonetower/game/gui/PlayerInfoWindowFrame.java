@@ -93,6 +93,8 @@ public class PlayerInfoWindowFrame extends Window
             {
                 case "Swiftness":batch.draw(AssetManager.getTextureRegion("statusIcons","swift",32,32),effectPos.x+=32,effectPos.y);break;
                 case "Blindness":batch.draw(AssetManager.getTextureRegion("statusIcons","blind",32,32),effectPos.x+=32,effectPos.y);break;
+                case "Poison":batch.draw(AssetManager.getTextureRegion("statusIcons","poison",32,32),effectPos.x+=32,effectPos.y);break;
+                case "Regeneration":batch.draw(AssetManager.getTextureRegion("statusIcons","regeneration",32,32),effectPos.x+=32,effectPos.y);break;
             }
         }
     }

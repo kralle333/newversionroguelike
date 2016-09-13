@@ -225,10 +225,6 @@ public class GameStateUpdater
                     monster.updateEffects();
                 }
             }
-            for(Chest chest : _chests)
-            {
-                chest.update(player);
-            }
         turnState=0;
     }
 
@@ -485,11 +481,6 @@ public class GameStateUpdater
     //
     private void useScroll(Scroll scroll)
     {
-        if(!scroll.canBeUsed())
-        {
-            Gdx.app.log("GSU-useScroll","Trying to use scroll which cant be used!!");
-            return;
-        }
         switch (scroll.getType())
         {
             case Instant:scroll.use();break;

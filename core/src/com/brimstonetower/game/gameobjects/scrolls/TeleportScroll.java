@@ -10,7 +10,7 @@ public class TeleportScroll extends Scroll
 {
     public TeleportScroll(TextureRegion region,String unidentifiedName )
     {
-        super("Teleport","Teleports you to a random place",false, region,unidentifiedName,Type.Instant,0,0);
+        super("Scroll of Teleportation","Teleports you to a random place",false, region,unidentifiedName,Type.Instant,3);
 
     }
 

@@ -11,18 +11,17 @@ public class MappingScroll extends Scroll
 
     public MappingScroll(TextureRegion region, String unidentifiedName)
     {
-        //Change to be upgradable
-        super("Mapping","Magically maps the whole dungeon",false,region,unidentifiedName,Type.Instant,0,0);
+        super("Scroll of Magic Mapping","Magically maps the whole dungeon",false,region,unidentifiedName,Type.Instant,1);
     }
 
     @Override
     public void use()
     {
+
         GameStateUpdater.playedMap.revealAll();
         GameConsole.addMessage("Map has been revealed");
 
         Tile playerTile = GameStateUpdater.player.getCurrentTile();
-        int lanternStr =GameStateUpdater.player.getViewDistance();
-        playerTile.setLight(Tile.LightAmount.Light, lanternStr,playerTile);
+        playerTile.updateLight(GameStateUpdater.player);
     }
 }

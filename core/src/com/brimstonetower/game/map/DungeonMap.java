@@ -60,12 +60,12 @@ public class DungeonMap
         {
             for(int y = 0;y<_tileHeight;y++)
             {
-                if(_tiles[x][y]!=null && _tiles[x][y].getLightAmount() == Tile.LightAmount.Non)
+                if(_tiles[x][y]!=null)
                 {
-                    _tiles[x][y].changeLight(Tile.LightAmount.DarkShadow);
-                    if(_tiles[x][y].getCharacter() != null)
+                    _tiles[x][y].changeLight(Tile.LightAmount.Shadow,1);
+                    if(_tiles[x][y].getObject() != null )
                     {
-                        _tiles[x][y].getCharacter().reveal();
+                        _tiles[x][y].getObject().reveal();
                     }
                 }
             }

@@ -191,6 +191,7 @@ public class AssetManager
         tileSetCoordinateMap.put("blind",new TileSetCoordinate(0,0));
         tileSetCoordinateMap.put("swift",new TileSetCoordinate(1,0));
         tileSetCoordinateMap.put("poison",new TileSetCoordinate(2,0));
+        tileSetCoordinateMap.put("regeneration",new TileSetCoordinate(3,0));
 
     }
 

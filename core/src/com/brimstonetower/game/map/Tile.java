@@ -353,10 +353,7 @@ public class Tile
 
             batch.setColor(toDraw);
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
-            if(_object!=null)
-            {
-                _object.draw(batch);
-            }
+
             _lightTimer+=Gdx.graphics.getDeltaTime();
             if(_lightTimer>lightChangeTime)
             {
@@ -369,12 +366,17 @@ public class Tile
         {
             batch.setColor(_lightColor);
             batch.draw(_textureRegion, _x * DungeonMap.TileSize, _y * DungeonMap.TileSize);
-            if(_object!=null)
-            {
-                _object.draw(batch);
-            }
         }
-
+        if(_object!=null)
+        {
+            if((_lightAmount == LightAmount.Light ||
+               _lightToChangeTo == LightAmount.Light) &&
+               !_object.wasSeen())
+            {
+                _object.reveal();
+            }
+            _object.draw(batch);
+        }
         if (_lightAmount != LightAmount.Non)
         {
             for (Item item : _items)
