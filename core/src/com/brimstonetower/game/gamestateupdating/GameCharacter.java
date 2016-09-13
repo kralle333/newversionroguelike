@@ -335,14 +335,12 @@ public class GameCharacter
         }
         for(Effect toRemove : effectsToRemove)
         {
-            Gdx.app.log("Remove effect:","F:"+toRemove.getName());
             removeEffect(toRemove);
         }
         effectsToRemove.clear();
     }
     protected void applyEffect(Effect effect)
     {
-        Gdx.app.log("Remove effect:","af:"+effect.getName());
             effect.setACtive();
             //Hp manipulation
             if(effect.getHitPointsChange()>0) {heal(effect.getHitPointsChange());}
@@ -361,14 +359,10 @@ public class GameCharacter
     }
     protected void removeEffect(Effect effect)
     {
-        Gdx.app.log("Remove effect:","af:"+effect.getName());
-        Gdx.app.log("RMOVE","FDA: "+effect.getType() );
         if(effect.getType() == Effect.Type.Temporary)
         {
             effect.reverseEffects();
             applyEffect(effect);
-
-            Gdx.app.log("Remove effect:","af:"+effect.getName());
         }
         _currentEffects.remove(effect);
     }

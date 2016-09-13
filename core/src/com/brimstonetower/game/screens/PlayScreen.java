@@ -520,7 +520,7 @@ public class PlayScreen implements Screen, GestureDetector.GestureListener, Inpu
             Vector3 touchedPosition = new Vector3(x, y, 0);
             mainCamera.unproject(touchedPosition);
             Tile touchedTile = _currentDungeonMap.getTouchedTile(touchedPosition.x, touchedPosition.y);
-            if (touchedTile != null)
+            if (touchedTile != null && touchedTile.isWalkable())
             {
                 if (_itemToThrow != null)
                 {

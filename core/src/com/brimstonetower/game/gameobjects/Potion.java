@@ -23,7 +23,7 @@ public class Potion extends Item
 
     public Potion(String description,String identifiedName,Effect effect,boolean isIdentified,TextureRegion textureRegion,Color color,int typeId)
     {
-        super(identifiedName, description, isIdentified, textureRegion,false,typeId);
+        super(identifiedName,description, isIdentified, textureRegion,false,typeId);
         _effect=effect;
         _color=color;
         _stringColor = ColorHelper.convertColorToString(color);

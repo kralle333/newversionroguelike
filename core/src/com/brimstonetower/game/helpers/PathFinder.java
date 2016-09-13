@@ -1,6 +1,7 @@
 package com.brimstonetower.game.helpers;
 
 import com.badlogic.gdx.Gdx;
+import com.brimstonetower.game.map.DungeonMap;
 import com.brimstonetower.game.map.Tile;
 
 import java.util.ArrayList;
@@ -42,8 +43,11 @@ public class PathFinder
             {
                 if (isDebugging)
                     Gdx.app.log("Pathfinder", "Node" + tile.getTilePosition().toString() + " from openset - has fscore: " + String.valueOf(fScores.get(tile)));
-
-                if (fScores.get(tile) < smallestFScore)
+                if(tile == to)
+                {
+                    currentNode = to;
+                }
+                else if (fScores.get(tile) < smallestFScore && tile.getObject() == null) // Only allow the next current tile to have an item if its the goal tile
                 {
                     smallestFScore = fScores.get(tile);
                     currentNode = tile;
