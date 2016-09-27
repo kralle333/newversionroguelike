@@ -16,6 +16,7 @@ public class Player extends GameCharacter
 {
     private static final int _startHp = 48;
     private static final int _startStr = 2;
+    private static final int _startAgility = 5;
     private final int _throwRange = 3;
     public int getThrowRange(){return _throwRange;}
     private boolean _displayThrowRange = false;
@@ -41,7 +42,7 @@ public class Player extends GameCharacter
 
     public Player(String name)
     {
-        super(name, _startStr, 5, _startHp, 4,AssetManager.getTextureRegion("mainHeroesWithBorder", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
+        super(name, _startStr, _startAgility, _startHp, 3,AssetManager.getTextureRegion("mainHeroesWithBorder", "playerType2", DungeonMap.TileSize, DungeonMap.TileSize));
         super.equip(ItemManager.getWeapon("Steel Short Sword"));//Player starts with sword
         super.equip(ItemManager.getArmor("Noble Clothes"));//Player starts with some clothes
         _equippedWeapon.identify();
@@ -85,11 +86,14 @@ public class Player extends GameCharacter
         float hpRatio = (float)currentHp/(float)maxHp;
         maxHp = (int) calculateNewStat((float) _startHp, 2000, level, 99);
         maxStr = (int) calculateNewStat((float) _startStr, 100, level, 99);
+        maxAgility=(int)calculateNewStat((float) _startAgility, 100, level, 99);
         currentHp =(int)(hpRatio*maxHp);
         currentStr = maxStr;
+        currentAgility = maxAgility;
 
         GameConsole.addMessage("Player leveled up! - Welcome to level " + level);
         GameConsole.addMessage("Strength is: " + getMaxStr());
+        GameConsole.addMessage("Agility is: " + getMaxStr());
         GameConsole.addMessage("Max hp is: " + getMaxHitPoints());
         _justLeveledUp=true;
         AssetManager.getSound("levelup").play();
