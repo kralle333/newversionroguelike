@@ -18,6 +18,14 @@ android {
         applicationId "com.brimstonetower.game"
         minSdkVersion 8
         targetSdkVersion 23
+        multiDexEnabled true
+    }
+    dexOptions{
+        incremental true
+        javaMaxHeapSize "2g"
+    }
+    dependencies {
+        compile 'com.android.support:multidex:1.0.0'
     }
 }
 

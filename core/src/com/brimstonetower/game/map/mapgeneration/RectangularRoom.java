@@ -17,6 +17,7 @@ public class RectangularRoom extends Room
         super(x, y, width, height);
     }
 
+
     public void setWallsAndFloor()
     {
         //Top wall
