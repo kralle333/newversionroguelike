@@ -4,7 +4,7 @@ The game was used to explore dynamic difficulty adjustment by using evolution al
 
 Later on I made a Android version which was released on the Google Playstore, but have not been kept up to date and is now taken down.
 
-Most artwork done by @Ivan
+Most artwork done by @IvanNik17
 
 ### Screenshots
 ![screenshot from game](/screenshots/0.png?raw=true)
